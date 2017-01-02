@@ -1,6 +1,8 @@
 # parallel-ssh
 Asyncronous parallel ssh command-line utility.
 
+Work in progress... The code and documentation will be posted soon.
+
 Here is a preview of the available command options:
 ```
 Usage: ./mdssh.pl [-u=username] [-p=password] [-sudo[=sudo_user]] [-timeout=n] [-threads=n]
