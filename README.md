@@ -1,7 +1,7 @@
 # parallel-ssh
 Asyncronous parallel ssh command-line utility.
 
-Work in progress... The code and documentation will be posted soon.
+Work in progress... The code and documentation will be posted in the near future.
 
 Here is a preview of the available command options:
 ```
