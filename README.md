@@ -1,5 +1,6 @@
-# parallel-ssh
-Asyncronous parallel ssh command-line utility.
+# parallel-ssh-scp
+Asyncronous parallel ssh/scp command-line utility that does not require setting up ssh keys.
+The ssh user's password can be passed by setting the $SSH_PASS environment variable to the actual password string or to a file containing the password.
 
 Work in progress... The code and documentation will be posted in the near future.
 
@@ -34,7 +35,7 @@ Usage: ./mdssh.pl [-u=username] [-p=password] [-sudo[=sudo_user]] [-timeout=n] [
 	 -timestamp : Display timestamp
 	 -s : Space-separated list of hostnames (brace expansion supported)
 	 -f : File containing hostnames (one per line)
-	 Set tcount or ttime to 0 to disable throttling
+	 Set -tcount or -ttime to 0 to disable throttling
 	 Use envoriment variables $SSH_USER and $SSH_PASS to pass credentials
 	 Enable -multiauth along with -tolocal when <source_path> uses brace expasion
 	 Encase <command> in quotes (single argument)
