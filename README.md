@@ -1,6 +1,6 @@
 # parallel-ssh-scp
 Asyncronous parallel ssh/scp command-line utility that does not require setting up ssh keys.
-The ssh user's password can be passed by setting the $SSH_PASS environment variable to the actual password string or to a file containing the password.
+The ssh user's password can be passed by setting by -p option or the $SSH_PASS environment variable to the actual password string or to a file containing the password.
 
 Work in progress... The code and documentation will be posted in the near future.
 
