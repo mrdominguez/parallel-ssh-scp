@@ -24,7 +24,7 @@ Usage: ./mdssh.pl [-u=username] [-p=password] [-sudo[=sudo_user]] [-timeout=n] [
 	 -meter : Display scp progress (default: disabled)
 	 -tcount : Number of forked processes before throttling (default: 25)
 	 -ttime : Throttling time (default: 3 seconds)
-	 -o : (Not defined) Buffer output and display after command completion
+	 -o : (Not defined) Buffer output; display it after command completion
 	      (0) Do not display command output
 	      (1) Display command output as it happens
 	 -olines : Display the last n lines of the buffered output (-o=1 -> default: 10 | full output: 0)
