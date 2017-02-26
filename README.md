@@ -1,10 +1,10 @@
+## Synopsis
+
 AUTHOR: Mariano Dominguez, <marianodominguez@hotmail.com>
 
 VERSION: 2.0
 
 BUGS: Please report bugs through GitHub or to <marianodominguez@hotmail.com>
-
-## Synopsis
 
 `mdssh.pl` (named after my initials, MD) is an asyncronous parallel SSH/SCP command-line utility that does not require setting up SSH keys.
 
@@ -131,7 +131,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
 ## How-To
 
-(Assuming `$SSH_USER` and `$SSH_PASS` have been set...)
+(Assuming `$SSH_USER` and `$SSH_PASS` have been set)
 
 * Check the OS (RHEL) and kernel version on the remove hosts:
 
