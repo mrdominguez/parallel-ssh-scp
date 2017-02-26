@@ -155,4 +155,4 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
 * Pull `/var/log/messages` from the remote hosts to the (non-existant) `remote_files` local directory:
 
-    `$ mdssh.pl -f=hosts -scp -tolocal -d=remote_files /var/log/mes
+    `$ mdssh.pl -f=hosts -scp -tolocal -d=remote_files /var/log/messages`
