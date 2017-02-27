@@ -289,7 +289,7 @@ sub usage {
 	print "\t -scp : Copy <source_path> from local host to \@remote_hosts:<target_path>\n";
 	print "\t -tolocal : Copy \@remote_hosts:<source_path> to <target_path> in local host\n";
 	print "\t            The remote hosts' hostname will be appended to <target_path> as a directory\n";
-	print "\t            If permissions allow it, non-existant local directories will be created\n";
+	print "\t            If permissions allow it, non-existent local directories will be created\n";
 	print "\t -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
 	print "\t -r : Recursively copy entire directories\n";
 	print "\t -d : Remote path (default: \$HOME)\n";
@@ -308,7 +308,7 @@ sub usage {
 	print "\t -f : File containing hostnames (one per line)\n";
 	print "\t Set -tcount or -ttime to 0 to disable throttling\n";
 	print "\t Use envoriment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
-	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expasion\n";
+	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n";
 	print "\t Encase <command> in quotes (single argument)\n\n";
 	exit;
 }

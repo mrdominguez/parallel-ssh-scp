@@ -143,14 +143,14 @@ sub usage {
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
 	print "\t -timeout : Timeout value for Expect (default: $timeout_default seconds)\n";
 	print "\t -tolocal : Copy from remote host to local host (default: local -> remote)\n";
-	print "\t            If permissions allow it, non-existant local directories in <target_path> will be created\n";
+	print "\t            If permissions allow it, non-existent local directories in <target_path> will be created\n";
 	print "\t -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
 	print "\t -q : Quiet mode disables the progress meter (default: enabled)\n";
 	print "\t -r : Recursively copy entire directories\n";
 	print "\t -v : Enable verbose messages\n";
 	print "\t Use envoriment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
 	print "\t If omited, <target_path> default value is \$HOME\n";
-	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expasion\n\n";
+	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n\n";
 	exit;
 }
 
