@@ -8,7 +8,7 @@ BUGS: Please report bugs to <marianodominguez@hotmail.com>
 
 `mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys.
 
-`mdssh.pl` enables process concurrency and calls `sshexp.pl` and `scpexp.pl` in the backgroup to connect to remote hosts (one host per process) via `ssh` or `scp` respectively.
+`mdssh.pl` enables process concurrency and calls `sshexp.pl` and `scpexp.pl` in the background to connect to remote hosts (one host per process) via `ssh` or `scp` respectively.
 
 ## Installation
 
@@ -52,7 +52,7 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
      -scp : Copy <source_path> from local host to @remote_hosts:<target_path>
      -tolocal : Copy @remote_hosts:<source_path> to <target_path> in local host
                 The remote hosts' hostname will be appended to <target_path> as a directory
-                If permissions allow it, non-existant local directories will be created
+                If permissions allow it, non-existent local directories will be created
      -multiauth : Always authenticate when password prompted (default: single authentication attempt)
      -r : Recursively copy entire directories
      -d : Remote path (default: $HOME)
@@ -71,7 +71,7 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
      -f : File containing hostnames (one per line)
      Set -tcount or -ttime to 0 to disable throttling
      Use envoriment variables $SSH_USER and $SSH_PASS to pass credentials
-     Enable -multiauth along with -tolocal when <source_path> uses brace expasion
+     Enable -multiauth along with -tolocal when <source_path> uses brace expansion
      Encase <command> in quotes (single argument)
 ```
 
@@ -119,14 +119,14 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
      -timeout : Timeout value for Expect (default: 20 seconds)
      -tolocal : Copy from remote host to local host (default: local -> remote)
-                If permissions allow it, non-existant local directories in <target_path> will be created
+                If permissions allow it, non-existent local directories in <target_path> will be created
      -multiauth : Always authenticate when password prompted (default: single authentication attempt)
      -q : Quiet mode disables the progress meter (default: enabled)
      -r : Recursively copy entire directories
      -v : Enable verbose messages
      Use envoriment variables $SSH_USER and $SSH_PASS to pass credentials
      If omited, <target_path> default value is $HOME
-     Enable -multiauth along with -tolocal when <source_path> uses brace expasion
+     Enable -multiauth along with -tolocal when <source_path> uses brace expansion
 ```
 
 ## How-To
@@ -153,6 +153,6 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
     `$ mdssh.pl -f=hosts -sudo "rm /var/local/tpm/package.rpm"`
 
-* Pull `/var/log/messages` from the remote hosts to the (non-existant) `remote_files` local directory:
+* Pull `/var/log/messages` from the remote hosts to the (non-existent) `remote_files` local directory:
 
     `$ mdssh.pl -f=hosts -scp -tolocal -d=remote_files /var/log/messages`
