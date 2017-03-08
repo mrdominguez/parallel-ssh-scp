@@ -277,7 +277,7 @@ sub usage {
 	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s=\"host1 host2 ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
-	print "\t -version : Show version information\n";
+	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";

@@ -40,7 +40,7 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
     [-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s="host1 host2 ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
-     -version : Show version information
+     -version : Display version information
      -u : Username (default: $USER -current user-)
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
@@ -88,7 +88,7 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
     [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] <host> [<command>]
 
      -help : Display usage
-     -version : Show version information
+     -version : Display version information
      -u : Username (default: $USER -current user-)
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
@@ -111,7 +111,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
     [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-q] <source_path> <host> [<target_path>]
 
      -help : Display usage
-     -version : Show version information
+     -version : Display version information
      -u : Username (default: $USER -current user-)
      -p : Password or path to password file (default: undef)
      -sshOpts : Additional SSH options

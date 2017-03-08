@@ -135,7 +135,7 @@ sub usage {
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-q] <source_path> <host> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
-	print "\t -version : Show version information\n";
+	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sshOpts : Additional SSH options\n";
