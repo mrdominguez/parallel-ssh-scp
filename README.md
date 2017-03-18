@@ -4,7 +4,7 @@ AUTHOR: Mariano Dominguez, <marianodominguez@hotmail.com>
 
 VERSION: 2.0
 
-BUGS: Please report bugs to <marianodominguez@hotmail.com>
+FEEDBACK/BUGS: Please contact me by email.
 
 `mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys.
 
