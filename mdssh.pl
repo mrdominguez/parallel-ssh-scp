@@ -265,7 +265,7 @@ sub check_process {
 			push @{$error_hosts->{$?>>8}}, $hosts->{$child_pid};
 			++$error_cnt;
 		}
-		&log_trace ("[$hosts->{$child_pid}] [$child_pid] process_$id->{$child_pid} exited ( Pending: $pending_cnt, Forked: $forked_cnt, Completed: $completed_cnt/$num_hosts -$completed_percent- OK: $ok_cnt | Error: $error_cnt )");
+		&log_trace ("[$hosts->{$child_pid}] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt, Forked: $forked_cnt, Completed: $completed_cnt/$num_hosts -$completed_percent- OK: $ok_cnt | Error: $error_cnt)");
 	}
 }
 
