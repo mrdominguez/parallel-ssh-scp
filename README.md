@@ -147,11 +147,11 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
 * Install (as root) the rpm on the remote hosts, set timeout to 5 minutes:
 
-    `$ mdssh.pl -timeout=300 -f=hosts -sudo "rpm -ivh /var/local/tpm/package.rpm"`
+    `$ mdssh.pl -timeout=300 -f=hosts -sudo "rpm -ivh /var/local/tmp/package.rpm"`
 
 * Delete the rpm file from the remote hosts:
 
-    `$ mdssh.pl -f=hosts -sudo "rm /var/local/tpm/package.rpm"`
+    `$ mdssh.pl -f=hosts -sudo "rm /var/local/tmp/package.rpm"`
 
 * Pull `/var/log/messages` from the remote hosts to the (non-existent) `remote_files` local directory:
 
