@@ -23,8 +23,8 @@ Use [cpan](http://perldoc.perl.org/cpan.html) to install these modules; alternat
 The username can be set by using the `-u` option in the command line or the `$SSH_USER` environment variable. If not set, the default username is `$USER`.
 
 The password can be passed by setting the `-p` option or the `$SSH_PASS` environment variable to:
-    - The actual password string (**not recommended**).
-    - A file containing the password.
+- The actual password string (**not recommended**).
+- A file containing the password.
 
 If neither of the above is set, no password will be used.
 
