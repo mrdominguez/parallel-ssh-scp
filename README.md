@@ -151,7 +151,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
 * Delete the rpm file from the remote hosts:
 
-    `$ mdssh.pl -f=hosts -sudo "rm /var/local/tmp/package.rpm"`
+    `$ mdssh.pl -f=hosts "rm /var/local/tmp/package.rpm"`
 
 * Pull `/var/log/messages` from the remote hosts to the (non-existent) `remote_files` local directory:
 
