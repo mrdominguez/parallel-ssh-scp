@@ -26,7 +26,7 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 - The actual password string (**not recommended**).
 - A file containing the password.
 
-If not set, no password will be used.
+If not set, the password will be undefined.
 
 ## Usage
 
