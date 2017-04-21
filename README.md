@@ -137,7 +137,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
     `$ mdssh.pl -f=hosts "cat /etc/redhat-release; uname -r"`
 
-* Execute `df -h` on the remote hosts and send the output to file in the local `df_output` directory:
+* Execute `df -h` on the remote hosts and send the output to file in the local `./df_output` directory:
 
     `$ mdssh.pl -f=hosts -odir=df_output "df -h"`
 
@@ -153,6 +153,6 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
     `$ mdssh.pl -f=hosts "rm /var/local/tmp/package.rpm"`
 
-* Pull `/var/log/messages` from the remote hosts to the (non-existent) `remote_files` local directory:
+* Pull `/var/log/messages` from the remote hosts to the local `./remote_files` directory:
 
     `$ mdssh.pl -f=hosts -scp -tolocal -d=remote_files /var/log/messages`
