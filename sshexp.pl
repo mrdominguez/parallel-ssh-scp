@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 2.0\n";
-	print "Release date: 02/15/2017\n";
+	print "Release date: 6/7/2017\n";
 	exit;
 }
 
@@ -84,7 +84,7 @@ $ssh .= " $sshOpts" if defined $sshOpts;
 $ssh .= " $username\@$host";
 #my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
-my $shell_prompt = qr'[\$\#] $';
+my $shell_prompt = qr'[\$\#]{1} $';
 
 my $exp = new Expect;
 $exp->raw_pty(0); 		# turn echoing (for sends) on=0 (default) / off=1
