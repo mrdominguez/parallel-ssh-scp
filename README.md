@@ -131,7 +131,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
 ## How-To
 
-**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of the `$PS1` prompt shell variable for Expect to correctly catch command execution termination. The default regex `' [\$\#] $'` may not always work**.
+**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the static end of the `$PS1` prompt shell variable for Expect to correctly catch command execution termination. The default regex `' [\$\#] $'` may not always work**.
 
 (Assuming `$SSH_USER` and `$SSH_PASS` have been set)
 
