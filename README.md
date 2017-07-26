@@ -77,7 +77,7 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
 
 NOTES:
 - Once a process is running, a timeout occurs when the executed command does not output anything after the `-timeout` value is reached.
-- Unless overridden by the SSH **ConnectTimeout** option, the system's TCP connect timeout value will be used (the default for Linux is 20 seconds). To change it, set the `-sshOpts` as follows  `-sshOpts='-o ConnectTimeout=10'` (in seconds).
+- Unless overridden by the SSH **ConnectTimeout** option, the system's TCP connect timeout value will be used (the default for Linux is 20 seconds). To change it, set `-sshOpts` as follows  `-sshOpts='-o ConnectTimeout=10'` (in seconds).
 - Both `-f` and `-s` can be used at the same time.
 - Lines containing the `#` character in the hosts file will be skipped.
 
@@ -106,6 +106,7 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
      Encase <command> in quotes to pass it as a single argument
      Omit <command> for interactive mode
 ```
+**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of the `$PS1` prompt shell variable for Expect to correctly catch command execution termination. The default regex `' [\$\#] $'` may not always work**.
 ```
 Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
     [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-q] <source_path> <host> [<target_path>]
@@ -156,3 +157,4 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 * Pull `/var/log/messages` from the remote hosts to the local `./remote_files` directory:
 
     `$ mdssh.pl -f=hosts -scp -tolocal -d=remote_files /var/log/messages`
+

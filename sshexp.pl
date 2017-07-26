@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 2.0\n";
-	print "Release date: 6/7/2017\n";
+	print "Release date: 7/25/2017\n";
 	exit;
 }
 
@@ -84,7 +84,7 @@ $ssh .= " $sshOpts" if defined $sshOpts;
 $ssh .= " $username\@$host";
 #my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
-my $shell_prompt = qr'[\$\#]{1} $';
+my $shell_prompt = qr' [\$\#] $';
 
 my $exp = new Expect;
 $exp->raw_pty(0); 		# turn echoing (for sends) on=0 (default) / off=1
@@ -143,7 +143,6 @@ my @cmd_output;
 #my $ret;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
-#	[ qr/\n/, sub {		push @cmd_output, $exp->before();
 	[ qr/\r\n/, sub {	push @cmd_output, $exp->before();
 				print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 );
 				exp_continue } ],
@@ -158,7 +157,6 @@ shift @cmd_output;
 my $rc;
 $exp->send("echo \$\?\n");
 $exp->expect($int_opts->{'timeout'},
-#	[ qr/\r/, sub { $rc = $exp->before(); exp_continue } ],
 	[ qr/\r\n/, sub { $rc = $exp->before(); exp_continue } ],
 	[ 'eof', sub { &no_match("[$host] (rc) Premature EOF") } ],
 	[ 'timeout', sub { die "[$host] (rc) Timeout" } ],
