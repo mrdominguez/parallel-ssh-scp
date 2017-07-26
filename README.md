@@ -106,7 +106,6 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
      Encase <command> in quotes to pass it as a single argument
      Omit <command> for interactive mode
 ```
-**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of the `$PS1` prompt shell variable for Expect to correctly catch command execution termination. The default regex `' [\$\#] $'` may not always work**.
 ```
 Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
     [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-q] <source_path> <host> [<target_path>]
@@ -131,6 +130,8 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 ```
 
 ## How-To
+
+**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of the `$PS1` prompt shell variable for Expect to correctly catch command execution termination. The default regex `' [\$\#] $'` may not always work**.
 
 (Assuming `$SSH_USER` and `$SSH_PASS` have been set)
 
