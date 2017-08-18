@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Asyncronous parallel SSH/SCP command-line utility with automatic authentication (no SSH keys required)
+# Asynchronous parallel SSH/SCP command-line utility with automatic authentication (no SSH keys required)
 # Version: 2.0
 # Use -help for options
 
@@ -125,7 +125,7 @@ if ( $sudo && !$scp ) {
 	print "Issuing sudo as user $sudo_user\n" if $v;
 }
 
-if ( $v) {
+if ( $v ) {
 	if ( $int_opts->{'tcount'} == 0 || $int_opts->{'ttime'} == 0 ) {
 		print "Throttling is disabled\n";
 	} else {
@@ -162,8 +162,7 @@ my $throttle_cnt = 0;
 my $ok_cnt = 0;
 my $error_cnt = 0;
 my $child_pid;
-foreach (@hosts) {
-	my $host = $_;
+foreach my $host (@hosts) {
 	chomp($host);
 	next if $host =~ /(#+)/;
 	next if $host =~ /^\s*$/;
