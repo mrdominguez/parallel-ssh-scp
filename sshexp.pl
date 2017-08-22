@@ -102,8 +102,7 @@ $exp->expect($int_opts->{'timeout'},
 							$pw_sent = 1;
 							$exp->send("$password\n");
 						} else {
-							die "[$host] Wrong credentials";
-						}
+							die "[$host] Wrong credentials"; }
 					} else {
 						die "[$host] Password required";
 					} exp_continue } ],
@@ -115,6 +114,7 @@ $exp->expect($int_opts->{'timeout'},
 );
 
 if ( $sudo ) {
+	$pw_sent = 0;
 	my $sudo_cmd;
 	my $sudo_user = $sudo eq '1' ? 'root' : $sudo;
 	print "[$host] Executing command through sudo as user $sudo_user\n" if $v;
@@ -122,7 +122,17 @@ if ( $sudo ) {
 #	$sudo_cmd = "sudo -i -u $sudo_user\n"; # Option 2
 	$exp->send("$sudo_cmd");
 	$exp->expect($int_opts->{'timeout'},
-		[ qr/password.*:\s*$/i, sub { $exp->send("$password\n"); exp_continue } ],
+#		[ qr/password.*:\s*$/i, sub { $exp->send("$password\n"); exp_continue } ],
+		# if $password is undefined and ssh does not require it, sudo may still prompt for password...
+		[ qr/password.*:\s*$/i, sub {	if ( defined $password ) {
+							if ( $pw_sent == 0 ) {
+								$pw_sent = 1;
+								$exp->send("$password\n");
+							} else {
+								die "[$host] Wrong credentials"; }
+						} else {
+							die "[$host] Password required";
+						} exp_continue } ],
 		[ qr/unknown/i, sub { die "[$host] Unknown login/user: $sudo_user" } ],
 		[ qr/does not exist/i, sub { die "[$host] User does not exist: $sudo_user" } ],
 		[ qr/not allowed to execute/i, sub { die "[$host] Unauthorized sudo user: $username (as $sudo_user)" } ],
