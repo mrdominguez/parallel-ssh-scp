@@ -135,27 +135,27 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
 (Assuming `$SSH_USER` and `$SSH_PASS` have been set)
 
-* Check the OS (RHEL) and kernel version on the remove hosts:
+* Check the OS (RHEL) and kernel version on the remote hosts:
 
     `$ mdssh.pl -f=hosts "cat /etc/redhat-release; uname -r"`
 
-* Execute `df -h` on the remote hosts and send the output to file in the local `./df_output` directory:
+* Execute `df -h` and send the output to file in the local `./df_output` directory:
 
     `$ mdssh.pl -f=hosts -odir=df_output "df -h"`
 
-* Push `package.rpm` to `/var/local/tmp` on the remote hosts using 3 copy processes:
+* Push `package.rpm` to `/var/local/tmp` using 3 copy processes:
 
     `$ mdssh.pl -threads=3 -f=hosts -scp -d=/var/local/tmp package.rpm`
 
-* Install (as root) the rpm on the remote hosts, set timeout to 5 minutes:
+* Install (as root) the rpm, set timeout to 5 minutes:
 
     `$ mdssh.pl -timeout=300 -f=hosts -sudo "rpm -ivh /var/local/tmp/package.rpm"`
 
-* Delete the rpm file from the remote hosts:
+* Delete the rpm file:
 
     `$ mdssh.pl -f=hosts "rm /var/local/tmp/package.rpm"`
 
-* Pull `/var/log/messages` from the remote hosts to the local `./remote_files` directory:
+* Pull `/var/log/messages` to the local `./remote_files` directory:
 
     `$ mdssh.pl -f=hosts -scp -tolocal -d=remote_files /var/log/messages`
 
