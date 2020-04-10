@@ -14,7 +14,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 These utilities are written in Perl and have been tested using Perl 5.1x.x on RHEL 6.x.
 
-Authentication and credentials are handled using the **Expect.pm** module. Additionally, to enable the interactive mode functionality in `sshexp.pl`, please install **IO::Stty**.
+Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
 Use [cpan](http://perldoc.perl.org/cpan.html) to install these modules; alternately, download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
 
