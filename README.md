@@ -147,7 +147,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
     `$ mdssh.pl -threads=3 -f=hosts -scp -d=/var/local/tmp package.rpm`
 
-* Install (as root) the rpm, set timeout to 5 minutes:
+* Install (as root) the package, set timeout to 5 minutes:
 
     `$ mdssh.pl -timeout=300 -f=hosts -sudo "rpm -ivh /var/local/tmp/package.rpm"`
 
