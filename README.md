@@ -139,7 +139,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
     `$ mdssh.pl -f=hosts "cat /etc/redhat-release; uname -r"`
 
-* Execute `df -h` and send the output to file in the local `./df_output` directory:
+* Execute `df -h` and send the output to a file in the local `./df_output` directory:
 
     `$ mdssh.pl -f=hosts -odir=df_output "df -h"`
 
