@@ -16,7 +16,9 @@ These utilities are written in Perl and have been tested using Perl 5.1x.x on RH
 
 Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
-Use [cpan](http://perldoc.perl.org/cpan.html) to install these modules; alternately, download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
+Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modules; alternately, download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
+
+**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination as the default value `' [\$\#] $'` may not always work**.
 
 ## Setting user credentials
 
@@ -130,8 +132,6 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 ```
 
 ## How-To
-
-**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of the `$PS1` prompt shell variable for Expect to correctly catch command execution termination. The default regex `' [\$\#] $'` may not always work**.
 
 (Assuming `$SSH_USER` and `$SSH_PASS` have been set)
 
