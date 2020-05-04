@@ -84,7 +84,7 @@ $ssh .= " $sshOpts" if defined $sshOpts;
 $ssh .= " $username\@$host";
 #my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
-my $shell_prompt = qr' [\$\#] $';
+my $shell_prompt = qr'\][\$\#] $';
 
 my $exp = new Expect;
 $exp->raw_pty(0); 		# turn echoing (for sends) on=0 (default) / off=1
