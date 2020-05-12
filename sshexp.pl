@@ -86,8 +86,8 @@ $ssh .= " $username\@$host";
 my $shell_prompt = qr'\][\$\#] $';
 
 my $exp = new Expect;
-$exp->raw_pty(0); 		# turn echoing (for sends) on=0 (default) / off=1
-$exp->log_user(0); 		# turn stdout logging on=1 (default) / off=0
+$exp->raw_pty(0); 	# turn echoing (for sends) on=0 (default) / off=1
+$exp->log_user(0); 	# turn stdout logging on=1 (default) / off=0
 print "[$host] Executing ssh... " if $v;
 $exp->spawn($ssh) or die $!;
 my $pid = $exp->pid();
@@ -207,7 +207,7 @@ sub send_password {
 	if ( defined $password ) {
 		if ( $pw_sent == 0 ) {
 			$pw_sent = 1;
-				$exp->send("$password\n");
+			$exp->send("$password\n");
 		} else {
 			die "[$host] Wrong credentials"; }
 	} else {
