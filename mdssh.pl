@@ -15,7 +15,6 @@
 # limitations under the License.
 
 # Asynchronous parallel SSH/SCP command-line utility with automatic authentication (no SSH keys required)
-# Version: 2.0
 # Use -help for options
 
 use strict;
@@ -37,13 +36,13 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 2.0\n";
-	print "Release date: 6/7/2017\n";
+	print "Version: 2.1\n";
+	print "Release date: 05/12/2020\n";
 	exit;
 }
 
 &usage if $help;
-die "Argument <command|source_path> is missing\nUse -help for options\n" if @ARGV < 1;
+die "Missing argument: <command|source_path>\nUse -help for options\n" if @ARGV < 1;
 my $cmd_spath = $ARGV[0];
 
 my (@hosts, @hosts_file, @hosts_cli);
