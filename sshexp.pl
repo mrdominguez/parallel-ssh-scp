@@ -15,7 +15,6 @@
 # limitations under the License.
 
 # SSH command-line utility with automatic authentication (no SSH keys required)
-# Version: 2.0
 # Use -help for options
 
 use strict;
@@ -33,13 +32,13 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 2.0\n";
-	print "Release date: 7/25/2017\n";
+	print "Version: 2.1\n";
+	print "Release date: 05/12/2020\n";
 	exit;
 }
 
 &usage if $help;
-die "Argument <host> is missing\nUse -help for options\n" if @ARGV < 1;
+die "Missing agument: <host>\nUse -help for options\n" if @ARGV < 1;
 
 my $int_opts = {};
 $int_opts->{'timeout'} = $timeout || $timeout_default; # use default value if 0 (or empty)
@@ -96,20 +95,14 @@ print "pid is [$pid]\n" if $v;
 #$exp->log_file("$0.log","a"); 	# log session to file: w=truncate / a=append (default)
 my $pw_sent = 0;
 $exp->expect($int_opts->{'timeout'},
-	[ '\(yes/no\)\?\s*$', sub { $exp->send("yes\n"); exp_continue } ],
-	[ qr/password:\s*$/i, sub {	if ( defined $password ) {
-						if ( $pw_sent == 0 ) {
-							$pw_sent = 1;
-							$exp->send("$password\n");
-						} else {
-							die "[$host] Wrong credentials"; }
-					} else {
-						die "[$host] Password required";
-					} exp_continue } ],
-	[ qr/login:\s*$/i, sub { $exp->send("$username\n"); exp_continue } ],
-	[ qr/REMOTE HOST IDENTIFICATION HAS CHANGED.*/, sub { print "[$host] Host key verification failed\n"; exp_continue } ],
-	[ 'eof', sub { &no_match("[$host] (auth) Premature EOF") } ],
-	[ 'timeout', sub { die "[$host] (auth) Timeout" } ],
+	# The authenticity of host '' can't be established... to continue connecting (yes/no)?
+	[ '\(yes/no\)\?\s*$', 		sub { $exp->send("yes\n"); exp_continue } ],
+	[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
+	[ qr/login:\s*$/i, 		sub { $exp->send("$username\n"); exp_continue } ],
+	[ 'REMOTE HOST IDENTIFICATION HAS CHANGED', sub { print "[$host] Host key verification failed\n"; exp_continue } ],
+	[ 'eof', 			sub { &no_match("[$host] (auth) Premature EOF") } ],
+	# Expect TIMEOUT
+	[ 'timeout', 			sub { die "[$host] (auth) Timeout" } ], 
 	[ $shell_prompt ],
 );
 
@@ -122,23 +115,15 @@ if ( $sudo ) {
 #	$sudo_cmd = "sudo -i -u $sudo_user\n"; # Option 2
 	$exp->send("$sudo_cmd");
 	$exp->expect($int_opts->{'timeout'},
-#		[ qr/password.*:\s*$/i, sub { $exp->send("$password\n"); exp_continue } ],
+#		[ qr/password.*:\s*$/i, 	sub { $exp->send("$password\n"); exp_continue } ],
 		# if $password is undefined and ssh does not require it, sudo may still prompt for password...
-		[ qr/password.*:\s*$/i, sub {	if ( defined $password ) {
-							if ( $pw_sent == 0 ) {
-								$pw_sent = 1;
-								$exp->send("$password\n");
-							} else {
-								die "[$host] Wrong credentials"; }
-						} else {
-							die "[$host] Password required";
-						} exp_continue } ],
-		[ qr/unknown/i, sub { die "[$host] Unknown login/user: $sudo_user" } ],
-		[ qr/does not exist/i, sub { die "[$host] User does not exist: $sudo_user" } ],
-		[ qr/not allowed to execute/i, sub { die "[$host] Unauthorized sudo user: $username (as $sudo_user)" } ],
-		[ qr/not in the sudoers file/i, sub { die "[$host] User $username is not in the sudoers file" } ],
-		[ 'eof', sub { &no_match("[$host] (sudo) Premature EOF") } ],
-		[ 'timeout', sub { die "[$host] (sudo) Timeout" } ],
+		[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
+		[ 'unknown', 			sub { die "[$host] Unknown user: $sudo_user" } ],
+		[ 'does not exist', 		sub { die "[$host] User does not exist: $sudo_user" } ],
+		[ 'not allowed to execute', 	sub { die "[$host] Unauthorized sudo user: $username (as $sudo_user)" } ],
+		[ 'not in the sudoers file', 	sub { die "[$host] User is not in the sudoers file: $username" } ],
+		[ 'eof', 			sub { &no_match("[$host] (sudo) Premature EOF") } ],
+		[ 'timeout', 			sub { die "[$host] (sudo) Timeout" } ],
 		[ $shell_prompt ],
 	);
 }
@@ -153,12 +138,12 @@ my @cmd_output;
 #my $ret;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
-	[ qr/\r\n/, sub {	push @cmd_output, $exp->before();
-				print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 );
-				exp_continue } ],
-#	[ qr/\r/, sub { $ret .= $exp->before(); exp_continue } ],
-	[ 'eof', sub { &no_match("[$host] (cmd) Premature EOF") } ],
-	[ 'timeout', sub { die "[$host] (cmd) Timeout" } ],
+	[ '\r\n', 	sub {	push @cmd_output, $exp->before();
+			print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 );
+			exp_continue } ],
+#	[ '\r', 	sub { $ret .= $exp->before(); exp_continue } ],
+	[ 'eof', 	sub { &no_match("[$host] (cmd) Premature EOF") } ],
+	[ 'timeout', 	sub { die "[$host] (cmd) Timeout" } ],
 	[ $shell_prompt ]
 );
 #@cmd_output = split /\n/, $ret; # or split /\r/, ... for qr/\n/ in $exp->expect
@@ -167,9 +152,9 @@ shift @cmd_output;
 my $rc;
 $exp->send("echo \$\?\n");
 $exp->expect($int_opts->{'timeout'},
-	[ qr/\r\n/, sub { $rc = $exp->before(); exp_continue } ],
-	[ 'eof', sub { &no_match("[$host] (rc) Premature EOF") } ],
-	[ 'timeout', sub { die "[$host] (rc) Timeout" } ],
+	[ '\r\n', 	sub { $rc = $exp->before(); exp_continue } ],
+	[ 'eof', 	sub { &no_match("[$host] (rc) Premature EOF") } ],
+	[ 'timeout', 	sub { die "[$host] (rc) Timeout" } ],
 	[ $shell_prompt ]
 );
 $rc =~ s{^\Q$/\E}{}; # remove newline character from start of string
@@ -218,6 +203,18 @@ sub no_match {
 	exit -1;
 }
 
+sub send_password {
+	if ( defined $password ) {
+		if ( $pw_sent == 0 ) {
+			$pw_sent = 1;
+				$exp->send("$password\n");
+		} else {
+			die "[$host] Wrong credentials"; }
+	} else {
+		die "[$host] Password required";
+	}
+}
+
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] <host> [<command>]\n\n";
@@ -242,4 +239,3 @@ sub usage {
 	print "\t Omit <command> for interactive mode\n\n";
 	exit;
 }
-
