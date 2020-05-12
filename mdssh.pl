@@ -287,11 +287,11 @@ sub usage {
 	print "\t -threads : Number of concurrent processes (default: $threads_default)\n";
 	print "\t -scp : Copy <source_path> from local host to \@remote_hosts:<target_path>\n";
 	print "\t -tolocal : Copy \@remote_hosts:<source_path> to <target_path> in local host\n";
-	print "\t            The remote hosts' hostname will be appended to <target_path> as a directory\n";
+	print "\t            The remote hostnames will be appended to <target_path> as a directory\n";
 	print "\t            If permissions allow it, non-existent local directories will be created\n";
 	print "\t -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
 	print "\t -r : Recursively copy entire directories\n";
-	print "\t -d : Remote path (default: \$HOME)\n";
+	print "\t -d : Target path (default: \$HOME)\n";
 	print "\t -meter : Display scp progress (default: disabled)\n";
 	print "\t -tcount : Number of forked processes before throttling (default: $tcount_default)\n";
 	print "\t -ttime : Throttling time (default: $ttime_default seconds)\n";
