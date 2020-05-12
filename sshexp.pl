@@ -1,6 +1,6 @@
 #!/usr/bin/perl -ws
 
-# Copyright 2016 Mariano Dominguez
+# Copyright 2020 Mariano Dominguez
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -86,8 +86,8 @@ $ssh .= " $username\@$host";
 my $shell_prompt = qr'\][\$\#] $';
 
 my $exp = new Expect;
-$exp->raw_pty(0); 	# turn echoing (for sends) on=0 (default) / off=1
-$exp->log_user(0); 	# turn stdout logging on=1 (default) / off=0
+$exp->raw_pty(0);	# turn echoing (for sends) on=0 (default) / off=1
+$exp->log_user(0);	# turn stdout logging on=1 (default) / off=0
 print "[$host] Executing ssh... " if $v;
 $exp->spawn($ssh) or die $!;
 my $pid = $exp->pid();
