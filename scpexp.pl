@@ -1,6 +1,6 @@
 #!/usr/bin/perl -ws
 
-# Copyright 2016 Mariano Dominguez
+# Copyright 2020 Mariano Dominguez
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$ho
 
 my $exp = new Expect;
 $exp->raw_pty(0);	# turn echoing (for sends) on=0 (default) / off=1
-$exp->log_user(0); 	# turn stdout logging on=1 (default) / off=0
+$exp->log_user(0);	# turn stdout logging on=1 (default) / off=0
 if ( $v ) {
 	print "Source path = $spath\n";
 	print "Target path = $tpath\n";
