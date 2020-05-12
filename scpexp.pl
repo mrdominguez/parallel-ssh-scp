@@ -15,7 +15,6 @@
 # limitations under the License.
 
 # SCP command-line utility with automatic authentication (no SSH keys required)
-# Version: 2.0
 # Use -help for options
 
 use strict;
@@ -32,13 +31,13 @@ my $timeout_default = 20;
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 2.0\n";
-	print "Release date: 6/7/2017\n";
+	print "Version: 2.1\n";
+	print "Release date: 05/12/2020\n";
 	exit;
 }
 
 &usage if $help;
-die "Missing argument(s): Set <source_path> and <host>\nUse -help for options\n" if @ARGV < 2;
+die "Required arguments: <source_path>, <host>\nUse -help for options\n" if @ARGV < 2;
 
 $timeout = $timeout_default unless $timeout;
 die "-timeout ($timeout) is not an integer" if $timeout =~ /\D/;
@@ -98,24 +97,16 @@ print "pid is [$pid]\n" if $v;
 my $pw_sent = 0;
 my $ret;
 $exp->expect($timeout,
-	[ '\(yes/no\)\?\s*$', sub { $exp->send("yes\n"); exp_continue } ],
-	[ qr/password:\s*$/i, sub {	if ( defined $password ) {
-						if ( $pw_sent == 0 ) {
-							$pw_sent = 1 unless $multiauth;
-							$exp->send("$password\n");
-						} else {
-							die "[$host] Wrong credentials";
-						}
-					} else {
-						die "[$host] Password required";
-					} exp_continue } ],
-	[ qr/login:\s*$/i, sub { $exp->send("$username\n"); exp_continue } ],
-	[ qr/REMOTE HOST IDENTIFICATION HAS CHANGED.*/, sub { print "[$host] Host key verification failed\n"; exp_continue } ],
-	[ 'timeout', sub { die "[$host] Timeout" } ],
-	[ qr/\r/, sub {		my $output = $exp->before();
-				$ret .= $output;
-				print "[$host] $output\n" if ( ! $q && $output =~ /(%|ETA)/ );
-				exp_continue; } ], # use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
+	[ '\(yes/no\)\?\s*$', 		sub { $exp->send("yes\n"); exp_continue } ],
+	[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
+	[ qr/login:\s*$/i, 		sub { $exp->send("$username\n"); exp_continue } ],
+	[ 'REMOTE HOST IDENTIFICATION HAS CHANGED', sub { print "[$host] Host key verification failed\n"; exp_continue } ],
+	[ 'timeout', 			sub { die "[$host] Timeout" } ],
+	# use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
+	[ '\r', 			sub { my $output = $exp->before();
+					$ret .= $output;
+					print "[$host] $output\n" if ( ! $q && $output =~ /(%|ETA)/ );
+					exp_continue; } ],
 );
 
 $exp->soft_close();
@@ -129,6 +120,18 @@ if ( $rc ) {
 }
 print "[$host] [$pid] -> $status_msg\n";
 exit $rc;
+
+sub send_password {
+	if ( defined $password ) {
+		if ( $pw_sent == 0 ) {
+			$pw_sent = 1;
+			$exp->send("$password\n");
+		} else {
+			die "[$host] Wrong credentials"; }
+	} else {
+		die "[$host] Password required";
+	}
+}
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u=username] [-p=password]\n";
@@ -153,4 +156,3 @@ sub usage {
 	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n\n";
 	exit;
 }
-
