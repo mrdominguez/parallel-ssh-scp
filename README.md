@@ -2,7 +2,7 @@
 
 AUTHOR: Mariano Dominguez, <marianodominguez@hotmail.com>
 
-VERSION: 2.0
+VERSION: 2.1
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -12,7 +12,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 ## Installation
 
-These utilities are written in Perl and have been tested using Perl 5.1x.x on RHEL 6.x.
+These utilities are written in Perl and have been tested using Perl 5.1x.x on RHEL 6 and 7.
 
 Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
@@ -53,11 +53,11 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
      -threads : Number of concurrent processes (default: 10)
      -scp : Copy <source_path> from local host to @remote_hosts:<target_path>
      -tolocal : Copy @remote_hosts:<source_path> to <target_path> in local host
-                The remote hosts' hostname will be appended to <target_path> as a directory
+                The remote hostnames will be appended to <target_path> as a directory
                 If permissions allow it, non-existent local directories will be created
      -multiauth : Always authenticate when password prompted (default: single authentication attempt)
      -r : Recursively copy entire directories
-     -d : Remote path (default: $HOME)
+     -d : Target path (default: $HOME)
      -meter : Display scp progress (default: disabled)
      -tcount : Number of forked processes before throttling (default: 25)
      -ttime : Throttling time (default: 5 seconds)
