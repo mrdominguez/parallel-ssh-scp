@@ -105,7 +105,7 @@ $exp->expect($timeout,
 	# use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
 	[ '\r', 			sub { my $output = $exp->before();
 					$ret .= $output;
-					print "[$host] $output\n" if ( ! $q && $output =~ /(%|ETA)/ );
+					print "[$host] $output\n" if ( !$q && $output =~ /(%|ETA)/ );
 					exp_continue; } ],
 );
 
