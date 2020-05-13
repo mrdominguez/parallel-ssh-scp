@@ -120,7 +120,7 @@ if ( $sudo ) {
 		[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
 		[ 'unknown', 			sub { die "[$host] Unknown user: $sudo_user" } ],
 		[ 'does not exist', 		sub { die "[$host] User does not exist: $sudo_user" } ],
-		[ 'not allowed to execute', 	sub { die "[$host] Unauthorized sudo user: $username (as $sudo_user)" } ],
+		[ 'not allowed to execute', 	sub { die "[$host] Unauthorized command: $username (as $sudo_user)" } ],
 		[ 'not in the sudoers file', 	sub { die "[$host] User is not in the sudoers file: $username" } ],
 		[ 'eof', 			sub { &no_match("[$host] (sudo) Premature EOF") } ],
 		[ 'timeout', 			sub { die "[$host] (sudo) Timeout" } ],
