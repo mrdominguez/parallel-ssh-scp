@@ -121,7 +121,7 @@ if ( $sudo ) {
 		[ 'unknown', 			sub { die "[$host] Unknown user: $sudo_user" } ],
 		[ 'does not exist', 		sub { die "[$host] User does not exist: $sudo_user" } ],
 		[ 'not allowed to execute', 	sub { die "[$host] Unauthorized command: $username (as $sudo_user)" } ],
-		[ 'not in the sudoers file', 	sub { die "[$host] User is not in the sudoers file: $username" } ],
+		[ 'not in the sudoers file', 	sub { die "[$host] User not in the sudoers file: $username" } ],
 		[ 'eof', 			sub { &no_match("[$host] (sudo) Premature EOF") } ],
 		[ 'timeout', 			sub { die "[$host] (sudo) Timeout" } ],
 		[ $shell_prompt ],
@@ -138,7 +138,7 @@ my @cmd_output;
 #my $ret;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
-	[ '\r\n', 	sub {	push @cmd_output, $exp->before();
+	[ '\r\n', 	sub { push @cmd_output, $exp->before();
 			print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 );
 			exp_continue } ],
 #	[ '\r', 	sub { $ret .= $exp->before(); exp_continue } ],
