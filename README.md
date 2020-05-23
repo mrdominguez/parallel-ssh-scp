@@ -72,7 +72,7 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
      -s : Space-separated list of hostnames (brace expansion supported)
      -f : File containing hostnames (one per line)
      Set -tcount or -ttime to 0 to disable throttling
-     Use envoriment variables $SSH_USER and $SSH_PASS to pass credentials
+     Use environment variables $SSH_USER and $SSH_PASS to pass credentials
      Enable -multiauth along with -tolocal when <source_path> uses brace expansion
      Encase <command> in quotes (single argument)
 ```
@@ -104,7 +104,7 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
      -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)
      -odir : Directory in which the command output will be stored as a file (default: $PWD -current folder-)
      -v : Enable verbose messages
-     Use envoriment variables $SSH_USER and $SSH_PASS to pass credentials
+     Use environment variables $SSH_USER and $SSH_PASS to pass credentials
      Encase <command> in quotes to pass it as a single argument
      Omit <command> for interactive mode
 ```
@@ -126,8 +126,8 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
      -q : Quiet mode disables the progress meter (default: enabled)
      -r : Recursively copy entire directories
      -v : Enable verbose messages
-     Use envoriment variables $SSH_USER and $SSH_PASS to pass credentials
-     If omited, <target_path> default value is $HOME
+     Use environment variables $SSH_USER and $SSH_PASS to pass credentials
+     If omitted, <target_path> default value is $HOME
      Enable -multiauth along with -tolocal when <source_path> uses brace expansion
 ```
 
