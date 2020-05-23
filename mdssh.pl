@@ -305,7 +305,7 @@ sub usage {
 	print "\t -s : Space-separated list of hostnames (brace expansion supported)\n";
 	print "\t -f : File containing hostnames (one per line)\n";
 	print "\t Set -tcount or -ttime to 0 to disable throttling\n";
-	print "\t Use envoriment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
+	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
 	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n";
 	print "\t Encase <command> in quotes (single argument)\n\n";
 	exit;
