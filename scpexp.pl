@@ -151,8 +151,8 @@ sub usage {
 	print "\t -q : Quiet mode disables the progress meter (default: enabled)\n";
 	print "\t -r : Recursively copy entire directories\n";
 	print "\t -v : Enable verbose messages\n";
-	print "\t Use envoriment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
-	print "\t If omited, <target_path> default value is \$HOME\n";
+	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
+	print "\t If omitted, <target_path> default value is \$HOME\n";
 	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n\n";
 	exit;
 }
