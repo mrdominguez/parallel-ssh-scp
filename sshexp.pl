@@ -234,7 +234,7 @@ sub usage {
 	print "\t -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)\n";
 	print "\t -odir : Directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t -v : Enable verbose messages\n";
-	print "\t Use envoriment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
+	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
 	print "\t Encase <command> in quotes to pass it as a single argument\n";
 	print "\t Omit <command> for interactive mode\n\n";
 	exit;
