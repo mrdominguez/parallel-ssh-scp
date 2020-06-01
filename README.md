@@ -33,7 +33,6 @@ If not set, the password will be undefined.
 ## Sample Output
 
 Check the status of the the `ntpd` service in `node1`, `node2`, `node3` and `cdsw`:
-
 ```
 MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'systemctl status ntpd'
 [node1] [18818] -> OK
@@ -82,10 +81,9 @@ Error (rc=255): 1 | node2
 MacBook-Pro:~ mdominguez$
 ```
 
-Display the amount of free and used memory with verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
-
+Restart the `ntpd` service and use verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
 ```
-MacBook-Pro:~ mdominguez$ mdssh.pl -v -s="node{1..3} cdsw" 'free -h'
+MacBook-Pro:~ mdominguez$ mdssh.pl -v -s="node{1..3} cdsw" 'service ntpd restart'
 threads = 10
 timeout = 20 seconds
 o = 1
@@ -95,28 +93,22 @@ Password file /root/ssh_pass found
 tcount = 25
 ttime = 5 seconds
 -----
-[node1] [13190] process_1 forked
-[node2] [13191] process_2 forked
-[node3] [13193] process_3 forked
-[cdsw] [13195] process_4 forked
-[node1] [13198] -> OK
-              total        used        free      shared  buff/cache   available
-Mem:            23G        2.3G         20G        8.6M        667M         20G
-Swap:          1.0G          0B        1.0G
-[node1] [13190] process_1 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 1 | Error: 0)
-[cdsw] [13200] -> OK
-              total        used        free      shared  buff/cache   available
-Mem:            22G        383M         21G        8.6M        199M         21G
-Swap:          1.0G          0B        1.0G
-[cdsw] [13195] process_4 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 2 | Error: 0)
-[node3] [13199] -> OK
-              total        used        free      shared  buff/cache   available
-Mem:            23G        366M         22G        8.5M        194M         22G
-Swap:          1.0G          0B        1.0G
-[node3] [13193] process_3 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 3 | Error: 0)
+[node1] [22781] process_1 forked
+[node2] [22782] process_2 forked
+[node3] [22784] process_3 forked
+[cdsw] [22786] process_4 forked
+[node3] [22789] -> OK
+Redirecting to /bin/systemctl restart  ntpd.service
+[node1] [22790] -> OK
+Redirecting to /bin/systemctl restart  ntpd.service
+[node3] [22784] process_3 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 1 | Error: 0)
+[node1] [22781] process_1 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 2 | Error: 0)
+[cdsw] [22792] -> OK
+Redirecting to /bin/systemctl restart  ntpd.service
+[cdsw] [22786] process_4 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 3 | Error: 0)
 ssh: connect to host node2 port 22: No route to host
 [node2] (auth) Premature EOF
-[node2] [13191] process_2 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
+[node2] [22782] process_2 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
 All processes completed
 -----
 Number of hosts: 4
