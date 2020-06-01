@@ -63,13 +63,14 @@ MacBook-Pro:~ mdominguez$
 
 Restart the *ntpd* service and use verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
 ```
-MacBook-Pro:~ mdominguez$ mdssh.pl -v -s="node{1..3} cdsw" 'service ntpd restart'
+MacBook-Pro:~ mdominguez$ mdssh.pl -v -sudo -s="node{1..3} cdsw" 'service ntpd restart'
 threads = 10
 timeout = 20 seconds
 o = 1
 olines = 10
-username = root
-Password file /root/ssh_pass found
+username = mdominguez
+Password file /Users/mdominguez/ssh_password found
+Issuing sudo as user root
 tcount = 25
 ttime = 5 seconds
 -----
