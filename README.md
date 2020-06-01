@@ -15,47 +15,47 @@ FEEDBACK/BUGS: Please contact me by email.
 Check the status of the *ntpd* service on *node1*, *node2*, *node3* and *cdsw*:
 ```
 MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'service ntpd status'
-[node1] [18818] -> OK
-Jun 01 08:51:39 node1.localdomain ntpd[8184]: 0.0.0.0 c61c 0c clock_step -2....s
-Jun 01 08:51:37 node1.localdomain ntpd[8184]: 0.0.0.0 c614 04 freq_mode
-Jun 01 08:51:38 node1.localdomain ntpd[8184]: 0.0.0.0 c618 08 no_sys_peer
-Jun 01 09:06:48 node1.localdomain ntpd[8184]: 0.0.0.0 c612 02 freq_set kerne...M
-Jun 01 09:06:48 node1.localdomain ntpd[8184]: 0.0.0.0 c615 05 clock_sync
-Jun 01 09:54:49 node1.localdomain ntpd[8184]: 0.0.0.0 0613 03 spike_detect -...s
-Jun 01 10:07:52 node1.localdomain ntpd[8184]: 0.0.0.0 061c 0c clock_step -0....s
-Jun 01 10:07:52 node1.localdomain ntpd[8184]: 0.0.0.0 0615 05 clock_sync
-Jun 01 10:07:53 node1.localdomain ntpd[8184]: 0.0.0.0 c618 08 no_sys_peer
-Hint: Some lines were ellipsized, use -l to show in full.
-[cdsw] [18820] -> Error (rc=3)
-Jun 01 09:00:55 cdsw-cdh.cdhdomain ntpd[940]: new interface(s) found: waking...r
-Jun 01 09:01:02 cdsw-cdh.cdhdomain ntpd[940]: 0.0.0.0 c61c 0c clock_step -1....s
-Jun 01 09:01:00 cdsw-cdh.cdhdomain ntpd[940]: 0.0.0.0 c614 04 freq_mode
-Jun 01 09:01:01 cdsw-cdh.cdhdomain ntpd[940]: 0.0.0.0 c618 08 no_sys_peer
-Jun 01 09:16:45 cdsw-cdh.cdhdomain ntpd[940]: 0.0.0.0 c612 02 freq_set kerne...M
-Jun 01 09:16:45 cdsw-cdh.cdhdomain ntpd[940]: 0.0.0.0 c615 05 clock_sync
-Jun 01 10:28:58 cdsw-cdh.cdhdomain ntpd[940]: ntpd exiting on signal 15
-Jun 01 10:28:58 cdsw-cdh.cdhdomain systemd[1]: Stopping Network Time Service...
-Jun 01 10:28:58 cdsw-cdh.cdhdomain systemd[1]: Stopped Network Time Service.
-Hint: Some lines were ellipsized, use -l to show in full.
-[node3] [18823] -> OK
-Jun 01 08:51:32 node3.localdomain ntpd_intres[8193]: DNS 3.centos.pool.ntp.or...
-Jun 01 08:51:33 node3.localdomain ntpd[8186]: Listen normally on 4 eno167777...3
-Jun 01 08:51:33 node3.localdomain ntpd[8186]: Listen normally on 5 eno167777...3
-Jun 01 08:51:33 node3.localdomain ntpd[8186]: new interface(s) found: waking...r
-Jun 01 08:51:41 node3.localdomain ntpd[8186]: 0.0.0.0 c61c 0c clock_step -5....s
-Jun 01 08:51:35 node3.localdomain ntpd[8186]: 0.0.0.0 c614 04 freq_mode
-Jun 01 08:51:36 node3.localdomain ntpd[8186]: 0.0.0.0 c618 08 no_sys_peer
-Jun 01 09:06:55 node3.localdomain ntpd[8186]: 0.0.0.0 c612 02 freq_set kerne...M
-Jun 01 09:06:55 node3.localdomain ntpd[8186]: 0.0.0.0 c615 05 clock_sync
-Hint: Some lines were ellipsized, use -l to show in full.
+[node1] [13328] -> OK
+Jun 01 14:34:28 node1.localdomain ntpd[8186]: 0.0.0.0 c012 02 freq_set kernel -0.581 PPM
+Jun 01 14:34:28 node1.localdomain ntpd[8206]: signal_no_reset: signal 17 had flags 4000000
+Jun 01 14:34:34 node1.localdomain ntpd[8186]: Listen normally on 4 eno16777736 192.168.0.191 UDP 123
+Jun 01 14:34:34 node1.localdomain ntpd[8186]: Listen normally on 5 eno16777736 fe80::20c:29ff:fea9:865e UDP 123
+Jun 01 14:34:34 node1.localdomain ntpd[8186]: new interface(s) found: waking up resolver
+Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 0.centos.pool.ntp.org -> 66.228.48.38
+Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 1.centos.pool.ntp.org -> 184.105.182.7
+Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 2.centos.pool.ntp.org -> 72.87.88.203
+Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 3.centos.pool.ntp.org -> 206.55.191.142
+Jun 01 14:34:43 node1.localdomain ntpd[8186]: 0.0.0.0 c615 05 clock_sync
+[node3] [13327] -> Error (rc=3)
+Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 0.centos.pool.ntp.org -> 129.250.35.251
+Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 1.centos.pool.ntp.org -> 65.19.178.219
+Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 2.centos.pool.ntp.org -> 174.143.130.91
+Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 3.centos.pool.ntp.org -> 38.229.71.1
+Jun 01 15:13:32 node3.localdomain ntpd[8177]: Listen normally on 5 eno16777736 fe80::250:56ff:fe22:80cb UDP 123
+Jun 01 15:13:32 node3.localdomain ntpd[8177]: new interface(s) found: waking up resolver
+Jun 01 15:13:37 node3.localdomain ntpd[8177]: 0.0.0.0 c615 05 clock_sync
+Jun 01 15:24:34 node3.localdomain ntpd[8177]: ntpd exiting on signal 15
+Jun 01 15:24:34 node3.localdomain systemd[1]: Stopping Network Time Service...
+Jun 01 15:24:34 node3.localdomain systemd[1]: Stopped Network Time Service.
+[cdsw] [13330] -> OK
+Jun 01 15:13:32 cdsw-cdh.cdhdomain ntpd[956]: 0.0.0.0 c012 02 freq_set kernel -2.508 PPM
+Jun 01 15:13:32 cdsw-cdh.cdhdomain ntpd[960]: signal_no_reset: signal 17 had flags 4000000
+Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 0.centos.pool.ntp.org -> 45.33.2.219
+Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 1.centos.pool.ntp.org -> 172.98.193.44
+Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 2.centos.pool.ntp.org -> 174.143.130.91
+Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 3.centos.pool.ntp.org -> 216.126.233.109
+Jun 01 15:13:35 cdsw-cdh.cdhdomain ntpd[956]: Listen normally on 4 eno16777736 192.168.0.203 UDP 123
+Jun 01 15:13:35 cdsw-cdh.cdhdomain ntpd[956]: Listen normally on 5 eno16777736 fe80::20c:29ff:fee3:13c3 UDP 123
+Jun 01 15:13:35 cdsw-cdh.cdhdomain ntpd[956]: new interface(s) found: waking up resolver
+Jun 01 15:13:42 cdsw-cdh.cdhdomain ntpd[956]: 0.0.0.0 c615 05 clock_sync
 ssh: connect to host node2 port 22: No route to host
 [node2] (auth) Premature EOF
 -----
 Number of hosts: 4
 ~
-OK: 2 | node1 node3
+OK: 2 | cdsw node1
 ~
-Error (rc=3): 1 | cdsw
+Error (rc=3): 1 | node3
 ~
 Error (rc=255): 1 | node2
 MacBook-Pro:~ mdominguez$
@@ -73,22 +73,22 @@ Password file /root/ssh_pass found
 tcount = 25
 ttime = 5 seconds
 -----
-[node1] [22781] process_1 forked
-[node2] [22782] process_2 forked
-[node3] [22784] process_3 forked
-[cdsw] [22786] process_4 forked
-[node3] [22789] -> OK
+[node1] [13397] process_1 forked
+[node2] [13398] process_2 forked
+[node3] [13400] process_3 forked
+[cdsw] [13402] process_4 forked
+[node3] [13408] -> OK
 Redirecting to /bin/systemctl restart  ntpd.service
-[node1] [22790] -> OK
+[node3] [13400] process_3 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 1 | Error: 0)
+[node1] [13405] -> OK
 Redirecting to /bin/systemctl restart  ntpd.service
-[node3] [22784] process_3 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 1 | Error: 0)
-[node1] [22781] process_1 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 2 | Error: 0)
-[cdsw] [22792] -> OK
+[node1] [13397] process_1 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 2 | Error: 0)
+[cdsw] [13407] -> OK
 Redirecting to /bin/systemctl restart  ntpd.service
-[cdsw] [22786] process_4 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 3 | Error: 0)
+[cdsw] [13402] process_4 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 3 | Error: 0)
 ssh: connect to host node2 port 22: No route to host
 [node2] (auth) Premature EOF
-[node2] [22782] process_2 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
+[node2] [13398] process_2 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
 All processes completed
 -----
 Number of hosts: 4
