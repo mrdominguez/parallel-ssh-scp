@@ -109,7 +109,7 @@ Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modu
 
 **IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination as the default value `'\][\$\#] $'` may not always work**.
 
-## Setting user credentials
+## Setting Credentials
 
 The username can be set by using the `-u` option in the command line or the `$SSH_USER` environment variable. If not set, the default username is `$USER`.
 
