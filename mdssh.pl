@@ -42,16 +42,19 @@ if ( $version ) {
 }
 
 &usage if $help;
+die "No hosts specified: Set -s or -f (or both)" unless ( $f || $s );
 die "Missing argument: <command|source_path>\nUse -help for options\n" if @ARGV < 1;
-my $cmd_spath = $ARGV[0];
 
+my $cmd_spath = $ARGV[0];
 my (@hosts, @hosts_file, @hosts_cli);
+
 if ( $f ) {
 	my $hosts_file = $f;
 	open my $fh, '<', $hosts_file or die "Can't open file $hosts_file: $!";
 	@hosts_file = <$fh>;
 	close $fh;
 }
+
 if ( $s ) {
 	@hosts_cli = split " ", qx/echo $s/;
 	# http://perldoc.perl.org/functions/split.html
@@ -59,14 +62,13 @@ if ( $s ) {
 	# equivalent to /\s+/ 
 }
 
-die "No hosts specified: Set -s or -f (or both)" unless ( $f || $s );
 @hosts = (@hosts_file, @hosts_cli);
-
 my $int_opts = {};
 $int_opts->{'threads'} = $threads || $threads_default; # use default value if 0 or empty
 $int_opts->{'tcount'} = $tcount // $tcount_default;
 $int_opts->{'ttime'} = $ttime // $ttime_default;
 $int_opts->{'timeout'} = $timeout || $timeout_default;
+
 if ( not defined $o ) { 
 	$int_opts->{'o'} = 1;
 } elsif ( $o eq '1' ) {
@@ -74,6 +76,7 @@ if ( not defined $o ) {
 } else {
 	$int_opts->{'o'} = $o;
 }
+
 $int_opts->{'olines'} = $olines // $olines_default;
 $int_opts->{'o'} = 1 if ( defined $olines );
 
@@ -153,14 +156,15 @@ my $running_cnt = 0;
 my $error_hosts = {};
 my @ok_hosts = ();
 my $pid = $$;
-
 my $num_hosts = 0;
+
 foreach (@hosts) { ++$num_hosts unless ( /^\s*$/ || /(#+)/ ) }
 
 my $throttle_cnt = 0;
 my $ok_cnt = 0;
 my $error_cnt = 0;
 my $child_pid;
+
 foreach my $host (@hosts) {
 	chomp($host);
 	next if $host =~ /(#+)/;
@@ -183,10 +187,10 @@ do { &check_process } until $child_pid == -1;
 
 my @sorted_ok_hosts = sort @ok_hosts;
 #print Dumper $error_hosts;
-
 print "-----\nNumber of hosts: $num_hosts\n~\n";
 print "OK: $ok_cnt ";
 print "| @sorted_ok_hosts" if $ok_cnt;
+
 foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 	$error_cnt = scalar @{$error_hosts->{$rc}};
 	print "\n~\n";
@@ -196,18 +200,18 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 		print "| @sorted_error_hosts";
 	}
 }
+
 print "\n";
 
 sub log_trace {
 	my $date = strftime "%m/%d/%Y %H:%M:%S", localtime;
 	my $trace = "@_";
-	$trace .= " === [$date]" if $v && $timestamp;
+	$trace .= " ... [$date]" if $v && $timestamp;
 	print "$trace\n" if $v;
 }
 
 sub fork_process {
 	my ($h, $c) = @_;
-
 	my $exit_code;
 	my $p = fork();
 	die "fork failed: $!" unless defined $p;
