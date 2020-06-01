@@ -124,7 +124,7 @@ if ( defined $password ) {
 my $sudo_user;
 if ( $sudo && !$scp ) {
 	$sudo_user = $sudo eq '1' ? 'root' : $sudo;
-	print "Issuing sudo as user $sudo_user\n" if $v;
+	print "Sudoing to user $sudo_user\n" if $v;
 }
 
 if ( $v ) {
