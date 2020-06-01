@@ -26,7 +26,6 @@ use File::Path qw(make_path);
 #$Expect::Debug = 1;
 
 our ($help, $version, $u, $p, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q);
-my $timeout_default = 20;
 
 if ( $version ) {
 	print "SCP command-line utility\n";
@@ -39,6 +38,7 @@ if ( $version ) {
 &usage if $help;
 die "Required arguments: <source_path>, <host>\nUse -help for options\n" if @ARGV < 2;
 
+my $timeout_default = 20;
 $timeout = $timeout_default unless $timeout;
 die "-timeout ($timeout) is not an integer" if $timeout =~ /\D/;
 
@@ -59,7 +59,6 @@ if ( $tolocal && !-e $tpath ) {
 
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
 my $password = $p || $ENV{SSH_PASS} || undef;
-
 print "username = $username\n" if $v;
 
 if ( defined $password ) {
@@ -83,6 +82,8 @@ $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$ho
 my $exp = new Expect;
 $exp->raw_pty(0);	# turn echoing (for sends) on=0 (default) / off=1
 $exp->log_user(0);	# turn stdout logging on=1 (default) / off=0
+#$exp->log_file("$0.log","a"); 	# log session to file: w=truncate / a=append (default)
+
 if ( $v ) {
 	print "Source path = $spath\n";
 	print "Target path = $tpath\n";
@@ -90,12 +91,15 @@ if ( $v ) {
 	print $tolocal ? "to " : "from ";
 	print "local)... ";
 }
+
 $exp->spawn($scp) or die $!;
+
 my $pid = $exp->pid();
-print "pid is [$pid]\n" if $v;
-#$exp->log_file("$0.log","a"); 	# log session to file: w=truncate / a=append (default)
 my $pw_sent = 0;
 my $ret;
+
+print "pid is [$pid]\n" if $v;
+
 $exp->expect($timeout,
 	[ '\(yes/no\)\?\s*$', 		sub { $exp->send("yes\n"); exp_continue } ],
 	[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
@@ -115,11 +119,15 @@ $ret =~ s{^\Q$/\E}{}; # remove newline character from start of string
 
 my $rc = ( $exp->exitstatus() >> 8 );
 my $status_msg = 'OK';
+
 if ( $rc ) {
 	$status_msg = "Error (rc=$rc)\n$ret";
 }
+
 print "[$host] [$pid] -> $status_msg\n";
 exit $rc;
+
+# end of script
 
 sub send_password {
 	if ( defined $password ) {
