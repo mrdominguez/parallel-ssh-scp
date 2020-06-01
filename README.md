@@ -12,7 +12,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 ## Installation
 
-These utilities are written in Perl and have been tested using Perl 5.1x.x on RHEL 6 and 7, as well as macOS Sierra and after.
+These utilities are written in Perl and have been tested using *Perl 5.1x.x* on *RHEL 6/7*, as well as *macOS Sierra* and after.
 
 Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
