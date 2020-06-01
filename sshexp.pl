@@ -102,7 +102,7 @@ sub winch {
 	$SIG{WINCH} = \&winch;
 }
 
-print "[$host] Executing ssh... " if $v;
+print "[$host] Executing SSH... " if $v;
 
 $exp->spawn($ssh) or die $!;
 
