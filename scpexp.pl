@@ -98,7 +98,7 @@ my $pid = $exp->pid();
 my $pw_sent = 0;
 my $ret;
 
-print "PID is [$pid]\n" if $v;
+print "PID: $pid\n" if $v;
 
 $exp->expect($timeout,
 	[ '\(yes/no\)\?\s*$', 		sub { $exp->send("yes\n"); exp_continue } ],
