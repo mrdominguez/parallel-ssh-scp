@@ -70,7 +70,7 @@ o = 1
 olines = 10
 username = mdominguez
 Password file /Users/mdominguez/ssh_password found
-Issuing sudo as user root
+Sudoing to user root
 tcount = 25
 ttime = 5 seconds
 -----
