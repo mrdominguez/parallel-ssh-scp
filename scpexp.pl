@@ -87,7 +87,7 @@ $exp->log_user(0);		# turn stdout logging on=1 (default) / off=0
 if ( $v ) {
 	print "Source path = $spath\n";
 	print "Target path = $tpath\n";
-	print "[$host] Executing scp (copy ";
+	print "[$host] Executing SCP (copy ";
 	print $tolocal ? "to " : "from ";
 	print "local)... ";
 }
