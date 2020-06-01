@@ -12,7 +12,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 ## Sample Output
 
-Check the status of the the `ntpd` service in `node1`, `node2`, `node3` and `cdsw`:
+Check the status of the *ntpd* service in *node1*, *node2*, *node3* and *cdsw*:
 ```
 MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'service ntpd status'
 [node1] [18818] -> OK
@@ -61,7 +61,7 @@ Error (rc=255): 1 | node2
 MacBook-Pro:~ mdominguez$
 ```
 
-Restart the `ntpd` service and use verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
+Restart the *ntpd* service and use verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
 ```
 MacBook-Pro:~ mdominguez$ mdssh.pl -v -s="node{1..3} cdsw" 'service ntpd restart'
 threads = 10
