@@ -42,7 +42,7 @@ if ( $version ) {
 }
 
 &usage if $help;
-die "No hosts specified: Set -s or -f (or both)" unless ( $f || $s );
+die "No hosts specified: Set -s or -f (or both)\nUse -help for options\n" unless ( $f || $s );
 die "Missing argument: <command|source_path>\nUse -help for options\n" if @ARGV < 1;
 
 my $cmd_spath = $ARGV[0];
