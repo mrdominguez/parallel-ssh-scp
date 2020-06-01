@@ -10,26 +10,6 @@ FEEDBACK/BUGS: Please contact me by email.
 
 `mdssh.pl` enables process concurrency and calls `sshexp.pl` and `scpexp.pl` in the background to connect to remote hosts (one host per process) via `ssh` or `scp` respectively.
 
-## Installation
-
-These utilities are written in Perl and have been tested using *Perl 5.1x.x* on *RHEL 6/7*, as well as *macOS Sierra* and after.
-
-Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
-
-Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modules; alternately, download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
-
-**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination as the default value `'\][\$\#] $'` may not always work**.
-
-## Setting user credentials
-
-The username can be set by using the `-u` option in the command line or the `$SSH_USER` environment variable. If not set, the default username is `$USER`.
-
-The password can be passed by setting the `-p` option or the `$SSH_PASS` environment variable to:
-- The actual password string (**not recommended**).
-- A file containing the password.
-
-If not set, the password will be undefined.
-
 ## Sample Output
 
 Check the status of the the `ntpd` service in `node1`, `node2`, `node3` and `cdsw`:
@@ -118,6 +98,26 @@ OK: 3 | cdsw node1 node3
 Error (rc=255): 1 | node2
 MacBook-Pro:~ mdominguez$
 ```
+
+## Installation
+
+These utilities are written in Perl and have been tested using *Perl 5.1x.x* on *RHEL 6/7*, as well as *macOS Sierra* and after.
+
+Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
+
+Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modules; alternately, download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
+
+**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination as the default value `'\][\$\#] $'` may not always work**.
+
+## Setting user credentials
+
+The username can be set by using the `-u` option in the command line or the `$SSH_USER` environment variable. If not set, the default username is `$USER`.
+
+The password can be passed by setting the `-p` option or the `$SSH_PASS` environment variable to:
+- The actual password string (**not recommended**).
+- A file containing the password.
+
+If not set, the password will be undefined.
 
 ## Usage
 
