@@ -12,7 +12,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 ## Sample Output
 
-Check the status of the *ntpd* service in *node1*, *node2*, *node3* and *cdsw*:
+Check the status of the *ntpd* service on *node1*, *node2*, *node3* and *cdsw*:
 ```
 MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'service ntpd status'
 [node1] [18818] -> OK
