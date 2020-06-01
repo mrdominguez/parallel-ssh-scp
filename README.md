@@ -12,7 +12,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 ## Installation
 
-These utilities are written in Perl and have been tested using Perl 5.1x.x on RHEL 6 and 7.
+These utilities are written in Perl and have been tested using Perl 5.1x.x on RHEL 6 and 7, as well as macOS Sierra and after.
 
 Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
@@ -29,6 +29,80 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 - A file containing the password.
 
 If not set, the password will be undefined.
+
+## Sample Output
+
+Display the amount of free and used memory in `node1`, `node2`, `node3` and `cdsw`:
+
+```
+MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'free -h'
+[node1] [13856] -> OK
+              total        used        free      shared  buff/cache   available
+Mem:            23G        2.3G         20G        8.6M        667M         20G
+Swap:          1.0G          0B        1.0G
+[node3] [13858] -> OK
+              total        used        free      shared  buff/cache   available
+Mem:            23G        366M         22G        8.5M        193M         22G
+Swap:          1.0G          0B        1.0G
+[cdsw] [13859] -> OK
+              total        used        free      shared  buff/cache   available
+Mem:            22G        383M         21G        8.6M        199M         21G
+Swap:          1.0G          0B        1.0G
+ssh: connect to host node2 port 22: No route to host
+[node2] (auth) Premature EOF
+-----
+Number of hosts: 4
+~
+OK: 3 | cdsw node1 node3
+~
+Error (rc=255): 1 | node2
+MacBook-Pro:~ mdominguez$
+```
+
+The following is the verbose output (`-v`), which is especially helpful to track progress when using hundrends of hosts:
+
+```
+MacBook-Pro:~ mdominguez$ mdssh.pl -v -s="node{1..3} cdsw" 'free -h'
+threads = 10
+timeout = 20 seconds
+o = 1
+olines = 10
+username = root
+Password file /root/ssh_pass found
+tcount = 25
+ttime = 5 seconds
+-----
+[node1] [13190] process_1 forked
+[node2] [13191] process_2 forked
+[node3] [13193] process_3 forked
+[cdsw] [13195] process_4 forked
+[node1] [13198] -> OK
+              total        used        free      shared  buff/cache   available
+Mem:            23G        2.3G         20G        8.6M        667M         20G
+Swap:          1.0G          0B        1.0G
+[node1] [13190] process_1 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 1 | Error: 0)
+[cdsw] [13200] -> OK
+              total        used        free      shared  buff/cache   available
+Mem:            22G        383M         21G        8.6M        199M         21G
+Swap:          1.0G          0B        1.0G
+[cdsw] [13195] process_4 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 2 | Error: 0)
+[node3] [13199] -> OK
+              total        used        free      shared  buff/cache   available
+Mem:            23G        366M         22G        8.5M        194M         22G
+Swap:          1.0G          0B        1.0G
+[node3] [13193] process_3 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 3 | Error: 0)
+ssh: connect to host node2 port 22: No route to host
+[node2] (auth) Premature EOF
+[node2] [13191] process_2 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
+All processes completed
+-----
+Number of hosts: 4
+~
+OK: 3 | cdsw node1 node3
+~
+Error (rc=255): 1 | node2
+MacBook-Pro:~ mdominguez$
+```
 
 ## Usage
 
