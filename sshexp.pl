@@ -127,7 +127,7 @@ if ( $sudo ) {
 	$pw_sent = 0;
 	my $sudo_cmd;
 	my $sudo_user = $sudo eq '1' ? 'root' : $sudo;
-	print "[$host] Executing command through sudo as user $sudo_user\n" if $v;
+	print "[$host] Sudoing to user $sudo_user\n" if $v;
 	$sudo_cmd = "sudo su - $sudo_user\n"; # Option 1
 #	$sudo_cmd = "sudo -i -u $sudo_user\n"; # Option 2
 	$exp->send("$sudo_cmd");
