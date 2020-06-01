@@ -109,7 +109,7 @@ $exp->spawn($ssh) or die $!;
 my $pid = $exp->pid();
 my $pw_sent = 0;
 
-print "pid is [$pid]\n" if $v;
+print "PID is [$pid]\n" if $v;
 
 $exp->expect($int_opts->{'timeout'},
 	# The authenticity of host '' can't be established... to continue connecting (yes/no)?
