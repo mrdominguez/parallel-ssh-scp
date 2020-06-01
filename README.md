@@ -2,7 +2,7 @@
 
 AUTHOR: Mariano Dominguez, <marianodominguez@hotmail.com>
 
-VERSION: 2.1
+VERSION: 2.2
 
 FEEDBACK/BUGS: Please contact me by email.
 
