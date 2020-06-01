@@ -25,9 +25,6 @@ use File::Basename;
 #$Expect::Debug = 1;
 
 our ($help, $version, $u, $p, $sshOpts, $sudo, $timeout, $o, $olines, $odir, $v);
-my $timeout_default = 20;
-my $olines_default = 10;
-my $odir_default = $ENV{PWD};
 
 if ( $version ) {
 	print "SSH command-line utility\n";
@@ -40,13 +37,18 @@ if ( $version ) {
 &usage if $help;
 die "Missing agument: <host>\nUse -help for options\n" if @ARGV < 1;
 
+my $timeout_default = 20;
+my $olines_default = 10;
+my $odir_default = $ENV{PWD};
 my $int_opts = {};
 $int_opts->{'timeout'} = $timeout || $timeout_default; # use default value if 0 (or empty)
+
 if ( defined $olines ) {
 	$int_opts->{'o'} = 1;
 } elsif ( defined $o ) {
 	$int_opts->{'o'} = $o;
 }
+
 $int_opts->{'olines'} = $olines // $olines_default;
 $odir = $odir_default if ( defined $odir && $odir eq '1' );
 
@@ -81,6 +83,7 @@ if ( defined $password ) {
 my $ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
 $ssh .= " $sshOpts" if defined $sshOpts;
 $ssh .= " $username\@$host";
+
 #my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
 my $shell_prompt = qr'\][\$\#] $';
@@ -88,12 +91,17 @@ my $shell_prompt = qr'\][\$\#] $';
 my $exp = new Expect;
 $exp->raw_pty(0);	# turn echoing (for sends) on=0 (default) / off=1
 $exp->log_user(0);	# turn stdout logging on=1 (default) / off=0
-print "[$host] Executing ssh... " if $v;
-$exp->spawn($ssh) or die $!;
-my $pid = $exp->pid();
-print "pid is [$pid]\n" if $v;
 #$exp->log_file("$0.log","a"); 	# log session to file: w=truncate / a=append (default)
+
+print "[$host] Executing ssh... " if $v;
+
+$exp->spawn($ssh) or die $!;
+
+my $pid = $exp->pid();
 my $pw_sent = 0;
+
+print "pid is [$pid]\n" if $v;
+
 $exp->expect($int_opts->{'timeout'},
 	# The authenticity of host '' can't be established... to continue connecting (yes/no)?
 	[ '\(yes/no\)\?\s*$', 		sub { $exp->send("yes\n"); exp_continue } ],
@@ -166,7 +174,6 @@ if ( $sudo ) {
 
 $exp->send("exit\n");
 #$exp->expect($int_opts->{'timeout'}, 'logout');
-
 #$exp->hard_close();
 $exp->soft_close();
 
@@ -175,6 +182,7 @@ $int_opts->{'olines'} = $cmd_output_lines if $int_opts->{'olines'} == 0;
 
 my $status_msg = "OK\n";
 $status_msg = "Error (rc=$rc)\n" if $rc;
+
 if ( defined $int_opts->{'o'} && $int_opts->{'o'} == 1 && $cmd_output_lines ) {
 	$status_msg .= ( $int_opts->{'olines'} < $cmd_output_lines ) ? join("\n", @cmd_output[-$int_opts->{'olines'}..-1]) : join("\n", @cmd_output);
 	$status_msg .= "\n";
