@@ -35,7 +35,7 @@ if ( $version ) {
 }
 
 &usage if $help;
-die "Missing agument: <host>\nUse -help for options\n" if @ARGV < 1;
+die "Missing argument: <host>\nUse -help for options\n" if @ARGV < 1;
 
 my $timeout_default = 20;
 my $olines_default = 10;
