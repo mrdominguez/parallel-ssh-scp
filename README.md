@@ -34,7 +34,7 @@ If not set, the password will be undefined.
 
 Check the status of the the `ntpd` service in `node1`, `node2`, `node3` and `cdsw`:
 ```
-MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'systemctl status ntpd'
+MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'service ntpd status'
 [node1] [18818] -> OK
 Jun 01 08:51:39 node1.localdomain ntpd[8184]: 0.0.0.0 c61c 0c clock_step -2....s
 Jun 01 08:51:37 node1.localdomain ntpd[8184]: 0.0.0.0 c614 04 freq_mode
