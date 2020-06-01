@@ -114,7 +114,6 @@ $exp->expect($timeout,
 );
 
 $exp->soft_close();
-
 $ret =~ s{^\Q$/\E}{}; # remove newline character from start of string
 
 my $rc = ( $exp->exitstatus() >> 8 );
