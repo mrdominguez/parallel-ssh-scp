@@ -138,7 +138,7 @@ if ( $v ) {
 if ( $scp ) {
 	$d = $ENV{HOME} if !$d;
 	if ( $v ) {
-		print "Executing scp (copy ";
+		print "Executing SCP (copy ";
 		print $tolocal ? "to " : "from ";
 		print "local)\n";
 		print "Source path: $cmd_spath\n";
