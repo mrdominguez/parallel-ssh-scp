@@ -29,8 +29,8 @@ our ($help, $version, $u, $p, $sshOpts, $sudo, $timeout, $o, $olines, $odir, $v)
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 2.1\n";
-	print "Release date: 05/12/2020\n";
+	print "Version: 2.2\n";
+	print "Release date: 06/01/2020\n";
 	exit;
 }
 
@@ -89,9 +89,18 @@ $ssh .= " $username\@$host";
 my $shell_prompt = qr'\][\$\#] $';
 
 my $exp = new Expect;
-$exp->raw_pty(0);	# turn echoing (for sends) on=0 (default) / off=1
-$exp->log_user(0);	# turn stdout logging on=1 (default) / off=0
-#$exp->log_file("$0.log","a"); 	# log session to file: w=truncate / a=append (default)
+$exp->raw_pty(0);		# turn echoing (for sends) on=0 (default) / off=1
+$exp->log_user(0);		# turn stdout logging on=1 (default) / off=0
+#$exp->log_file("$0.log","a");	# log session to file: w=truncate / a=append (default)
+
+# catch the signal WINCH ("window size changed"), change the terminal size and propagate the signal to the spawned application
+$exp->slave->clone_winsize_from(\*STDIN);
+$SIG{WINCH} = \&winch;
+sub winch {
+	$exp->slave->clone_winsize_from(\*STDIN);
+	kill WINCH => $exp->pid if $exp->pid;
+	$SIG{WINCH} = \&winch;
+}
 
 print "[$host] Executing ssh... " if $v;
 
