@@ -129,8 +129,7 @@ MacBook-Pro:~ mdominguez$
 
 ## Usage
 
-Here is a preview of the available command options for `mdssh.pl`:
-
+**mdssh.pl**
 ```
 Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
     [-sudo[=sudo_user]] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
@@ -180,8 +179,7 @@ NOTES:
 - Both `-f` and `-s` can be used at the same time.
 - Lines containing the `#` character in the hosts file will be skipped.
 
-Here is a preview of the available command options for `sshexp.pl` and `scpexp.pl`:
-
+**sshexp.pl**
 ```
 Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] <host> [<command>]
@@ -205,6 +203,7 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
      Encase <command> in quotes to pass it as a single argument
      Omit <command> for interactive mode
 ```
+**scpexp.pl**
 ```
 Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
     [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-q] <source_path> <host> [<target_path>]
