@@ -35,10 +35,11 @@ if ( $version ) {
 	exit;
 }
 
+my $timeout_default = 20;
+
 &usage if $help;
 die "Required arguments: <source_path>, <host>\nUse -help for options\n" if @ARGV < 2;
 
-my $timeout_default = 20;
 $timeout = $timeout_default unless $timeout;
 die "-timeout ($timeout) is not an integer" if $timeout =~ /\D/;
 
