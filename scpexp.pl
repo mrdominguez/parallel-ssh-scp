@@ -84,7 +84,7 @@ $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$ho
 
 my $exp = new Expect;
 $exp->raw_pty(0);
-$exp->log_user(0);		# Set (1) -default-, unset (0) logging to STDOUT
+$exp->log_stdout(0);		# Set (1) -default-, unset (0) logging to STDOUT
 #$exp->log_file("$0.log","a");	# Log session to file (a=append -default-, w=truncate)
 
 if ( $v ) {
