@@ -34,12 +34,13 @@ if ( $version ) {
 	exit;
 }
 
-&usage if $help;
-die "Missing argument: <host>\nUse -help for options\n" if @ARGV < 1;
-
 my $timeout_default = 20;
 my $olines_default = 10;
 my $odir_default = $ENV{PWD};
+
+&usage if $help;
+die "Missing argument: <host>\nUse -help for options\n" if @ARGV < 1;
+
 my $int_opts = {};
 $int_opts->{'timeout'} = $timeout || $timeout_default; # use default value if 0 (or empty)
 
