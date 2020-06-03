@@ -83,7 +83,6 @@ if ( defined $password ) {
 	print "No password set\n" if $v;
 }
 
-my $sudo_flag = 1 if $cmd && $cmd =~ /sudo/;
 my $ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
 $ssh .= " $sshOpts" if defined $sshOpts;
 $ssh .= " $username\@$host";
@@ -94,7 +93,7 @@ my $shell_prompt = qr'\][\$\#] $';
 
 my $exp = new Expect;
 $exp->raw_pty(0);
-$exp->log_user(0);		# Set (1) -default-, unset (0) logging to STDOUT
+$exp->log_stdout(0);		# Set (1) -default-, unset (0) logging to STDOUT
 #$exp->log_file("$0.log","a");	# Log session to file (a=append -default-, w=truncate)
 
 # Catch the signal WINCH ("window size changed"), change the terminal size and propagate the signal to the spawned application
@@ -130,9 +129,10 @@ $exp->expect($int_opts->{'timeout'},
 );
 
 $pw_sent = 0;
+my $sudo_user;
 if ( $sudo ) {
 	my $sudo_cmd;
-	my $sudo_user = $sudo eq '1' ? 'root' : $sudo;
+	$sudo_user = $sudo eq '1' ? 'root' : $sudo;
 	print "[$host] Sudoing to user $sudo_user\n" if $v;
 #	$sudo_cmd = "sudo su - $sudo_user";
 	$sudo_cmd = "sudo -i -u $sudo_user";
@@ -153,7 +153,16 @@ if ( $sudo ) {
 }
 
 if ( !defined $cmd ) {
-	$exp->send("\n");
+	my $user = $sudo ? $sudo_user : $username;
+	my $msg = '';
+	
+	# Comment out to hide the welcome message
+	$msg = "echo -e '#\\n# Welcome to $host\\n# You are logged in as $user";
+	$msg .= " via sudo (by $username)" if $sudo;
+	$msg .= "\\n#'";
+	$msg .= '; date';
+
+	$exp->send("$msg\n");
 	$exp->interact();
 	$exp->soft_close();
 	exit;
@@ -187,7 +196,7 @@ $exp->expect($int_opts->{'timeout'},
 	[ $shell_prompt ]
 );
 
-if ( $sudo || $sudo_flag ) {
+if ( $sudo ) {
 	$exp->send("exit\n");
 	$exp->expect($int_opts->{'timeout'}, [ $shell_prompt ]);
 }
