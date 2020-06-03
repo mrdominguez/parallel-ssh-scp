@@ -22,16 +22,16 @@ use Expect;
 use File::Basename;
 use File::Path qw(make_path);
 
-#$Expect::Exp_Internal = 1;
-#$Expect::Debug = 1;
+our ($help, $version, $u, $p, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
 
-our ($help, $version, $u, $p, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q);
+$Expect::Exp_Internal = 1 if $d;        # Sets/unsets 'exp_internal' debugging
+$Expect::Debug = 1 if $d;               # Object debugging
 
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 2.2\n";
-	print "Release date: 06/01/2020\n";
+	print "Version: 3.0\n";
+	print "Release date: 06/03/2020\n";
 	exit;
 }
 
@@ -41,7 +41,7 @@ my $timeout_default = 20;
 die "Required arguments: <source_path>, <host>\nUse -help for options\n" if @ARGV < 2;
 
 $timeout = $timeout_default unless $timeout;
-die "-timeout ($timeout) is not an integer" if $timeout =~ /\D/;
+die "-timeout ($timeout) is not an integer\n" if $timeout =~ /\D/;
 
 my ($spath, $host) = @ARGV;
 my $tpath = $ARGV[2] || $ENV{HOME};
@@ -74,16 +74,16 @@ if ( defined $password ) {
 	print "No password set\n" if $v;
 }
 
-# using -q (quiet mode) will make expect timeout for large files because the progress meter is disabled
+# Using -q (quiet mode) will make expect timeout for large files because the progress meter is disabled
 my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no';
 $scp .= " $sshOpts" if defined $sshOpts;
 $scp .= " -r" if $r;
 $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$host:$tpath" );
 
 my $exp = new Expect;
-$exp->raw_pty(0);		# turn echoing (for sends) on=0 (default) / off=1
-$exp->log_user(0);		# turn stdout logging on=1 (default) / off=0
-#$exp->log_file("$0.log","a");	# log session to file: w=truncate / a=append (default)
+$exp->raw_pty(0);		# Turn echoing (for sends) on=0 (default) / off=1
+$exp->log_user(0);		# Turn stdout logging on=1 (default) / off=0
+#$exp->log_file("$0.log","a");	# Log session to file: w=truncate / a=append (default)
 
 if ( $v ) {
 	print "Source path = $spath\n";
@@ -102,20 +102,25 @@ my $ret;
 print "PID: $pid\n" if $v;
 
 $exp->expect($timeout,
-	[ '\(yes/no\)\?\s*$', 		sub { $exp->send("yes\n"); exp_continue } ],
-	[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
-	[ qr/login:\s*$/i, 		sub { $exp->send("$username\n"); exp_continue } ],
-	[ 'REMOTE HOST IDENTIFICATION HAS CHANGED', sub { print "[$host] Host key verification failed\n"; exp_continue } ],
-	[ 'timeout', 			sub { die "[$host] Timeout" } ],
-	# use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
-	[ '\r', 			sub { my $output = $exp->before();
-					$ret .= $output;
-					print "[$host] $output\n" if ( !$q && $output =~ /(%|ETA)/ );
-					exp_continue; } ],
+          # Are you sure you want to continue connecting (yes/no)?
+	[ '\(yes/no\)\?\s*$',		sub { print "The authenticity of host \'$host\' can't be established\n";
+	  				  $exp->send("yes\n");
+					  exp_continue } ],
+	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
+	[ qr/login:\s*$/i,		sub { $exp->send("$username\n"); exp_continue } ],
+	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
+	  # Expect TIMEOUT
+	[ 'timeout',			sub { die "[$host] Timeout\n" } ],
+	  # Use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
+	[ '\r',				sub { my $output = $exp->before();
+					  $ret .= $output;
+					  print "[$host] $output\n" if ( !$q && $output =~ /(%|ETA)/ );
+					  exp_continue; } ],
 );
 
 $exp->soft_close();
-$ret =~ s{^\Q$/\E}{}; # remove newline character from start of string
+
+$ret =~ s{^\Q$/\E}{};		# Remove newline character from start of string
 
 my $rc = ( $exp->exitstatus() >> 8 );
 my $status_msg = 'OK';
@@ -127,7 +132,7 @@ if ( $rc ) {
 print "[$host] [$pid] -> $status_msg\n";
 exit $rc;
 
-# end of script
+# End of script
 
 sub send_password {
 	if ( defined $password ) {
@@ -135,15 +140,15 @@ sub send_password {
 			$pw_sent = 1;
 			$exp->send("$password\n");
 		} else {
-			die "[$host] Wrong credentials"; }
+			die "[$host] Wrong credentials\n"; }
 	} else {
-		die "[$host] Password required";
+		die "[$host] Password required\n";
 	}
 }
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u=username] [-p=password]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-q] <source_path> <host> [<target_path>]\n\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <host> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
@@ -159,6 +164,7 @@ sub usage {
 	print "\t -q : Quiet mode disables the progress meter (default: enabled)\n";
 	print "\t -r : Recursively copy entire directories\n";
 	print "\t -v : Enable verbose messages\n";
+	print "\t -d : Expect debugging\n";
 	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
 	print "\t If omitted, <target_path> default value is \$HOME\n";
 	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n\n";
