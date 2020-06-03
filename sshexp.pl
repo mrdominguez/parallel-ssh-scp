@@ -153,6 +153,7 @@ if ( $sudo ) {
 }
 
 if ( !defined $cmd ) {
+	$exp->send("\n");
 	$exp->interact();
 	$exp->soft_close();
 	exit;
