@@ -25,7 +25,7 @@ use File::Path qw(make_path);
 our ($help, $version, $u, $p, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
 
 if ( $d ) {
-	$Expect::Exp_Internal = 1;	# Sets/unsets 'exp_internal' debugging
+	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging
 	$Expect::Debug = 1;		# Object debugging
 }
 
