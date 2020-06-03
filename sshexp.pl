@@ -272,7 +272,7 @@ sub usage {
 	print "\t -timeout : Timeout value for Expect (default: $timeout_default seconds)\n";
 	print "\t -o : (Not defined) Display command output as it happens\n";
 	print "\t      (0) Do not display command output\n";
-	print "\t      (1) Buffer output; display it after command completion (useful for concurrent execution)\n";
+	print "\t      (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
 	print "\t -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)\n";
 	print "\t -odir : Directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t -v : Enable verbose messages\n";
