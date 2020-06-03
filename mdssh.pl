@@ -36,8 +36,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 2.2\n";
-	print "Release date: 06/01/2020\n";
+	print "Version: 3.0\n";
+	print "Release date: 06/03/2020\n";
 	exit;
 }
 
@@ -81,7 +81,7 @@ $int_opts->{'olines'} = $olines // $olines_default;
 $int_opts->{'o'} = 1 if ( defined $olines );
 
 foreach my $opt ( keys(%{$int_opts}) ) {
-	die "-$opt ($int_opts->{$opt}) is not an integer" if $int_opts->{$opt} =~ /\D/;
+	die "-$opt ($int_opts->{$opt}) is not an integer\n" if $int_opts->{$opt} =~ /\D/;
 }
 
 if ( defined $odir ) {
