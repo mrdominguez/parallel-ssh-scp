@@ -24,7 +24,7 @@ use File::Basename;
 our ($help, $version, $u, $p, $sshOpts, $sudo, $timeout, $o, $olines, $odir, $v, $d);
 
 if ( $d ) {
-	$Expect::Exp_Internal = 1;	# Sets/unsets 'exp_internal' debugging	
+	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging	
 	$Expect::Debug = 1;		# Object debugging
 }
 
