@@ -21,16 +21,18 @@ use strict;
 use Expect;
 use File::Basename;
 
-#$Expect::Exp_Internal = 1;
-#$Expect::Debug = 1;
+our ($help, $version, $u, $p, $sshOpts, $sudo, $timeout, $o, $olines, $odir, $v, $d);
 
-our ($help, $version, $u, $p, $sshOpts, $sudo, $timeout, $o, $olines, $odir, $v);
+if ( $d ) {
+	$Expect::Exp_Internal = 1;	# Sets/unsets 'exp_internal' debugging	
+	$Expect::Debug = 1;		# Object debugging
+}
 
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 2.2\n";
-	print "Release date: 06/01/2020\n";
+	print "Version: 3.0\n";
+	print "Release date: 06/03/2020\n";
 	exit;
 }
 
@@ -42,7 +44,7 @@ my $odir_default = $ENV{PWD};
 die "Missing argument: <host>\nUse -help for options\n" if @ARGV < 1;
 
 my $int_opts = {};
-$int_opts->{'timeout'} = $timeout || $timeout_default; # use default value if 0 (or empty)
+$int_opts->{'timeout'} = $timeout || $timeout_default;		# Use default value if 0 (or empty)
 
 if ( defined $olines ) {
 	$int_opts->{'o'} = 1;
@@ -54,7 +56,7 @@ $int_opts->{'olines'} = $olines // $olines_default;
 $odir = $odir_default if ( defined $odir && $odir eq '1' );
 
 foreach my $opt ( keys(%{$int_opts}) ) {
-	die "-$opt ($int_opts->{$opt}) is not an integer" if $int_opts->{$opt} =~ /\D/;
+	die "-$opt ($int_opts->{$opt}) is not an integer\n" if $int_opts->{$opt} =~ /\D/;
 }
 
 if ( $v ) {
@@ -81,6 +83,7 @@ if ( defined $password ) {
 	print "No password set\n" if $v;
 }
 
+my $sudo_flag = 1 if $cmd && $cmd =~ /sudo/;
 my $ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
 $ssh .= " $sshOpts" if defined $sshOpts;
 $ssh .= " $username\@$host";
@@ -90,11 +93,8 @@ $ssh .= " $username\@$host";
 my $shell_prompt = qr'\][\$\#] $';
 
 my $exp = new Expect;
-$exp->raw_pty(0);		# turn echoing (for sends) on=0 (default) / off=1
-$exp->log_user(0);		# turn stdout logging on=1 (default) / off=0
-#$exp->log_file("$0.log","a");	# log session to file: w=truncate / a=append (default)
 
-# catch the signal WINCH ("window size changed"), change the terminal size and propagate the signal to the spawned application
+# Catch the signal WINCH ("window size changed"), change the terminal size and propagate the signal to the spawned application
 $exp->slave->clone_winsize_from(\*STDIN);
 $SIG{WINCH} = \&winch;
 sub winch {
@@ -113,36 +113,39 @@ my $pw_sent = 0;
 print "PID: $pid\n" if $v;
 
 $exp->expect($int_opts->{'timeout'},
-	# The authenticity of host '' can't be established... to continue connecting (yes/no)?
-	[ '\(yes/no\)\?\s*$', 		sub { $exp->send("yes\n"); exp_continue } ],
-	[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
-	[ qr/login:\s*$/i, 		sub { $exp->send("$username\n"); exp_continue } ],
-	[ 'REMOTE HOST IDENTIFICATION HAS CHANGED', sub { print "[$host] Host key verification failed\n"; exp_continue } ],
-	[ 'eof', 			sub { &no_match("[$host] (auth) Premature EOF") } ],
-	# Expect TIMEOUT
-	[ 'timeout', 			sub { die "[$host] (auth) Timeout" } ], 
-	[ $shell_prompt ],
+  	  # Are you sure you want to continue connecting (yes/no)?
+	[ '\(yes/no\)\?\s*$',			sub { print "The authenticity of host \'$host\' can't be established\n";
+						  $exp->send("yes\n");
+						  exp_continue } ],
+	[ qr/password.*:\s*$/i,			sub { &send_password(); exp_continue } ],
+	[ qr/login:\s*$/i,			sub { $exp->send("$username\n"); exp_continue } ],
+	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
+	[ 'eof',				sub { &capture("[$host] (auth) EOF\n") } ],
+	  # Expect TIMEOUT
+	[ 'timeout',				sub { die "[$host] (auth) Timeout\n" } ], 
+	[ $shell_prompt ]
 );
 
+$pw_sent = 0;
 if ( $sudo ) {
-	$pw_sent = 0;
 	my $sudo_cmd;
 	my $sudo_user = $sudo eq '1' ? 'root' : $sudo;
 	print "[$host] Sudoing to user $sudo_user\n" if $v;
-	$sudo_cmd = "sudo su - $sudo_user\n"; # Option 1
-#	$sudo_cmd = "sudo -i -u $sudo_user\n"; # Option 2
-	$exp->send("$sudo_cmd");
+#	$sudo_cmd = "sudo su - $sudo_user";
+	$sudo_cmd = "sudo -i -u $sudo_user";
+
+	$exp->send("$sudo_cmd\n");
 	$exp->expect($int_opts->{'timeout'},
-#		[ qr/password.*:\s*$/i, 	sub { $exp->send("$password\n"); exp_continue } ],
-		# if $password is undefined and ssh does not require it, sudo may still prompt for password...
-		[ qr/password.*:\s*$/i, 	sub { &send_password(); exp_continue } ],
-		[ 'unknown', 			sub { die "[$host] Unknown user: $sudo_user" } ],
-		[ 'does not exist', 		sub { die "[$host] User does not exist: $sudo_user" } ],
-		[ 'not allowed to execute', 	sub { die "[$host] Unauthorized command: $username (as $sudo_user)" } ],
-		[ 'not in the sudoers file', 	sub { die "[$host] User not in the sudoers file: $username" } ],
-		[ 'eof', 			sub { &no_match("[$host] (sudo) Premature EOF") } ],
-		[ 'timeout', 			sub { die "[$host] (sudo) Timeout" } ],
-		[ $shell_prompt ],
+ 		  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
+		[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
+		[ 'unknown',			sub { &capture("[$host] (sudo) ") } ],
+		[ 'does not exist',		sub { &capture("[$host] (sudo) ") } ],
+		[ 'not allowed to execute',	sub { &capture("[$host] (sudo) ") } ],
+		[ 'not in the sudoers file',	sub { &capture("[$host] (sudo) ") } ],
+		[ '\r\n',			sub { exp_continue } ],
+		[ 'eof',			sub { &capture("[$host] (sudo) EOF\n") } ],
+		[ 'timeout',			sub { die "[$host] (sudo) Timeout\n" } ],
+		[ $shell_prompt ]
 	);
 }
 
@@ -153,31 +156,34 @@ if ( !defined $cmd ) {
 }
 
 my @cmd_output;
-#my $ret;
+$pw_sent = 0;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
-	[ '\r\n', 	sub { push @cmd_output, $exp->before();
-			print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 );
-			exp_continue } ],
-#	[ '\r', 	sub { $ret .= $exp->before(); exp_continue } ],
-	[ 'eof', 	sub { &no_match("[$host] (cmd) Premature EOF") } ],
-	[ 'timeout', 	sub { die "[$host] (cmd) Timeout" } ],
+	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
+	[ 'unknown',			sub { &capture("[$host] (sudo command) ") } ],
+	[ 'does not exist',		sub { &capture("[$host] (sudo command) ") } ],
+	[ 'not allowed to execute',	sub { &capture("[$host] (sudo command) ") } ],
+	[ 'not in the sudoers file',	sub { &capture("[$host] (sudo command) ") } ],
+	[ '\r\n',			sub { push @cmd_output, $exp->before() if $exp->before();
+				 	  print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 && $exp->before() );
+					  exp_continue } ],
+	[ 'eof',			sub { &capture("[$host] (cmd) EOF\n") } ],
+	[ 'timeout',			sub { die "[$host] (cmd) Timeout\n" } ],
 	[ $shell_prompt ]
 );
-#@cmd_output = split /\n/, $ret; # or split /\r/, ... for qr/\n/ in $exp->expect
+
 shift @cmd_output;
 
 my $rc;
 $exp->send("echo \$\?\n");
 $exp->expect($int_opts->{'timeout'},
 	[ '\r\n', 	sub { $rc = $exp->before(); exp_continue } ],
-	[ 'eof', 	sub { &no_match("[$host] (rc) Premature EOF") } ],
-	[ 'timeout', 	sub { die "[$host] (rc) Timeout" } ],
+	[ 'eof', 	sub { &capture("[$host] (rc) EOF\n") } ],
+	[ 'timeout', 	sub { die "[$host] (rc) Timeout\n" } ],
 	[ $shell_prompt ]
 );
-$rc =~ s{^\Q$/\E}{}; # remove newline character from start of string
 
-if ( $sudo ) {
+if ( $sudo || $sudo_flag ) {
 	$exp->send("exit\n");
 	$exp->expect($int_opts->{'timeout'}, [ $shell_prompt ]);
 }
@@ -211,13 +217,18 @@ if ( defined $odir ) {
 print "[$host] [$pid] -> $status_msg";
 exit $rc;
 
-# end of script
+# End of script
 
-sub no_match {
-	my $message = shift;
-	my $exp_output = $exp->before();
-	$exp_output =~ s{^\Q$/\E}{};
-	print $exp_output.$message."\n";
+sub capture {
+	my $msg = shift;
+	my $exp_output = $exp->before() if $exp->before();
+	$exp_output .= $exp->match() if $exp->match();
+	$exp_output .= $exp->after() if $exp->after();
+	if ( $exp_output ) {
+		$exp_output =~ s/\r\n.*/\n/gs;
+		$msg .= $exp_output;
+	}
+	print $msg;
 	exit -1;
 }
 
@@ -227,15 +238,15 @@ sub send_password {
 			$pw_sent = 1;
 			$exp->send("$password\n");
 		} else {
-			die "[$host] Wrong credentials"; }
+			die "[$host] Wrong credentials\n"; }
 	} else {
-		die "[$host] Password required";
+		die "[$host] Password required\n";
 	}
 }
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_user]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] <host> [<command>]\n\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <host> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
@@ -252,6 +263,7 @@ sub usage {
 	print "\t -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)\n";
 	print "\t -odir : Directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t -v : Enable verbose messages\n";
+	print "\t -d : Expect debugging\n";
 	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
 	print "\t Encase <command> in quotes to pass it as a single argument\n";
 	print "\t Omit <command> for interactive mode\n\n";
