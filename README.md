@@ -2,68 +2,60 @@
 
 AUTHOR: Mariano Dominguez, <marianodominguez@hotmail.com>
 
-VERSION: 2.2
+VERSION: 3.0
 
 FEEDBACK/BUGS: Please contact me by email.
 
 `mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys. It enables process concurrency and calls `sshexp.pl` and `scpexp.pl` in the background to connect to remote hosts (one host per process) via `ssh` or `scp` respectively.
 
-Sudo operations that require password input are also supported (`-sudo`).
+*Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` (*preferred method*) or using the `sudo` command.
 
 ## Sample Output
 
-Check the status of the *ntpd* service on *node1*, *node2*, *node3* and *cdsw*:
+Check the status of the `ntpd` service on *kube-master*, *kube-node1*, *kube-node2* and *localhost*:
 ```
-MacBook-Pro:~ mdominguez$ mdssh.pl -s="node{1..3} cdsw" 'service ntpd status'
-[node1] [13328] -> OK
-Jun 01 14:34:28 node1.localdomain ntpd[8186]: 0.0.0.0 c012 02 freq_set kernel -0.581 PPM
-Jun 01 14:34:28 node1.localdomain ntpd[8206]: signal_no_reset: signal 17 had flags 4000000
-Jun 01 14:34:34 node1.localdomain ntpd[8186]: Listen normally on 4 eno16777736 192.168.0.191 UDP 123
-Jun 01 14:34:34 node1.localdomain ntpd[8186]: Listen normally on 5 eno16777736 fe80::20c:29ff:fea9:865e UDP 123
-Jun 01 14:34:34 node1.localdomain ntpd[8186]: new interface(s) found: waking up resolver
-Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 0.centos.pool.ntp.org -> 66.228.48.38
-Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 1.centos.pool.ntp.org -> 184.105.182.7
-Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 2.centos.pool.ntp.org -> 72.87.88.203
-Jun 01 14:34:36 node1.localdomain ntpd_intres[8206]: DNS 3.centos.pool.ntp.org -> 206.55.191.142
-Jun 01 14:34:43 node1.localdomain ntpd[8186]: 0.0.0.0 c615 05 clock_sync
-[node3] [13327] -> Error (rc=3)
-Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 0.centos.pool.ntp.org -> 129.250.35.251
-Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 1.centos.pool.ntp.org -> 65.19.178.219
-Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 2.centos.pool.ntp.org -> 174.143.130.91
-Jun 01 15:13:31 node3.localdomain ntpd_intres[8189]: DNS 3.centos.pool.ntp.org -> 38.229.71.1
-Jun 01 15:13:32 node3.localdomain ntpd[8177]: Listen normally on 5 eno16777736 fe80::250:56ff:fe22:80cb UDP 123
-Jun 01 15:13:32 node3.localdomain ntpd[8177]: new interface(s) found: waking up resolver
-Jun 01 15:13:37 node3.localdomain ntpd[8177]: 0.0.0.0 c615 05 clock_sync
-Jun 01 15:24:34 node3.localdomain ntpd[8177]: ntpd exiting on signal 15
-Jun 01 15:24:34 node3.localdomain systemd[1]: Stopping Network Time Service...
-Jun 01 15:24:34 node3.localdomain systemd[1]: Stopped Network Time Service.
-[cdsw] [13330] -> OK
-Jun 01 15:13:32 cdsw-cdh.cdhdomain ntpd[956]: 0.0.0.0 c012 02 freq_set kernel -2.508 PPM
-Jun 01 15:13:32 cdsw-cdh.cdhdomain ntpd[960]: signal_no_reset: signal 17 had flags 4000000
-Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 0.centos.pool.ntp.org -> 45.33.2.219
-Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 1.centos.pool.ntp.org -> 172.98.193.44
-Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 2.centos.pool.ntp.org -> 174.143.130.91
-Jun 01 15:13:34 cdsw-cdh.cdhdomain ntpd_intres[960]: DNS 3.centos.pool.ntp.org -> 216.126.233.109
-Jun 01 15:13:35 cdsw-cdh.cdhdomain ntpd[956]: Listen normally on 4 eno16777736 192.168.0.203 UDP 123
-Jun 01 15:13:35 cdsw-cdh.cdhdomain ntpd[956]: Listen normally on 5 eno16777736 fe80::20c:29ff:fee3:13c3 UDP 123
-Jun 01 15:13:35 cdsw-cdh.cdhdomain ntpd[956]: new interface(s) found: waking up resolver
-Jun 01 15:13:42 cdsw-cdh.cdhdomain ntpd[956]: 0.0.0.0 c615 05 clock_sync
-ssh: connect to host node2 port 22: No route to host
-[node2] (auth) Premature EOF
+MacBook-Pro:~ mdominguez$ mdssh -s='kube-master kube-node{1,2} localhost' 'service ntpd status'
+[kube-node2] (auth) EOF
+ssh: connect to host kube-node2 port 22: Connection refused
+[localhost] [14481] -> OK
+Redirecting to /bin/systemctl status  ntpd.service
+● ntpd.service - Network Time Service
+   Loaded: loaded (/usr/lib/systemd/system/ntpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Tue 2020-06-02 23:26:22 EDT; 14min ago
+  Process: 11870 ExecStart=/usr/sbin/ntpd -u ntp:ntp $OPTIONS (code=exited, status=0/SUCCESS)
+ Main PID: 11871 (ntpd)
+   CGroup: /system.slice/ntpd.service
+           └─11871 /usr/sbin/ntpd -u ntp:ntp -g
+[kube-node1] [14479] -> Error (rc=3)
+Redirecting to /bin/systemctl status ntpd.service
+● ntpd.service - Network Time Service
+   Loaded: loaded (/usr/lib/systemd/system/ntpd.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+[kube-master] [14482] -> OK
+Redirecting to /bin/systemctl status ntpd.service
+● ntpd.service - Network Time Service
+   Loaded: loaded (/usr/lib/systemd/system/ntpd.service; disabled; vendor preset: disabled)
+   Active: active (running) since Tue 2020-06-02 23:15:10 EDT; 25min ago
+  Process: 16684 ExecStart=/usr/sbin/ntpd -u ntp:ntp $OPTIONS (code=exited, status=0/SUCCESS)
+ Main PID: 16685 (ntpd)
+    Tasks: 1
+   Memory: 616.0K
+   CGroup: /system.slice/ntpd.service
+           └─16685 /usr/sbin/ntpd -u ntp:ntp -g
 -----
 Number of hosts: 4
 ~
-OK: 2 | cdsw node1
+OK: 2 | kube-master localhost
 ~
-Error (rc=3): 1 | node3
+Error (rc=3): 1 | kube-node1
 ~
-Error (rc=255): 1 | node2
+Error (rc=255): 1 | kube-node2
 MacBook-Pro:~ mdominguez$
 ```
 
-Restart the *ntpd* service and use verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
+Restart the `ntpd` service and use verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
 ```
-MacBook-Pro:~ mdominguez$ mdssh.pl -v -sudo -s="node{1..3} cdsw" 'service ntpd restart'
+MacBook-Pro:~ mdominguez$ mdssh -v -sudo -s='kube-master kube-node{1,2} localhost' 'service ntpd restart'
 threads = 10
 timeout = 20 seconds
 o = 1
@@ -74,29 +66,29 @@ Sudoing to user root
 tcount = 25
 ttime = 5 seconds
 -----
-[node1] [13397] process_1 forked
-[node2] [13398] process_2 forked
-[node3] [13400] process_3 forked
-[cdsw] [13402] process_4 forked
-[node3] [13408] -> OK
+[kube-master] [15192] process_1 forked
+[kube-node1] [15193] process_2 forked
+[kube-node2] [15195] process_3 forked
+[localhost] [15197] process_4 forked
+[kube-node2] (auth) EOF
+ssh: connect to host kube-node2 port 22: Connection refused
+[kube-node2] [15195] process_3 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 0 | Error: 1)
+[localhost] [15203] -> OK
 Redirecting to /bin/systemctl restart  ntpd.service
-[node3] [13400] process_3 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 1 | Error: 0)
-[node1] [13405] -> OK
-Redirecting to /bin/systemctl restart  ntpd.service
-[node1] [13397] process_1 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 2 | Error: 0)
-[cdsw] [13407] -> OK
-Redirecting to /bin/systemctl restart  ntpd.service
-[cdsw] [13402] process_4 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 3 | Error: 0)
-ssh: connect to host node2 port 22: No route to host
-[node2] (auth) Premature EOF
-[node2] [13398] process_2 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
+[localhost] [15197] process_4 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 1 | Error: 1)
+[kube-node1] [15201] -> OK
+Redirecting to /bin/systemctl restart ntpd.service
+[kube-node1] [15193] process_2 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 2 | Error: 1)
+[kube-master] [15202] -> OK
+Redirecting to /bin/systemctl restart ntpd.service
+[kube-master] [15192] process_1 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
 All processes completed
 -----
 Number of hosts: 4
 ~
-OK: 3 | cdsw node1 node3
+OK: 3 | kube-master kube-node1 localhost
 ~
-Error (rc=255): 1 | node2
+Error (rc=255): 1 | kube-node2
 MacBook-Pro:~ mdominguez$
 ```
 
@@ -174,8 +166,8 @@ NOTES:
 
 **sshexp.pl**
 ```
-Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_user]]
-    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] <host> [<command>]
+Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_user]] [-sshOpts=ssh_options] 
+    [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <host> [<command>]
 
      -help : Display usage
      -version : Display version information
@@ -192,14 +184,15 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
      -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)
      -odir : Directory in which the command output will be stored as a file (default: $PWD -current folder-)
      -v : Enable verbose messages
+     -d : Expect debugging	 
      Use environment variables $SSH_USER and $SSH_PASS to pass credentials
      Encase <command> in quotes to pass it as a single argument
      Omit <command> for interactive mode
 ```
 **scpexp.pl**
 ```
-Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
-    [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-q] <source_path> <host> [<target_path>]
+Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password] [-sshOpts=ssh_options] 
+    [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <host> [<target_path>]
 
      -help : Display usage
      -version : Display version information
@@ -215,6 +208,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
      -q : Quiet mode disables the progress meter (default: enabled)
      -r : Recursively copy entire directories
      -v : Enable verbose messages
+     -d : Expect debugging
      Use environment variables $SSH_USER and $SSH_PASS to pass credentials
      If omitted, <target_path> default value is $HOME
      Enable -multiauth along with -tolocal when <source_path> uses brace expansion
@@ -222,7 +216,7 @@ Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password]
 
 ## How-To
 
-(Assuming `$SSH_USER` and `$SSH_PASS` have been set)
+(Assuming that `$SSH_USER` and `$SSH_PASS` have been set)
 
 * Check the OS (RHEL) and kernel version on the remote hosts:
 
