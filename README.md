@@ -142,7 +142,7 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
      -meter : Display scp progress (default: disabled)
      -tcount : Number of forked processes before throttling (default: 25)
      -ttime : Throttling time (default: 5 seconds)
-     -o : (Not defined) Buffer output; display it after command completion
+     -o : (Not defined) Buffer the output and display it after command completion
           (0) Do not display command output
           (1) Display command output as it happens
      -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)
@@ -180,7 +180,7 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
      -timeout : Timeout value for Expect (default: 20 seconds)
      -o : (Not defined) Display command output as it happens
           (0) Do not display command output
-          (1) Buffer output; display it after command completion (useful for concurrent execution)
+          (1) Buffer the output and display it after command completion (useful for concurrent execution)
      -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)
      -odir : Directory in which the command output will be stored as a file (default: $PWD -current folder-)
      -v : Enable verbose messages
