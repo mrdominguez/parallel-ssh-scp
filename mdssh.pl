@@ -298,7 +298,7 @@ sub usage {
 	print "\t -meter : Display scp progress (default: disabled)\n";
 	print "\t -tcount : Number of forked processes before throttling (default: $tcount_default)\n";
 	print "\t -ttime : Throttling time (default: $ttime_default seconds)\n";
-	print "\t -o : (Not defined) Buffer output; display it after command completion\n";
+	print "\t -o : (Not defined) Buffer the output and display it after command completion\n";
 	print "\t      (0) Do not display command output\n";
 	print "\t      (1) Display command output as it happens\n";
 	print "\t -olines : Ignore -o and display the last n lines of buffered output (default: $olines_default | full output: 0)\n";
