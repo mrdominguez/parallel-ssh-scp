@@ -24,8 +24,10 @@ use File::Path qw(make_path);
 
 our ($help, $version, $u, $p, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
 
-$Expect::Exp_Internal = 1 if $d;        # Sets/unsets 'exp_internal' debugging
-$Expect::Debug = 1 if $d;               # Object debugging
+if ( $d ) {
+	$Expect::Exp_Internal = 1;	# Sets/unsets 'exp_internal' debugging
+	$Expect::Debug = 1;		# Object debugging
+}
 
 if ( $version ) {
 	print "SCP command-line utility\n";
@@ -81,9 +83,6 @@ $scp .= " -r" if $r;
 $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$host:$tpath" );
 
 my $exp = new Expect;
-$exp->raw_pty(0);		# Turn echoing (for sends) on=0 (default) / off=1
-$exp->log_user(0);		# Turn stdout logging on=1 (default) / off=0
-#$exp->log_file("$0.log","a");	# Log session to file: w=truncate / a=append (default)
 
 if ( $v ) {
 	print "Source path = $spath\n";
