@@ -160,7 +160,7 @@ Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
 
 NOTES:
 - Once a process is running, a timeout occurs when the executed command does not output anything after the `-timeout` value is reached.
-- Unless overridden by the SSH **ConnectTimeout** option, the system's TCP connect timeout value will be used (the default for Linux is 20 seconds). To change it, set `-sshOpts` as follows  `-sshOpts='-o ConnectTimeout=10'` (in seconds).
+- Unless overridden by the SSH *ConnectTimeout* option, the system's TCP connect timeout value will be used (the default for Linux is 20 seconds). To change it, set `-sshOpts` as follows  `-sshOpts='-o ConnectTimeout=10'` (in seconds).
 - Both `-f` and `-s` can be used at the same time.
 - Lines containing the `#` character in the hosts file will be skipped.
 
