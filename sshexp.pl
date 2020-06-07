@@ -156,7 +156,7 @@ if ( !defined $cmd ) {
 	my $user = $sudo ? $sudo_user : $username;
 	my $msg = '';
 	
-	# Comment out to hide the welcome message
+	# Comment out to disable welcome message
 	$msg = "echo -e '#\\n# Connected to $host\\n# Logged in as $user";
 	$msg .= " via sudo (by $username)" if $sudo;
 	$msg .= "\\n#'";
