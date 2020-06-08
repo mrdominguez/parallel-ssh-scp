@@ -102,6 +102,34 @@ Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modu
 
 **IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination as the default value `'\][\$\#] $'` may not always work**.
 
+The following is an example of an unattended installation script for RHEL-based distributions:
+```
+#!/bin/bash
+
+sudo yum -y install git cpan gcc openssl openssl-devel
+
+REPOSITORY=parallel-ssh-scp
+cd; git clone https://github.com/mrdominguez/$REPOSITORY
+
+cd $REPOSITORY
+chmod +x *.pl
+ln -s mdssh.pl mdssh
+ln -s sshexp.pl sshexp
+ln -s scpexp.pl scpexp
+
+cd; grep "PATH=.*$REPOSITORY" .bashrc || echo -e "\nexport PATH=\"\$HOME/$REPOSITORY:\$PATH\"" >> .bashrc
+
+echo | cpan
+. .bashrc
+
+perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit'
+
+cpan Expect IO::Stty
+
+mdssh.pl -help
+echo "Run 'source ~/.bashrc' to refresh environment variables"
+```
+
 ## Setting Credentials
 
 The username can be set by using the `-u` option in the command line or the `$SSH_USER` environment variable. If not set, the default username is `$USER`.
