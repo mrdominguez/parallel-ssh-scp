@@ -32,7 +32,7 @@ if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.0\n";
-	print "Release date: 06/03/2020\n";
+	print "Release date: 2020-06-03\n";
 	exit;
 }
 
