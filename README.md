@@ -62,7 +62,7 @@ Error (rc=255): 1 | kube-node2
 MacBook-Pro:~ mdominguez$
 ```
 
-Restart the `ntpd` service and use verbose output (`-v`), which is especially helpful to track progress when managing hundreds of hosts:
+Restart the `ntpd` service and use verbose output (`-v`), which is especially useful for tracking progress when managing hundreds of hosts:
 ```
 MacBook-Pro:~ mdominguez$ mdssh -v -sudo -s='kube-master kube-node{1,2} localhost' 'service ntpd restart'
 threads = 10
