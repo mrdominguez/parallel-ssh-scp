@@ -37,7 +37,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.0\n";
-	print "Release date: 2020-06-03\n";
+	print "Release date: 2020-06-15\n";
 	exit;
 }
 
@@ -50,7 +50,7 @@ my (@hosts, @hosts_file, @hosts_cli);
 
 if ( $f ) {
 	my $hosts_file = $f;
-	open my $fh, '<', $hosts_file or die "Can't open file $hosts_file: $!";
+	open my $fh, '<', $hosts_file or die "Can't open file $hosts_file: $!\n";
 	@hosts_file = <$fh>;
 	close $fh;
 }
@@ -90,9 +90,8 @@ if ( defined $odir ) {
 		die "Directory $odir is not writable\n" if !-w $odir;
 	} else {
 		print "Creating directory $odir...\n" if $v;
-		unless( make_path $odir ) {
-			die "Unable to create $odir: $!";
-		}
+		eval { make_path $odir }
+			or die "Can't create $odir: $!\n";
 	}
 }
 
@@ -111,7 +110,7 @@ print "username = $username\n" if $v;
 if ( defined $password ) {
 	if ( -e $password ) {
 		print "Password file $password found\n" if $v;
-		$password = qx/cat $password/ or die;
+		$password = qx/cat $password/ || die "Can't get password from file $password\n";
 		chomp($password);
 	} else {
 		print "Password file not found\n" if $v;
@@ -214,7 +213,7 @@ sub fork_process {
 	my ($h, $c) = @_;
 	my $exit_code;
 	my $p = fork();
-	die "fork failed: $!" unless defined $p;
+	die "Fork failed: $!\n" unless defined $p;
 
 	if ($p) {
 		$hosts->{$p} = $h;
