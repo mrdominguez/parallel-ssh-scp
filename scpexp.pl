@@ -55,7 +55,7 @@ if ( $tolocal && !-e $tpath ) {
 	} else {
 		print "Creating directory $dir...\n" if $v;
 		eval { make_path $dir }
-			or die "Can't create $dir: $!\n";
+			or die "Can't create directory $dir: $!\n";
 	}
 }
 
