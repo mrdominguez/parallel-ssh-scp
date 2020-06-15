@@ -91,7 +91,7 @@ if ( defined $odir ) {
 	} else {
 		print "Creating directory $odir...\n" if $v;
 		eval { make_path $odir }
-			or die "Can't create $odir: $!\n";
+			or die "Can't create directory $odir: $!\n";
 	}
 }
 
