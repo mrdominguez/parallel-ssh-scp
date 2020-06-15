@@ -32,7 +32,7 @@ if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.0\n";
-	print "Release date: 2020-06-03\n";
+	print "Release date: 2020-06-15\n";
 	exit;
 }
 
@@ -44,7 +44,7 @@ my $odir_default = $ENV{PWD};
 die "Missing argument: <host>\nUse -help for options\n" if @ARGV < 1;
 
 my $int_opts = {};
-$int_opts->{'timeout'} = $timeout || $timeout_default;		# Use default value if 0 (or empty)
+$int_opts->{'timeout'} = $timeout || $timeout_default;	# Use default value if 0 (or empty)
 
 if ( defined $olines ) {
 	$int_opts->{'o'} = 1;
@@ -74,7 +74,7 @@ print "username = $username\n" if $v;
 if ( defined $password ) {
 	if ( -e $password ) {
 		print "Password file $password found\n" if $v;
-		$password = qx/cat $password/ or die;
+		$password = qx/cat $password/ || die "Can't get password from file $password\n";
 		chomp($password);
 	} else {
 		print "Password file not found\n" if $v;
@@ -107,7 +107,7 @@ sub winch {
 
 print "[$host] Executing SSH... " if $v;
 
-$exp->spawn($ssh) or die $!;
+$exp->spawn($ssh) or die "Cannot spawn ssh: $!\n";
 
 my $pid = $exp->pid();
 my $pw_sent = 0;
@@ -223,7 +223,7 @@ if ( defined $odir ) {
 		print $fh join("\n", @cmd_output);
 		close $fh;
 	} else {
-		$status_msg .=  "Can't create file $output_file: $!\n";
+		$status_msg .= "Can't create file $output_file: $!\n";
 	}
 }
 
