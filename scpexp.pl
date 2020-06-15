@@ -33,7 +33,7 @@ if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.0\n";
-	print "Release date: 2020-06-03\n";
+	print "Release date: 2020-06-15\n";
 	exit;
 }
 
@@ -54,9 +54,8 @@ if ( $tolocal && !-e $tpath ) {
 		die "Directory $dir is not writable\n" if !-w $dir;
 	} else {
 		print "Creating directory $dir...\n" if $v;
-		unless( make_path $dir ) {
-			die "Unable to create $dir: $!";
-		}
+		eval { make_path $dir }
+			or die "Can't create $dir: $!\n";
 	}
 }
 
@@ -67,7 +66,7 @@ print "username = $username\n" if $v;
 if ( defined $password ) {
 	if ( -e $password ) {
 		print "Password file $password found\n" if $v;
-		$password = qx/cat $password/ or die;
+		$password = qx/cat $password/ || die "Can't get password from file $password\n";
 		chomp($password);
 	} else {
 		print "Password file not found\n" if $v;
@@ -95,7 +94,7 @@ if ( $v ) {
 	print "local)... ";
 }
 
-$exp->spawn($scp) or die $!;
+$exp->spawn($scp) or die "Cannot spawn scp: $!\n";
 
 my $pid = $exp->pid();
 my $pw_sent = 0;
