@@ -9,7 +9,9 @@
 
 ## Synopsis
 
-AUTHOR: Mariano Dominguez, <marianodominguez@hotmail.com>
+AUTHOR: Mariano Dominguez  
+<marianodominguez@hotmail.com>  
+https://www.linkedin.com/in/marianodominguez
 
 VERSION: 3.0
 
