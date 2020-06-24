@@ -25,7 +25,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 Check the status of the `ntpd` service on *kube-master*, *kube-node1*, *kube-node2* and *localhost*:
 ```
-MacBook-Pro:~ mdominguez$ mdssh -s='kube-master kube-node{1,2} localhost' 'service ntpd status'
+[mdom@localhost ~]$ mdssh -s='kube-master kube-node{1,2} localhost' 'service ntpd status'
 [kube-node2] (auth) EOF
 ssh: connect to host kube-node2 port 22: Connection refused
 [localhost] [14481] -> OK
@@ -61,12 +61,12 @@ OK: 2 | kube-master localhost
 Error (rc=3): 1 | kube-node1
 ~
 Error (rc=255): 1 | kube-node2
-MacBook-Pro:~ mdominguez$
+[mdom@localhost ~]$
 ```
 
 Restart the `ntpd` service and use verbose output (`-v`), which is especially useful for tracking progress when managing hundreds of hosts:
 ```
-MacBook-Pro:~ mdominguez$ mdssh -v -sudo -s='kube-master kube-node{1,2} localhost' 'service ntpd restart'
+[mdom@localhost ~]$ mdssh -v -sudo -s='kube-master kube-node{1,2} localhost' 'service ntpd restart'
 threads = 10
 timeout = 20 seconds
 o = 1
@@ -100,7 +100,7 @@ Number of hosts: 4
 OK: 3 | kube-master kube-node1 localhost
 ~
 Error (rc=255): 1 | kube-node2
-MacBook-Pro:~ mdominguez$
+[mdom@localhost ~]$
 ```
 
 ## Installation
