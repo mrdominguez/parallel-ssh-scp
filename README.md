@@ -71,8 +71,8 @@ threads = 10
 timeout = 20 seconds
 o = 1
 olines = 10
-username = mdominguez
-Password file /Users/mdominguez/ssh_password found
+username = mdom
+Password file /home/mdom/ssh_pass found
 Sudoing to user root
 tcount = 25
 ttime = 5 seconds
