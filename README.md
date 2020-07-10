@@ -140,6 +140,17 @@ mdssh -help
 echo "Run 'source ~/.bashrc' to refresh environment variables"
 ```
 
+If you run into the issue below, particularly in *RHEL 6*, install or update these packages: `nss curl libcurl`.
+
+```
+$ git clone https://github.com/mrdominguez/parallel-ssh-scp
+Initialized empty Git repository in /home/mdom/parallel-ssh-scp/.git/
+error:  while accessing https://github.com/mrdominguez/parallel-ssh-scp/info/refs
+
+fatal: HTTP request failed
+$
+```
+
 ## Setting Credentials
 
 The username can be set by using the `-u` option in the command line or the `$SSH_USER` environment variable. If not set, the default username is `$USER`.
