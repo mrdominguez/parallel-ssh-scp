@@ -21,6 +21,7 @@ use strict;
 use Expect;
 use File::Basename;
 use File::Path qw(make_path);
+use IO::Prompter;
 
 our ($help, $version, $u, $p, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
 
@@ -32,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.0\n";
-	print "Release date: 2020-06-15\n";
+	print "Version: 3.1\n";
+	print "Release date: 2020-07-18\n";
 	exit;
 }
 
@@ -57,6 +58,12 @@ if ( $tolocal && !-e $tpath ) {
 		eval { make_path $dir }
 			or die "Can't create directory $dir: $!\n";
 	}
+}
+
+$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'' if ( $p && $p eq '1' );
+if ( $p->timedout ) {
+	print "Timed out\n";
+	exit;
 }
 
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
@@ -148,7 +155,7 @@ sub send_password {
 }
 
 sub usage {
-	print "\nUsage: $0 [-help] [-version] [-u=username] [-p=password]\n";
+	print "\nUsage: $0 [-help] [-version] [-u=username] [-p[=password]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <host> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
