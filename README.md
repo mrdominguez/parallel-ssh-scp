@@ -159,7 +159,7 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 - The actual password string (**not recommended**).
 - A file containing the password.
 
-The password value is optional. If not provided, there is a prompt for one, and if not set, the password will be undefined.
+The password value is optional. If not provided, there will be a prompt for one, and if not set, the password will be undefined.
 
 ## Usage
 
