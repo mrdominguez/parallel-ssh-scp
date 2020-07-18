@@ -22,6 +22,7 @@ use File::Basename;
 use POSIX qw/:sys_wait_h strftime/;
 use Data::Dumper;
 use File::Path qw(make_path);
+use IO::Prompter;
 
 BEGIN { $| = 1 }
 
@@ -36,8 +37,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.0\n";
-	print "Release date: 2020-06-15\n";
+	print "Version: 3.1\n";
+	print "Release date: 2020-07-18\n";
 	exit;
 }
 
@@ -101,6 +102,12 @@ if ( $v ) {
 	print "o = $int_opts->{'o'}\n" if defined $int_opts->{'o'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
+}
+
+$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'' if ( $p && $p eq '1' );
+if ( $p->timedout ) {
+	print "Timed out\n";
+	exit;
 }
 
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
@@ -271,7 +278,7 @@ sub check_process {
 }
 
 sub usage {
-	print "\nUsage: $0 [-help] [-version] [-u=username] [-p=password]\n";
+	print "\nUsage: $0 [-help] [-version] [-u=username] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-d=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
