@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 3.0
+VERSION: 3.1
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -107,7 +107,7 @@ Error (rc=255): 1 | kube-node2
 
 These utilities are written in Perl and have been tested using *Perl 5.1x.x* on *RHEL 6/7*, as well as *macOS Sierra* and after.
 
-Authentication and credentials are handled using the **Expect.pm** module. The interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
+Automation for authentication is managed through the **Expect.pm** module. The password prompt uses **IO::Prompter** and the interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
 Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modules; alternately, download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
 
@@ -134,7 +134,7 @@ echo | cpan
 . .bashrc
 
 perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit'
-cpan Expect IO::Stty
+cpan Expect IO::Stty IO::Prompter
 
 mdssh -help
 echo "Run 'source ~/.bashrc' to refresh environment variables"
@@ -159,13 +159,13 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 - The actual password string (**not recommended**).
 - A file containing the password.
 
-If not set, the password will be undefined.
+The password value is optional. If not provided, there is a prompt for one, and if not set, the password will be undefined.
 
 ## Usage
 
 **mdssh.pl**
 ```
-Usage: mdssh.pl [-help] [-version] [-u=username] [-p=password]
+Usage: mdssh.pl [-help] [-version] [-u=username] [-p[=password]]
     [-sudo[=sudo_user]] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-d=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
@@ -215,7 +215,7 @@ NOTES:
 
 **sshexp.pl**
 ```
-Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_user]] [-sshOpts=ssh_options] 
+Usage: sshexp.pl [-help] [-version] [-u=username] [-p[=password]] [-sudo[=sudo_user]] [-sshOpts=ssh_options] 
     [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <host> [<command>]
 
      -help : Display usage
@@ -240,7 +240,7 @@ Usage: sshexp.pl [-help] [-version] [-u=username] [-p=password] [-sudo[=sudo_use
 ```
 **scpexp.pl**
 ```
-Usage: scpexp.pl [-help] [-version] [-u=username] [-p=password] [-sshOpts=ssh_options] 
+Usage: scpexp.pl [-help] [-version] [-u=username] [-p[=password]] [-sshOpts=ssh_options] 
     [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <host> [<target_path>]
 
      -help : Display usage
