@@ -60,10 +60,12 @@ if ( $tolocal && !-e $tpath ) {
 	}
 }
 
-$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'' if ( $p && $p eq '1' );
-if ( $p->timedout ) {
-	print "Timed out\n";
-	exit;
+if ( $p && $p eq '1' ) {
+	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
+	if ( $p->timedout ) {
+		print "Timed out\n";
+		exit;
+	}
 }
 
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
