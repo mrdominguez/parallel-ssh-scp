@@ -69,10 +69,7 @@ if ( $v ) {
 
 if ( $p && $p eq '1' ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
-	if ( $p->timedout ) {
-		print "Timed out\n";
-		exit;
-	}
+	die "Timed out\n" if $p->timedout;
 }
 
 my ($host, $cmd) = @ARGV;
