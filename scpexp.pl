@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.1\n";
-	print "Release date: 2020-07-18\n";
+	print "Release date: 2020-07-19\n";
 	exit;
 }
 
@@ -62,10 +62,7 @@ if ( $tolocal && !-e $tpath ) {
 
 if ( $p && $p eq '1' ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
-	if ( $p->timedout ) {
-		print "Timed out\n";
-		exit;
-	}
+	die "Timed out\n" if $p->timedout;
 }
 
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
