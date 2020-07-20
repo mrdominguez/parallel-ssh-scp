@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.1\n";
-	print "Release date: 2020-07-19\n";
+	print "Release date: 2020-07-20\n";
 	exit;
 }
 
@@ -58,6 +58,12 @@ if ( $tolocal && !-e $tpath ) {
 		eval { make_path $dir }
 			or die "Can't create directory $dir: $!\n";
 	}
+}
+
+if ( $u && $u eq '1' ) {
+	$u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
+	die "Timed out\n" if $u->timedout;
+	print "Using default username\n" if $u->defaulted;
 }
 
 if ( $p && $p eq '1' ) {
@@ -154,7 +160,7 @@ sub send_password {
 }
 
 sub usage {
-	print "\nUsage: $0 [-help] [-version] [-u=username] [-p[=password]]\n";
+	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <host> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
