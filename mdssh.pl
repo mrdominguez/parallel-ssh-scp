@@ -38,7 +38,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.1\n";
-	print "Release date: 2020-07-19\n";
+	print "Release date: 2020-07-20\n";
 	exit;
 }
 
@@ -102,6 +102,12 @@ if ( $v ) {
 	print "o = $int_opts->{'o'}\n" if defined $int_opts->{'o'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
+}
+
+if ( $u && $u eq '1' ) {
+	$u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
+	die "Timed out\n" if $u->timedout;
+	print "Using default username\n" if $u->defaulted;
 }
 
 if ( $p && $p eq '1' ) {
@@ -277,7 +283,7 @@ sub check_process {
 }
 
 sub usage {
-	print "\nUsage: $0 [-help] [-version] [-u=username] [-p[=password]]\n";
+	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-d=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
