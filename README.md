@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 3.1
+VERSION: 3.2
 
 FEEDBACK/BUGS: Please contact me by email.
 
