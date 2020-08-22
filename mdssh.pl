@@ -37,8 +37,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.1\n";
-	print "Release date: 2020-07-20\n";
+	print "Version: 3.2\n";
+	print "Release date: 2020-08-22\n";
 	exit;
 }
 
@@ -131,6 +131,8 @@ if ( defined $password ) {
 	print "No password set\n" if $v;
 	$password = '';
 }
+
+$ENV{SSH_PASS} = $password;
 
 my $sudo_user;
 if ( $sudo && !$scp ) {
@@ -237,7 +239,7 @@ sub fork_process {
 
 	my $dir = dirname($0);
 	my $app = $scp ? "$dir/scpexp.pl" : "$dir/sshexp.pl";
-	$app .= " -u=$username -p=$password";
+	$app .= " -u=$username";
 	$app .= " -sshOpts='$sshOpts'" if defined $sshOpts;
 	$app .= " -timeout=$timeout" if $timeout;
 		
