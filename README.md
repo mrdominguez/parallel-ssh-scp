@@ -105,7 +105,7 @@ Error (rc=255): 1 | kube-node2
 
 ## Installation
 
-These utilities are written in Perl and have been tested using version *5.1x.x* on *RHEL 6/7*, as well as *macOS Sierra (10.12)* and after.
+These utilities are written in *Perl* and have been tested using version *5.1x.x* on *RHEL 6/7*, as well as *macOS Sierra (10.12)* and after.
 
 Automation for authentication is managed through the **Expect.pm** module. **IO::Prompter** is used for username/password prompting and the interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
