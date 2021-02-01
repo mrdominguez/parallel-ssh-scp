@@ -111,15 +111,14 @@ if ( $u && $u eq '1' ) {
 	die "Timed out\n" if $u->timedout;
 	print "Using default username\n" if $u->defaulted;
 }
+my $username = $u || $ENV{SSH_USER} || $ENV{USER};
+print "username = $username\n" if $v;
 
 if ( $p && $p eq '1' ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
 	die "Timed out\n" if $p->timedout;
 }
-
-my $username = $u || $ENV{SSH_USER} || $ENV{USER};
 my $password = $p || $ENV{SSH_PASS} || undef;
-print "username = $username\n" if $v;
 
 if ( defined $password ) {
 	if ( -e $password ) {
