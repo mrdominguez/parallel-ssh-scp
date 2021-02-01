@@ -102,6 +102,8 @@ if ( $v ) {
 	print "o = $int_opts->{'o'}\n" if defined $int_opts->{'o'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
+	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
+	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 }
 
 if ( $u && $u eq '1' ) {
@@ -113,11 +115,6 @@ if ( $u && $u eq '1' ) {
 if ( $p && $p eq '1' ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
 	die "Timed out\n" if $p->timedout;
-}
-
-if ( $v ) {
-	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
-	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 }
 
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
