@@ -115,6 +115,11 @@ if ( $p && $p eq '1' ) {
 	die "Timed out\n" if $p->timedout;
 }
 
+if ( $v ) {
+	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
+	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
+}
+
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
 my $password = $p || $ENV{SSH_PASS} || undef;
 print "username = $username\n" if $v;
