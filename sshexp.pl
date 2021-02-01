@@ -67,6 +67,11 @@ if ( $v ) {
 	print "odir = $odir\n" if defined $odir;
 }
 
+if ( $v ) {
+	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
+	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
+}
+
 if ( $u && $u eq '1' ) {
         $u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
         die "Timed out\n" if $u->timedout;
