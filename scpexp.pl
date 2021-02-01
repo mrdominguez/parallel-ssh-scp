@@ -1,6 +1,6 @@
 #!/usr/bin/perl -ws
 
-# Copyright 2020 Mariano Dominguez
+# Copyright 2021 Mariano Dominguez
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 3.2\n";
-	print "Release date: 2020-08-22\n";
+	print "Release date: 2021-02-01\n";
 	exit;
 }
 
