@@ -1,16 +1,16 @@
 ### Table of Contents
 
-[Synopsis](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#synopsis)
-[Sample Output](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#sample-output)
-[Installation](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#installation)
-[Setting Credentials](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#setting-credentials)
-[Usage](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#usage)
+[Synopsis](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#synopsis)  
+[Sample Output](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#sample-output)  
+[Installation](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#installation)  
+[Setting Credentials](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#setting-credentials)  
+[Usage](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#usage)  
 [How-To](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#how-to)
 
 ## Synopsis
 
-AUTHOR: Mariano Dominguez
-<marianodominguez@hotmail.com>
+AUTHOR: Mariano Dominguez  
+<marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
 VERSION: 3.2
