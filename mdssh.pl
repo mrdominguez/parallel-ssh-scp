@@ -37,8 +37,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.2\n";
-	print "Release date: 2021-02-01\n";
+	print "Version: 3.2.1\n";
+	print "Release date: 2021-07-26\n";
 	exit;
 }
 
@@ -208,7 +208,7 @@ print "| @sorted_ok_hosts" if $ok_cnt;
 foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 	$error_cnt = scalar @{$error_hosts->{$rc}};
 	print "\n~\n";
-	print "Error (rc=$rc): $error_cnt ";
+	print "Error (RC=$rc): $error_cnt ";
 	if ( $error_cnt ) {
 		my @sorted_error_hosts = sort @{$error_hosts->{$rc}};
 		print "| @sorted_error_hosts";
