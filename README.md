@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 3.2
+VERSION: 3.3
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -37,7 +37,7 @@ Redirecting to /bin/systemctl status  ntpd.service
  Main PID: 11871 (ntpd)
    CGroup: /system.slice/ntpd.service
            └─11871 /usr/sbin/ntpd -u ntp:ntp -g
-[kube-node1] [14479] -> Error (rc=3)
+[kube-node1] [14479] -> Error (RC=3)
 Redirecting to /bin/systemctl status ntpd.service
 ● ntpd.service - Network Time Service
    Loaded: loaded (/usr/lib/systemd/system/ntpd.service; disabled; vendor preset: disabled)
@@ -58,9 +58,9 @@ Number of hosts: 4
 ~
 OK: 2 | kube-master localhost
 ~
-Error (rc=3): 1 | kube-node1
+Error (RC=3): 1 | kube-node1
 ~
-Error (rc=255): 1 | kube-node2
+Error (RC=255): 1 | kube-node2
 [mdom@localhost ~]$
 ```
 
@@ -99,7 +99,7 @@ Number of hosts: 4
 ~
 OK: 3 | kube-master kube-node1 localhost
 ~
-Error (rc=255): 1 | kube-node2
+Error (RC=255): 1 | kube-node2
 [mdom@localhost ~]$
 ```
 
