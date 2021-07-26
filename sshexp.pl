@@ -21,6 +21,7 @@ use strict;
 use Expect;
 use File::Basename;
 use IO::Prompter;
+use Scalar::Util qw(looks_like_number);
 
 our ($help, $version, $u, $p, $sshOpts, $sudo, $timeout, $o, $olines, $odir, $v, $d);
 
@@ -32,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.2\n";
-	print "Release date: 2021-02-01\n";
+	print "Version: 3.3\n";
+	print "Release date: 2021-07-26\n";
 	exit;
 }
 
@@ -223,7 +224,15 @@ my $cmd_output_lines = scalar @cmd_output;
 $int_opts->{'olines'} = $cmd_output_lines if $int_opts->{'olines'} == 0;
 
 my $status_msg = "OK\n";
-$status_msg = "Error (rc=$rc)\n" if $rc;
+if ( $rc ) {
+	$status_msg = "Error";
+	if ( looks_like_number($rc) ) {
+		$status_msg .= " (RC=$rc)\n"
+	} else {
+		$status_msg .= ": Unexpected exit code\n";
+		$rc = -1;
+	}
+}
 
 if ( defined $int_opts->{'o'} && $int_opts->{'o'} == 1 && $cmd_output_lines ) {
 	$status_msg .= ( $int_opts->{'olines'} < $cmd_output_lines ) ? join("\n", @cmd_output[-$int_opts->{'olines'}..-1]) : join("\n", @cmd_output);
