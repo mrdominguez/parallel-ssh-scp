@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.2\n";
-	print "Release date: 2021-02-01\n";
+	print "Version: 3.3\n";
+	print "Release date: 2021-07-26\n";
 	exit;
 }
 
@@ -143,7 +143,7 @@ my $rc = ( $exp->exitstatus() >> 8 );
 my $status_msg = 'OK';
 
 if ( $rc ) {
-	$status_msg = "Error (rc=$rc)\n$ret";
+	$status_msg = "Error (RC=$rc)\n$ret";
 }
 
 print "[$host] [$pid] -> $status_msg\n";
