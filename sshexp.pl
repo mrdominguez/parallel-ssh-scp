@@ -23,7 +23,7 @@ use File::Basename;
 use IO::Prompter;
 use Scalar::Util qw(looks_like_number);
 
-our ($help, $version, $u, $p, $sshOpts, $sudo, $timeout, $o, $olines, $odir, $v, $d);
+our ($help, $version, $u, $p, $sudo, $via, $sshOpts, $timeout, $o, $olines, $odir, $v, $d);
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging	
@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.3\n";
-	print "Release date: 2021-07-26\n";
+	print "Version: 3.4\n";
+	print "Release date: 2021-07-28\n";
 	exit;
 }
 
@@ -68,6 +68,8 @@ if ( $v ) {
 	print "odir = $odir\n" if defined $odir;
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
+	print "via = '$via'\n" if $via;
+	print "sshOpts = '$sshOpts'\n" if $sshOpts;;
 }
 
 if ( $u && $u eq '1' ) {
@@ -97,9 +99,15 @@ if ( defined $password ) {
 }
 
 my ($host, $cmd) = @ARGV;
-my $ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
-$ssh .= " $sshOpts" if defined $sshOpts;
-$ssh .= " $username\@$host";
+my $ssh;
+
+if ( $via ) {
+	$ssh = "sft ssh --via=$via $host";
+} else {
+	$ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
+	$ssh .= " $sshOpts" if $sshOpts;
+	$ssh .= " $username\@$host";
+}
 
 #my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
@@ -172,7 +180,7 @@ if ( !defined $cmd ) {
 	
 	# Comment out to remove message
 	$msg = "echo -e '#\\n# Connected to $host\\n# Logged in as $user";
-	$msg .= " via sudo (by $username)" if $sudo;
+	$msg .= " through sudo (by $username)" if $sudo;
 	$msg .= "\\n#'";
 	$msg .= '; date';
 
@@ -281,13 +289,14 @@ sub send_password {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]] [-sudo[=sudo_user]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <host> [<command>]\n\n";
+	print "\t[-via=bastions] [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <host> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
+	print "\t -via : Specify hosts to act as bastions for OKTA ASA sft client\n";
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
