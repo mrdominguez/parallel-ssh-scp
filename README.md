@@ -21,7 +21,11 @@ FEEDBACK/BUGS: Please contact me by email.
 
 *Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` (*preferred method*) or using the `sudo` command.
 
-The latest release is compatible with the OKTA ASA ScaleFT client when using the `-via=bastions` option, which translates internally to the following command: `sft ssh --via=<bastions> <host>`. See OKTA documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
+The latest release is compatible with the OKTA ASA ScaleFT client when using the `-via=bastions` option, which translates internally to the following command:
+```
+sft ssh --via=<bastions> <host>
+```
+See OKTA documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
 
 ## Sample Output
 
