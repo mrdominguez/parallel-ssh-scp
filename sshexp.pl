@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.4\n";
-	print "Release date: 2021-07-28\n";
+	print "Version: 3.5\n";
+	print "Release date: 2021-09-07\n";
 	exit;
 }
 
@@ -72,6 +72,9 @@ if ( $v ) {
 	print "sshOpts = '$sshOpts'\n" if $sshOpts;;
 }
 
+my ($host, $cmd) = @ARGV;
+($u, $host) = ($1, $2) if $host =~ /(\w+)\@(.+)/;
+
 if ( $u && $u eq '1' ) {
         $u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
         die "Timed out\n" if $u->timedout;
@@ -98,16 +101,14 @@ if ( defined $password ) {
 	print "No password set\n" if $v;
 }
 
-my ($host, $cmd) = @ARGV;
 my $ssh;
-
 if ( $via ) {
-	$ssh = "sft ssh --via=$via $host";
+	$ssh = "sft ssh --via=$via ";
 } else {
 	$ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
 	$ssh .= " $sshOpts" if $sshOpts;
-	$ssh .= " $username\@$host";
 }
+$ssh .= " $username\@$host";
 
 #my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
@@ -145,6 +146,8 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/login:\s*$/i,			sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
 	[ 'eof',				sub { &capture("[$host] (auth) EOF\n") } ],
+	[ qr/known_hosts\?/i,			sub { $exp->slave->stty(qw(-echo)); $exp->send("yes\n");
+						  $exp->slave->stty(qw(echo)); exp_continue } ],
 	  # Expect TIMEOUT
 	[ 'timeout',				sub { die "[$host] (auth) Timeout\n" } ], 
 	[ $shell_prompt ]
@@ -289,7 +292,7 @@ sub send_password {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]] [-sudo[=sudo_user]]\n";
-	print "\t[-via=bastions] [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <host> [<command>]\n\n";
+	print "\t[-via=[bastion_user@]hastion] [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <[username@]host> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
