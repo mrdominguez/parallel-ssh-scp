@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.4\n";
-	print "Release date: 2021-07-28\n";
+	print "Version: 3.5\n";
+	print "Release date: 2021-09-07\n";
 	exit;
 }
 
@@ -48,6 +48,7 @@ die "-timeout ($timeout) is not an integer\n" if $timeout =~ /\D/;
 
 my ($spath, $host) = @ARGV;
 my $tpath = $ARGV[2] || $ENV{HOME};
+($u, $host) = ($1, $2) if $host =~ /(\w+)\@(.+)/;
 
 if ( $tolocal && !-e $tpath ) {
 	my ($filename, $dir, $suffix) = fileparse $tpath;
@@ -165,7 +166,7 @@ sub send_password {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <host> [<target_path>]\n\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <[username@]host> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
