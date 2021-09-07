@@ -37,8 +37,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.4\n";
-	print "Release date: 2021-07-28\n";
+	print "Version: 3.5\n";
+	print "Release date: 2021-09-07\n";
 	exit;
 }
 
@@ -290,10 +290,10 @@ sub check_process {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-sudo[=sudo_user]] [-via=bastions] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
+	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-d=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
-	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s=\"host1 host2 ...\" | -f=hosts_file) <command|source_path>\n\n";
+	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s=\"[username1@]host1 [username2@]host2 ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
