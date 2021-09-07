@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 3.4
+VERSION: 3.5
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -21,11 +21,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 *Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` (*preferred method*) or using the `sudo` command.
 
-The latest release is compatible with the OKTA ASA ScaleFT client when using the `-via=bastions` option, which translates internally to the following command:
-```
-sft ssh --via=<bastions> <host>
-```
-See OKTA documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
+The latest release is compatible with the OKTA ASA ScaleFT client when using the `-via=bastion` option, which translates internally to the following command: `sft ssh --via=<bastion> <host>`. See OKTA documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
 
 ## Sample Output
 
@@ -159,7 +155,7 @@ $
 
 ## Setting Credentials
 
-The username can be set by using the `-u` option in the command line or the `$SSH_USER` environment variable. If not set, the default username is the value of the environtment variable `$USER`.
+The username can be set as `username@host`, by using the `-u` option in the command line, or the `$SSH_USER` environment variable (in that order of precedence). If not set, the default username is the value of the environtment variable `$USER`.
 
 The password can be passed by setting the `-p` option or the `$SSH_PASS` environment variable to:
 - The actual password string (**not recommended**).
@@ -172,10 +168,10 @@ Both username and password values are optional. If no value is provided, there w
 **mdssh.pl**
 ```
 Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-sudo[=sudo_user]] [-via=bastions] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
+    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-d=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
-    [-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s="host1 host2 ..." | -f=hosts_file) <command|source_path>
+    [-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s="[username1@]host1 [username2@]host2 ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
      -version : Display version information
@@ -222,8 +218,8 @@ NOTES:
 
 **sshexp.pl**
 ```
-Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sudo[=sudo_user]] [-via=bastions]
-    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <host> [<command>]
+Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sudo[=sudo_user]] [-via=[bastion_user@]bastion]
+    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d] <[username@]host> [<command>]
 
      -help : Display usage
      -version : Display version information
@@ -249,7 +245,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sudo[=sudo
 **scpexp.pl**
 ```
 Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sshOpts=ssh_options] 
-    [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <host> [<target_path>]
+    [-timeout=n] [-tolocal] [-multiauth] [-r] [-v] [-d] [-q] <source_path> <[username@]host> [<target_path>]
 
      -help : Display usage
      -version : Display version information
