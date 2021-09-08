@@ -169,7 +169,7 @@ Both username and password values are optional. If no value is provided, there w
 ```
 Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sudo[=sudo_user]] [-via=[bastion_user@]bastion] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
-    [-scp [-tolocal] [-multiauth] [-r] [-d=target_path] [-meter]]
+    [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
     [-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s="[username1@]host1 [username2@]host2 ..." | -f=hosts_file) <command|source_path>
 
@@ -185,13 +185,13 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -timeout : Timeout value for Expect (default: 20 seconds)
      -threads : Number of concurrent processes (default: 10)
      -scp : Copy <source_path> from local host to @remote_hosts:<target_path>
-     -tolocal : Copy @remote_hosts:<source_path> to <target_path> in local host
-                The remote hostnames will be appended to <target_path> as a directory
-                If permissions allow it, non-existent local directories will be created
-     -multiauth : Always authenticate when password prompted (default: single authentication attempt)
-     -r : Recursively copy entire directories
-     -d : Target path (default: $HOME)
-     -meter : Display scp progress (default: disabled)
+       -tolocal : Copy @remote_hosts:<source_path> to <target_path> in local host
+                  The remote hostnames will be appended to <target_path> as a directory
+                  If permissions allow it, non-existent local directories will be created
+       -multiauth : Always authenticate when password prompted (default: single authentication attempt)
+       -r : Recursively copy entire directories
+       -target : Target path (default: $HOME)
+       -meter : Display scp progress (default: disabled)
      -tcount : Number of forked processes before throttling (default: 25)
      -ttime : Throttling time (default: 5 seconds)
      -o : (Not defined) Buffer the output and display it after command completion
@@ -281,7 +281,7 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sshOpts=ss
 
 * Push `package.rpm` to `/var/local/tmp` using 3 copy processes:
 
-	`mdssh.pl -threads=3 -f=hosts -scp -d=/var/local/tmp package.rpm`
+	`mdssh.pl -threads=3 -f=hosts -scp -target=/var/local/tmp package.rpm`
 
 * Install (as root) the package, set timeout to 5 minutes:
 
@@ -293,4 +293,4 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sshOpts=ss
 
 * Pull `/var/log/messages` to the local `./remote_files` directory:
 
-	`mdssh.pl -f=hosts -scp -tolocal -d=remote_files /var/log/messages`
+	`mdssh.pl -f=hosts -scp -tolocal -target=remote_files /var/log/messages`
