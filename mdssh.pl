@@ -26,7 +26,7 @@ use IO::Prompter;
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $d, $tolocal, $multiauth, $meter, $sudo, $via, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
+our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $via, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
 my $threads_default = 10;
 my $tcount_default = 25;
 my $ttime_default = 5;
@@ -152,13 +152,13 @@ if ( $v ) {
 }
 
 if ( $scp ) {
-	$d = $ENV{HOME} if !$d;
+	$target = $ENV{HOME} if !$target;
 	if ( $v ) {
 		print "Executing SCP (copy ";
 		print $tolocal ? "to " : "from ";
 		print "local)\n";
 		print "Source path: $cmd_spath\n";
-		print "Target path: $d\n";
+		print "Target path: $target\n";
 	}
 }
 
@@ -252,10 +252,10 @@ sub fork_process {
 		$app .= " -q" unless $meter;
 		if ( $tolocal ) {
 			$app .= " -tolocal";
-			$d .= "/$h/";
+			$target .= "/$h/";
 		}
 		$app .= " -multiauth" if $multiauth;
-		system("$app \"$c\" $h $d");
+		system("$app \"$c\" $h $target");
 	} else {
 		$app .= " -sudo=$sudo_user" if $sudo;
 		$app .= " -o=$int_opts->{'o'}" if defined $int_opts->{'o'};
@@ -291,7 +291,7 @@ sub check_process {
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
-	print "\t[-scp [-tolocal] [-multiauth] [-r] [-d=target_path] [-meter]]\n";
+	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
 	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s=\"[username1@]host1 [username2@]host2 ...\" | -f=hosts_file) <command|source_path>\n\n";
 
@@ -307,13 +307,13 @@ sub usage {
 	print "\t -timeout : Timeout value for Expect (default: $timeout_default seconds)\n";
 	print "\t -threads : Number of concurrent processes (default: $threads_default)\n";
 	print "\t -scp : Copy <source_path> from local host to \@remote_hosts:<target_path>\n";
-	print "\t -tolocal : Copy \@remote_hosts:<source_path> to <target_path> in local host\n";
-	print "\t            The remote hostnames will be appended to <target_path> as a directory\n";
-	print "\t            If permissions allow it, non-existent local directories will be created\n";
-	print "\t -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
-	print "\t -r : Recursively copy entire directories\n";
-	print "\t -d : Target path (default: \$HOME)\n";
-	print "\t -meter : Display scp progress (default: disabled)\n";
+	print "\t   -tolocal : Copy \@remote_hosts:<source_path> to <target_path> in local host\n";
+	print "\t              The remote hostnames will be appended to <target_path> as a directory\n";
+	print "\t              If permissions allow it, non-existent local directories will be created\n";
+	print "\t   -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
+	print "\t   -r : Recursively copy entire directories\n";
+	print "\t   -target : Target path (default: \$HOME)\n";
+	print "\t   -meter : Display scp progress (default: disabled)\n";
 	print "\t -tcount : Number of forked processes before throttling (default: $tcount_default)\n";
 	print "\t -ttime : Throttling time (default: $ttime_default seconds)\n";
 	print "\t -o : (Not defined) Buffer the output and display it after command completion\n";
