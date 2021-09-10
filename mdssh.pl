@@ -26,7 +26,7 @@ use IO::Prompter;
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $via, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
+our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $via, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
 my $threads_default = 10;
 my $tcount_default = 25;
 my $ttime_default = 5;
@@ -37,8 +37,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.5\n";
-	print "Release date: 2021-09-07\n";
+	print "Version: 3.6\n";
+	print "Release date: 2021-09-10\n";
 	exit;
 }
 
@@ -104,8 +104,9 @@ if ( $v ) {
 	print "odir = $odir\n" if defined $odir;
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
-	print "via = '$via'\n" if $via;
-	print "sshOpts = '$sshOpts'\n" if $sshOpts;
+	print "via = $via\n" if $via;
+	print "ru = $ru\n" if $ru;
+	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
 
 if ( $u && $u eq '1' ) {
@@ -244,6 +245,7 @@ sub fork_process {
 	my $app = $scp ? "$dir/scpexp.pl" : "$dir/sshexp.pl";
 	$app .= " -u=$username";
 	$app .= " -via='$via'" if $via;
+	$app .= " -ru=$ru" if $ru;
 	$app .= " -sshOpts='$sshOpts'" if $sshOpts;
 	$app .= " -timeout=$timeout" if $timeout;
 		
@@ -290,17 +292,21 @@ sub check_process {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion] [-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
+	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ru=remote_user]]\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
-	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]] (-s=\"[username1@]host1 [username2@]host2 ...\" | -f=hosts_file) <command|source_path>\n\n";
+	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]]\n";
+	print "\t(-s=\"[username1@]host1 [username2@]host2 ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
-	print "\t -u : Username (default: \$USER -current user-)\n";
+	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
-	print "\t -via : Specify hosts to act as bastions for OKTA ASA sft client\n";
+	print "\t -via : Bastion host for Okta ASA sft client\n";
+	print "\t        (Default bastion_user: Okta username -sft login-)\n";
+	print "\t   -ru : Remote user (default: Okta username)\n";
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
