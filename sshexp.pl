@@ -189,7 +189,7 @@ if ( !defined $cmd ) {
 	my $msg = '';
 	
 	# Comment out to remove message
-	$msg = "echo -e \"#\\n# Connected to $host\\n# Logged in as `whoami`";
+	$msg = "echo -e \"#\\n# Connected to `hostname -f`\\n# Logged in as `whoami`";
 	$msg .= " through sudo" if $sudo;
 	$msg .= "\\n#\"";
 	$msg .= '; date';
@@ -298,10 +298,10 @@ sub send_password {
 }
 
 sub usage {
-	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]] [-sudo[=sudo_user]]\n";
-	print "\t[-via=[bastion_user@]bastion [-ru=remote_user]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path]\n";
-	print "\t[-v] [-d] <[username|remote_user@]host> [<command>]\n\n";
+	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
+	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ru=remote_user]]\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]\n";
+	print "\t<[username|remote_user@]host> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
