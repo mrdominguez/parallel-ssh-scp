@@ -223,10 +223,10 @@ NOTES:
 
 **sshexp.pl**
 ```
-Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sudo[=sudo_user]]
-    [-via=[bastion_user@]bastion [-ru=remote_user]]
-    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path]
-    [-v] [-d] <[username|remote_user@]host> [<command>]
+Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
+    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ru=remote_user]]
+    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]
+    <[username|remote_user@]host> [<command>]
 
      -help : Display usage
      -version : Display version information
