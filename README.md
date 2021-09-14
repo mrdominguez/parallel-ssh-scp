@@ -253,8 +253,8 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 ```
 **scpexp.pl**
 ```
-Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]] [-sshOpts=ssh_options] 
-    [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]
+Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]] 
+    [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]
     <source_path> <[username@]host> [<target_path>]
 
      -help : Display usage
