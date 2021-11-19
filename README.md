@@ -19,7 +19,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 `mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys. It enables process concurrency and calls `sshexp.pl` or `scpexp.pl` in the background to connect to remote hosts (one host per process) through `ssh` and `scp` respectively.
 
-*Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` (*preferred method*) or using the `sudo` command.
+*Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` *(preferred method)* or using the `sudo` command.
 
 The latest release is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
 
