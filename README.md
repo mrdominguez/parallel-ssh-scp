@@ -13,15 +13,15 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 3.6
+VERSION: 3.7
 
 FEEDBACK/BUGS: Please contact me by email.
 
-`mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys. It enables process concurrency and calls `sshexp.pl` and `scpexp.pl` in the background to connect to remote hosts (one host per process) via `ssh` or `scp` respectively.
+`mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys. It enables process concurrency and calls `sshexp.pl` or `scpexp.pl` in the background to connect to remote hosts (one host per process) through `ssh` and `scp` respectively.
 
 *Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` (*preferred method*) or using the `sudo` command.
 
-The latest release is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which translates internally to the following command: `sft ssh --via=<bastion> <host>`. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
+The latest release is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
 
 ## Sample Output
 
@@ -253,7 +253,8 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 ```
 **scpexp.pl**
 ```
-Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]] 
+Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
+    [-via=[bastion_user@]bastion [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]
     <source_path> <[username@]host> [<target_path>]
 
@@ -261,6 +262,9 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -version : Display version information
      -u : Username (default: $USER -current user-)
      -p : Password or path to password file (default: undef)
+     -via : Bastion host for Okta ASA sft client
+            (Default bastion_user: Okta username -sft login-)
+       -ru : Remote user (default: Okta username)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
