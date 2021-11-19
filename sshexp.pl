@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.6\n";
-	print "Release date: 2021-09-10\n";
+	print "Version: 3.7\n";
+	print "Release date: 2021-11-19\n";
 	exit;
 }
 
@@ -76,9 +76,8 @@ if ( $v ) {
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
 	print "ru = $ru\n" if $ru;
-	print "sshOpts = $sshOpts\n" if $sshOpts;;
+	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
-
 
 if ( $u && $u eq '1' ) {
         $u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
@@ -108,7 +107,7 @@ if ( defined $password ) {
 
 my $ssh;
 if ( $via ) {
-	$ssh = "sft ssh --via=$via ";
+	$ssh = "sft ssh --via $via ";
 	$ssh .= "$ru\@" if $ru;
 	$ssh .= $host
 } else {
