@@ -23,7 +23,7 @@ use File::Basename;
 use File::Path qw(make_path);
 use IO::Prompter;
 
-our ($help, $version, $u, $p, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
+our ($help, $version, $u, $p, $via, $ru, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging
@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.6\n";
-	print "Release date: 2021-09-10\n";
+	print "Version: 3.7\n";
+	print "Release date: 2021-11-19\n";
 	exit;
 }
 
@@ -48,7 +48,10 @@ die "-timeout ($timeout) is not an integer\n" if $timeout =~ /\D/;
 
 my ($spath, $host) = @ARGV;
 my $tpath = $ARGV[2] || $ENV{HOME};
-($u, $host) = ($1, $2) if $host =~ /(.+)\@(.+)/;
+if ( $host =~ /(.+)\@(.+)/ ) {
+	$host = $2;
+	$via ? $ru = $1 : $u = $1
+}
 
 if ( $tolocal && !-e $tpath ) {
 	my ($filename, $dir, $suffix) = fileparse $tpath;
@@ -62,8 +65,12 @@ if ( $tolocal && !-e $tpath ) {
 }
 
 if ( $v ) {
+	print "timeout = $timeout seconds\n";
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
+	print "via = $via\n" if $via;
+	print "ru = $ru\n" if $ru;
+	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
 
 if ( $u && $u eq '1' ) {
@@ -94,6 +101,11 @@ if ( defined $password ) {
 
 # Using -q (quiet mode) will make expect timeout for large files because the progress meter is disabled
 my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no';
+if ( $via ) {
+	$scp .= " -o 'ProxyCommand sft proxycommand --via $via ";
+	$scp .= "$ru\@" if $ru;
+	$scp .= "$host'";
+}
 $scp .= " $sshOpts" if defined $sshOpts;
 $scp .= " -r" if $r;
 $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$host:$tpath" );
@@ -166,6 +178,7 @@ sub send_password {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
+	print "\t[-via=[bastion_user@]bastion [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]\n";
 	print "\t<source_path> <[username@]host> [<target_path>]\n\n";
 
@@ -173,6 +186,9 @@ sub usage {
 	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
+	print "\t -via : Bastion host for Okta ASA sft client\n";
+	print "\t        (Default bastion_user: Okta username -sft login-)\n";
+	print "\t   -ru : Remote user (default: Okta username)\n";
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
