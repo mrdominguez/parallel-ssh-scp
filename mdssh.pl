@@ -26,7 +26,7 @@ use IO::Prompter;
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $via, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
+our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $via, $ou, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
 my $threads_default = 10;
 my $tcount_default = 25;
 my $ttime_default = 5;
@@ -37,8 +37,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.7\n";
-	print "Release date: 2021-11-19\n";
+	print "Version: 4.0\n";
+	print "Release date: 2021-11-21\n";
 	exit;
 }
 
@@ -105,7 +105,7 @@ if ( $v ) {
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
-	print "ru = $ru\n" if $ru;
+	print "ou = $ou\n" if $ou;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
 
@@ -135,7 +135,6 @@ if ( defined $password ) {
 	print "No password set\n" if $v;
 	$password = '';
 }
-
 $ENV{SSH_PASS} = $password;
 
 my $sudo_user;
@@ -187,12 +186,15 @@ foreach my $host (@hosts) {
 	next if $host =~ /(#+)/;
 	next if $host =~ /^\s*$/;
 	++$throttle_cnt;
-	&fork_process($host, $cmd_spath);
+
+	&fork_process($host, $via, $cmd_spath);
+
 	if ( $running_cnt >= $int_opts->{'threads'} ) {
 		do { &check_process } until ( $running_cnt < $int_opts->{'threads'} || $child_pid == -1 );	
 	}
+
 	if ( $throttle_cnt == $int_opts->{'tcount'} && $forked_cnt != $num_hosts && $int_opts->{'ttime'} != 0 ) {
-		&log_trace ("Throttling... resuming in $int_opts->{'ttime'} seconds");
+		&log_trace("Throttling... resuming in $int_opts->{'ttime'} seconds");
 		sleep $int_opts->{'ttime'};
 		$throttle_cnt = 0;
 	}
@@ -200,7 +202,7 @@ foreach my $host (@hosts) {
 
 do { &check_process } until $child_pid == -1;
 
-&log_trace ("All processes completed");
+&log_trace("All processes completed");
 
 my @sorted_ok_hosts = sort @ok_hosts;
 #print Dumper $error_hosts;
@@ -212,6 +214,7 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 	$error_cnt = scalar @{$error_hosts->{$rc}};
 	print "\n~\n";
 	print "Error (RC=$rc): $error_cnt ";
+
 	if ( $error_cnt ) {
 		my @sorted_error_hosts = sort @{$error_hosts->{$rc}};
 		print "| @sorted_error_hosts";
@@ -228,16 +231,30 @@ sub log_trace {
 }
 
 sub fork_process {
-	my ($h, $c) = @_;
+	my ($h, $via, $c) = @_;
 	my $exit_code;
+	my $host = $h;
+	my $via_override;
+
+	if ( $h =~ /(.+),([^\s].+[^\s])?/ ) {
+		$host = $1;
+		$via_override = $2 if $2;
+	}
+
+	$via = $via_override if $via_override;
+
 	my $p = fork();
 	die "Fork failed: $!\n" unless defined $p;
 
 	if ($p) {
-		$hosts->{$p} = $h;
+		$hosts->{$p}->{'host'} = $host;
+		$hosts->{$p}->{'via'} = $via if $via_override;
 		$id->{$p} = ++$forked_cnt;
 		++$running_cnt;
-		&log_trace ("[$h] [$p] process_$id->{$p} forked");
+		my $log_msg = "[$host";
+		$log_msg .= " __via__ $via" if $via;
+		$log_msg .= "] [$p] process_$id->{$p} forked"; 
+		&log_trace($log_msg);
 		return $p;
 	}
 
@@ -245,10 +262,11 @@ sub fork_process {
 	my $app = $scp ? "$dir/scpexp.pl" : "$dir/sshexp.pl";
 	$app .= " -u=$username";
 	$app .= " -via='$via'" if $via;
-	$app .= " -ru=$ru" if $ru;
+	$app .= " -ou=$ou" if $ou;
 	$app .= " -sshOpts='$sshOpts'" if $sshOpts;
 	$app .= " -timeout=$timeout" if $timeout;
-		
+
+	my $cmd;
 	if ( $scp ) {
 		$app .= " -r" if $r;
 		$app .= " -q" unless $meter;
@@ -257,13 +275,17 @@ sub fork_process {
 			$target .= "/$h/";
 		}
 		$app .= " -multiauth" if $multiauth;
-		system("$app \"$c\" $h $target");
+		$cmd = "$app \"$c\" $host $target";
+#		print "$cmd\n" if $v;
+		system $cmd;
 	} else {
 		$app .= " -sudo=$sudo_user" if $sudo;
 		$app .= " -o=$int_opts->{'o'}" if defined $int_opts->{'o'};
 		$app .= " -olines=$int_opts->{'olines'}" if defined $olines;
 		$app .= " -odir=$odir" if defined $odir;
-		system("$app $h \"$c\"");
+		$cmd = "$app $host \"$c\"";
+#		print "$cmd\n" if $v;
+		system $cmd;
 	}
 
 	$exit_code = $?>>8;
@@ -279,25 +301,33 @@ sub check_process {
 		my $completed_percent = sprintf("%d%%", 100*$completed_cnt/$num_hosts);
 		my $pending_cnt = $num_hosts-$completed_cnt;
 #		print "$child_pid exited with code " . ($?>>8) . "\n";
+
+		my $host = $hosts->{$child_pid}->{'host'};
+		$host .= ",$hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
+
 		if ( $? == 0 ) {
-			push @ok_hosts, $hosts->{$child_pid};
+			push @ok_hosts, $host;
 			++$ok_cnt;
 		} else {
-			push @{$error_hosts->{$?>>8}}, $hosts->{$child_pid};
+			push @{$error_hosts->{$?>>8}}, $host;
 			++$error_cnt;
 		}
-		&log_trace ("[$hosts->{$child_pid}] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | Completed: $completed_cnt/$num_hosts -$completed_percent- | OK: $ok_cnt | Error: $error_cnt)");
+
+		my $log_msg = "[$hosts->{$child_pid}->{'host'}";
+		$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
+		$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | Completed: $completed_cnt/$num_hosts -$completed_percent- | OK: $ok_cnt | Error: $error_cnt)";
+		&log_trace($log_msg);
 	}
 }
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ru=remote_user]]\n";
+	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ou=okta_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
 	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]]\n";
-	print "\t(-s=\"[username1@]host1 [username2@]host2 ...\" | -f=hosts_file) <command|source_path>\n\n";
+	print "\t(-s=\"[username1@]host1[,\$via1] [username2@]host2[,\$via2] ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
@@ -306,7 +336,7 @@ sub usage {
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
 	print "\t        (Default bastion_user: Okta username -sft login-)\n";
-	print "\t   -ru : Remote user (default: Okta username)\n";
+	print "\t   -ou : Okta user (default: Okta username)\n";
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
