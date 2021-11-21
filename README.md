@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 3.7
+VERSION: 4.0
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -22,6 +22,8 @@ FEEDBACK/BUGS: Please contact me by email.
 *Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` *(preferred method)* or using the `sudo` command.
 
 The latest release is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
+
+The `-via` option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma, like so: `host,[bastion_user@]bastion`.
 
 ## Sample Output
 
@@ -168,12 +170,12 @@ Both username and password values are optional. If no value is provided, there w
 **mdssh.pl**
 ```
 Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ru=remote_user]]
+    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ou=okta_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
     [-o[=0|1] -olines=n -odir=path] [-v [-timestamp]]
-    (-s="[username1@]host1 [username2@]host2 ..." | -f=hosts_file) <command|source_path>
+    (-s="[username1@]host1[,$via1] [username2@]host2[,$via2] ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
      -version : Display version information
@@ -182,7 +184,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -via : Bastion host for Okta ASA sft client
             (Default bastion_user: Okta username -sft login-)
-       -ru : Remote user (default: Okta username)
+       -ou : Okta user (default: Okta username)
      -sshOpts : Additional SSH options
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
@@ -224,9 +226,9 @@ NOTES:
 **sshexp.pl**
 ```
 Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ru=remote_user]]
+    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ou=okta_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]
-    <[username|remote_user@]host> [<command>]
+    <[username|okta_user@]host[,$via]> [<command>]
 
      -help : Display usage
      -version : Display version information
@@ -235,7 +237,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -via : Bastion host for Okta ASA sft client
             (Default bastion_user: Okta username -sft login-)
-       -ru : Remote user (default: Okta username)
+       -ou : Okta user (default: Okta username)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
@@ -254,17 +256,17 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 **scpexp.pl**
 ```
 Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-via=[bastion_user@]bastion [-ru=remote_user]]
+    [-via=[bastion_user@]bastion [-ou=okta_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]
-    <source_path> <[username@]host> [<target_path>]
+    <source_path> <[username|okta_user@]host[,$via]> [<target_path>]
 
      -help : Display usage
      -version : Display version information
-     -u : Username (default: $USER -current user-)
+     -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
      -p : Password or path to password file (default: undef)
      -via : Bastion host for Okta ASA sft client
             (Default bastion_user: Okta username -sft login-)
-       -ru : Remote user (default: Okta username)
+       -ou : Okta user (default: Okta username)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
