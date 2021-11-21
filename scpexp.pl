@@ -23,7 +23,7 @@ use File::Basename;
 use File::Path qw(make_path);
 use IO::Prompter;
 
-our ($help, $version, $u, $p, $via, $ru, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
+our ($help, $version, $u, $p, $via, $ou, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging
@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.7\n";
-	print "Release date: 2021-11-19\n";
+	print "Version: 4.0\n";
+	print "Release date: 2021-11-21\n";
 	exit;
 }
 
@@ -48,9 +48,15 @@ die "-timeout ($timeout) is not an integer\n" if $timeout =~ /\D/;
 
 my ($spath, $host) = @ARGV;
 my $tpath = $ARGV[2] || $ENV{HOME};
+
+if ( $host =~ /(.+),([^\s].+[^\s])?/ ) {
+	$host = $1;
+	$via = $2 if $2;
+}
+
 if ( $host =~ /(.+)\@(.+)/ ) {
 	$host = $2;
-	$via ? $ru = $1 : $u = $1
+	$via ? $ou = $1 : $u = $1
 }
 
 if ( $tolocal && !-e $tpath ) {
@@ -69,19 +75,19 @@ if ( $v ) {
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
-	print "ru = $ru\n" if $ru;
+	print "ou = $ou\n" if $ou;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
 
-if ( $u && $u eq '1' ) {
+if ( $u && $u eq '1' && !$via ) {
 	$u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
 	die "Timed out\n" if $u->timedout;
 	print "Using default username\n" if $u->defaulted;
 }
-my $username = $u || $ENV{SSH_USER} || $ENV{USER};
+my $username = ( $via && $ou ) ? $ou : ( $u || $ENV{SSH_USER} || $ENV{USER} );
 print "username = $username\n" if $v;
 
-if ( $p && $p eq '1' ) {
+if ( $p && $p eq '1' && !$via ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
 	die "Timed out\n" if $p->timedout;
 }
@@ -103,12 +109,13 @@ if ( defined $password ) {
 my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no';
 if ( $via ) {
 	$scp .= " -o 'ProxyCommand sft proxycommand --via $via ";
-	$scp .= "$ru\@" if $ru;
+	$scp .= "$ou\@" if $ou;
 	$scp .= "$host'";
 }
 $scp .= " $sshOpts" if defined $sshOpts;
 $scp .= " -r" if $r;
 $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$host:$tpath" );
+#print "$scp\n" if $v;
 
 my $exp = new Expect;
 $exp->raw_pty(0);
@@ -139,6 +146,8 @@ $exp->expect($timeout,
 	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
 	[ qr/login:\s*$/i,		sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
+	[ qr/Add to known_hosts\?/i,	sub { $exp->slave->stty(qw(-echo)); $exp->send("yes\n");
+					  $exp->slave->stty(qw(echo)); exp_continue } ],
 	  # Expect TIMEOUT
 	[ 'timeout',			sub { die "[$host] Timeout\n" } ],
 	  # Use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
@@ -178,17 +187,17 @@ sub send_password {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-via=[bastion_user@]bastion [-ru=remote_user]]\n";
+	print "\t[-via=[bastion_user@]bastion [-ou=okta_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]\n";
-	print "\t<source_path> <[username@]host> [<target_path>]\n\n";
+	print "\t<source_path> <[username|okta_user@]host[,\$via]> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
-	print "\t -u : Username (default: \$USER -current user-)\n";
+	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
 	print "\t        (Default bastion_user: Okta username -sft login-)\n";
-	print "\t   -ru : Remote user (default: Okta username)\n";
+	print "\t   -ou : Okta user (default: Okta username)\n";
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
