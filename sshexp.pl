@@ -23,7 +23,7 @@ use File::Basename;
 use IO::Prompter;
 use Scalar::Util qw(looks_like_number);
 
-our ($help, $version, $u, $p, $sudo, $via, $ru, $sshOpts, $timeout, $o, $olines, $odir, $v, $d);
+our ($help, $version, $u, $p, $sudo, $via, $ou, $sshOpts, $timeout, $o, $olines, $odir, $v, $d);
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging	
@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 3.7\n";
-	print "Release date: 2021-11-19\n";
+	print "Version: 4.0\n";
+	print "Release date: 2021-11-21\n";
 	exit;
 }
 
@@ -62,9 +62,15 @@ foreach my $opt ( keys(%{$int_opts}) ) {
 }
 
 my ($host, $cmd) = @ARGV;
+
+if ( $host =~ /(.+),([^\s].+[^\s])?/ ) {
+	$host = $1;
+	$via = $2 if $2;
+}
+
 if ( $host =~ /(.+)\@(.+)/ ) {
 	$host = $2;
-	$via ? $ru = $1 : $u = $1
+	$via ? $ou = $1 : $u = $1
 }
 
 if ( $v ) {
@@ -75,11 +81,11 @@ if ( $v ) {
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
-	print "ru = $ru\n" if $ru;
+	print "ou = $ou\n" if $ou;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
 
-if ( $u && $u eq '1' ) {
+if ( $u && $u eq '1' && !$via ) {
         $u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
         die "Timed out\n" if $u->timedout;
 	print "Using default username\n" if $u->defaulted;
@@ -87,7 +93,7 @@ if ( $u && $u eq '1' ) {
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
 print "username = $username\n" if $v;
 
-if ( $p && $p eq '1' ) {
+if ( $p && $p eq '1' && !$via ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
 	die "Timed out\n" if $p->timedout;
 }
@@ -108,13 +114,14 @@ if ( defined $password ) {
 my $ssh;
 if ( $via ) {
 	$ssh = "sft ssh --via $via ";
-	$ssh .= "$ru\@" if $ru;
+	$ssh .= "$ou\@" if $ou;
 	$ssh .= $host
 } else {
 	$ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
 	$ssh .= " $sshOpts" if $sshOpts;
 	$ssh .= " $username\@$host"
 }
+#print "$ssh\n" if $v;
 
 #my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
@@ -151,8 +158,9 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,			sub { &send_password(); exp_continue } ],
 	[ qr/login:\s*$/i,			sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
+	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
 	[ 'eof',				sub { &capture("[$host] (auth) EOF\n") } ],
-	[ qr/known_hosts\?/i,			sub { $exp->slave->stty(qw(-echo)); $exp->send("yes\n");
+	[ qr/Add to known_hosts\?/i,		sub { $exp->slave->stty(qw(-echo)); $exp->send("yes\n");
 						  $exp->slave->stty(qw(echo)); exp_continue } ],
 	  # Expect TIMEOUT
 	[ 'timeout',				sub { die "[$host] (auth) Timeout\n" } ], 
@@ -298,9 +306,9 @@ sub send_password {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ru=remote_user]]\n";
+	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-ou=okta_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]\n";
-	print "\t<[username|remote_user@]host> [<command>]\n\n";
+	print "\t<[username|okta_user@]host[,\$via]> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
@@ -309,7 +317,7 @@ sub usage {
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
 	print "\t        (Default bastion_user: Okta username -sft login-)\n";
-	print "\t   -ru : Remote user (default: Okta username)\n";
+	print "\t   -ou : Okta user (default: Okta username)\n";
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
