@@ -21,9 +21,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 *Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` *(preferred method)* or using the `sudo` command.
 
-The latest release is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm).
-
-The `-via` option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma, like so: `host,[bastion_user@]bastion`.
+The latest release is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm). The `-via` option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma, like so: `host,[bastion_user@]bastion`.
 
 ## Sample Output
 
