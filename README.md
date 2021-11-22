@@ -184,7 +184,6 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
             (Default bastion_user: Okta username -sft login-)
        -ou : Okta user (default: Okta username)
      -sshOpts : Additional SSH options
-     -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
      -timeout : Timeout value for Expect (default: 20 seconds)
