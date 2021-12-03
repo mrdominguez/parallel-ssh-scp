@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.0\n";
-	print "Release date: 2021-11-21\n";
+	print "Version: 4.1\n";
+	print "Release date: 2021-12-03\n";
 	exit;
 }
 
@@ -151,8 +151,8 @@ my $pw_sent = 0;
 print "PID: $pid\n" if $v;
 
 $exp->expect($int_opts->{'timeout'},
-  	  # Are you sure you want to continue connecting (yes/no)?
-	[ '\(yes/no\)\?\s*$',			sub { print "The authenticity of host \'$host\' can't be established\n";
+  	  # Are you sure you want to continue connecting (yes/no/[fingerprint])?
+	[ '\(yes/no(/.*)?\)\?\s*$',		sub { print "The authenticity of host \'$host\' can't be established\n";
 						  $exp->send("yes\n");
 						  exp_continue } ],
 	[ qr/password.*:\s*$/i,			sub { &send_password(); exp_continue } ],
@@ -229,9 +229,9 @@ shift @cmd_output;
 my $rc;
 $exp->send("echo \$\?\n");
 $exp->expect($int_opts->{'timeout'},
-	[ '\r\n', 	sub { $rc = $exp->before(); exp_continue } ],
-	[ 'eof', 	sub { &capture("[$host] (rc) EOF\n") } ],
-	[ 'timeout', 	sub { die "[$host] (rc) Timeout\n" } ],
+	[ '\r\n',	sub { $rc = $exp->before(); exp_continue } ],
+	[ 'eof',	sub { &capture("[$host] (rc) EOF\n") } ],
+	[ 'timeout',	sub { die "[$host] (rc) Timeout\n" } ],
 	[ $shell_prompt ]
 );
 
