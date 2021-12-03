@@ -106,7 +106,7 @@ if ( defined $password ) {
 }
 
 # Using -q (quiet mode) will make expect timeout for large files because the progress meter is disabled
-my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no';
+my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no -o UserKnownHostsFile=/dev/null';
 if ( $via ) {
 	$scp .= " -o 'ProxyCommand sft proxycommand --via $via ";
 	$scp .= "$ou\@" if $ou;
@@ -199,7 +199,7 @@ sub usage {
 	print "\t        (Default bastion_user: Okta username -sft login-)\n";
 	print "\t   -ou : Okta user (default: Okta username)\n";
 	print "\t -sshOpts : Additional SSH options\n";
-	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
+	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no -o UserKnownHostsFile=/dev/null)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
 	print "\t -timeout : Timeout value for Expect (default: $timeout_default seconds)\n";
 	print "\t -tolocal : Copy from remote host to local host (default: local -> remote)\n";
