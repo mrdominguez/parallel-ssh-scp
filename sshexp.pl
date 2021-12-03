@@ -159,7 +159,7 @@ $exp->expect($int_opts->{'timeout'},
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
 	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
 	[ 'eof',				sub { &capture("[$host] (auth) EOF\n") } ],
-	[ qr/Add to known_hosts\?/i,		sub { &send_yes() } ],
+	[ qr/Add to known_hosts\?.*/i,		sub { &send_yes() } ],
 	  # Expect TIMEOUT
 	[ 'timeout',				sub { die "[$host] (auth) Timeout\n" } ], 
 	[ $shell_prompt ]
