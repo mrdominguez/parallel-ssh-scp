@@ -141,13 +141,11 @@ print "PID: $pid\n" if $v;
 $exp->expect($timeout,
           # Are you sure you want to continue connecting (yes/no/[fingerprint])?
 	[ '\(yes/no(/.*)?\)\?\s*$',	sub { print "The authenticity of host \'$host\' can't be established\n" if $v;
-	  				  $exp->send("yes\n");
-					  exp_continue } ],
+	  				  &send_yes() } ],
 	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
 	[ qr/login:\s*$/i,		sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
-	[ qr/Add to known_hosts\?/i,	sub { $exp->slave->stty(qw(-echo)); $exp->send("yes\n");
-					  $exp->slave->stty(qw(echo)); exp_continue } ],
+	[ qr/Add to known_hosts\?/i,	sub { &send_yes() } ],
 	  # Expect TIMEOUT
 	[ 'timeout',			sub { die "[$host] Timeout\n" } ],
 	  # Use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
@@ -183,6 +181,13 @@ sub send_password {
 	} else {
 		die "[$host] Password required\n";
 	}
+}
+
+sub send_yes {
+	$exp->slave->stty(qw(-echo));
+	$exp->send("yes\n");
+	$exp->slave->stty(qw(echo));
+	exp_continue
 }
 
 sub usage {
