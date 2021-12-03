@@ -30,7 +30,7 @@ The latest release is compatible with the Okta ASA ScaleFT client when using the
 Note that SSH also allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Pass options via `-sshOpts` like so:
 
 ```
-mdssh|sshexp|scpexp -sshOpts='-J user@<bastion:port>' ...
+-sshOpts='-J user@<bastion:port>'
 ```
 
 ## Sample Output
