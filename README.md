@@ -27,7 +27,7 @@ The latest release is compatible with the Okta ASA ScaleFT client when using the
 [username@]host,[bastion_user@]bastion
 ```
 
-Note that SSH also allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Pass options via `-sshOpts` like so:
+Note that SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Pass options via `-sshOpts` like so:
 
 ```
 -sshOpts='-J user@<bastion:port>'
