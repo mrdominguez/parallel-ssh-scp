@@ -153,15 +153,13 @@ print "PID: $pid\n" if $v;
 $exp->expect($int_opts->{'timeout'},
   	  # Are you sure you want to continue connecting (yes/no/[fingerprint])?
 	[ '\(yes/no(/.*)?\)\?\s*$',		sub { print "The authenticity of host \'$host\' can't be established\n" if $v;
-						  $exp->send("yes\n");
-						  exp_continue } ],
+						  &send_yes() } ],
 	[ qr/password.*:\s*$/i,			sub { &send_password(); exp_continue } ],
 	[ qr/login:\s*$/i,			sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
 	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
 	[ 'eof',				sub { &capture("[$host] (auth) EOF\n") } ],
-	[ qr/Add to known_hosts\?/i,		sub { $exp->slave->stty(qw(-echo)); $exp->send("yes\n");
-						  $exp->slave->stty(qw(echo)); exp_continue } ],
+	[ qr/Add to known_hosts\?/i,		sub { &send_yes() } ],
 	  # Expect TIMEOUT
 	[ 'timeout',				sub { die "[$host] (auth) Timeout\n" } ], 
 	[ $shell_prompt ]
@@ -302,6 +300,13 @@ sub send_password {
 	} else {
 		die "[$host] Password required\n";
 	}
+}
+
+sub send_yes {
+	$exp->slave->stty(qw(-echo));
+	$exp->send("yes\n");
+	$exp->slave->stty(qw(echo));
+	exp_continue
 }
 
 sub usage {
