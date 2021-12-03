@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.0\n";
-	print "Release date: 2021-11-21\n";
+	print "Version: 4.1\n";
+	print "Release date: 2021-12-03\n";
 	exit;
 }
 
@@ -106,9 +106,9 @@ if ( defined $password ) {
 }
 
 # Using -q (quiet mode) will make expect timeout for large files because the progress meter is disabled
-my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no -o UserKnownHostsFile=/dev/null';
+my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no';
 if ( $via ) {
-	$scp .= " -o 'ProxyCommand sft proxycommand --via $via ";
+	$scp .= " -o UserKnownHostsFile=/dev/null -o 'ProxyCommand sft proxycommand --via $via ";
 	$scp .= "$ou\@" if $ou;
 	$scp .= "$host'";
 }
@@ -139,8 +139,8 @@ my $ret;
 print "PID: $pid\n" if $v;
 
 $exp->expect($timeout,
-          # Are you sure you want to continue connecting (yes/no)?
-	[ '\(yes/no\)\?\s*$',		sub { print "The authenticity of host \'$host\' can't be established\n";
+          # Are you sure you want to continue connecting (yes/no/[fingerprint])?
+	[ '\(yes/no(/.*)?\)\?\s*$',	sub { print "The authenticity of host \'$host\' can't be established\n";
 	  				  $exp->send("yes\n");
 					  exp_continue } ],
 	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
