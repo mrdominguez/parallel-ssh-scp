@@ -145,7 +145,7 @@ $exp->expect($timeout,
 	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
 	[ qr/login:\s*$/i,		sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
-	[ qr/Add to known_hosts\?/i,	sub { &send_yes() } ],
+	[ qr/Add to known_hosts\?.*/i,	sub { &send_yes() } ],
 	  # Expect TIMEOUT
 	[ 'timeout',			sub { die "[$host] Timeout\n" } ],
 	  # Use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
