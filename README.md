@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 4.0
+VERSION: 4.1
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -270,7 +270,7 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
        -ou : Okta user (default: Okta username)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
-                Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o UserKnownHostsFile=/dev/null'
+                Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
      -timeout : Timeout value for Expect (default: 20 seconds)
      -tolocal : Copy from remote host to local host (default: local -> remote)
                 If permissions allow it, non-existent local directories in <target_path> will be created
