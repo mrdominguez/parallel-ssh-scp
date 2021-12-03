@@ -140,7 +140,7 @@ print "PID: $pid\n" if $v;
 
 $exp->expect($timeout,
           # Are you sure you want to continue connecting (yes/no/[fingerprint])?
-	[ '\(yes/no(/.*)?\)\?\s*$',	sub { print "The authenticity of host \'$host\' can't be established\n";
+	[ '\(yes/no(/.*)?\)\?\s*$',	sub { print "The authenticity of host \'$host\' can't be established\n" if $v;
 	  				  $exp->send("yes\n");
 					  exp_continue } ],
 	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
