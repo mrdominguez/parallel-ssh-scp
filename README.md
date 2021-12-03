@@ -270,7 +270,7 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
        -ou : Okta user (default: Okta username)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
-                Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
+                Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o UserKnownHostsFile=/dev/null'
      -timeout : Timeout value for Expect (default: 20 seconds)
      -tolocal : Copy from remote host to local host (default: local -> remote)
                 If permissions allow it, non-existent local directories in <target_path> will be created
