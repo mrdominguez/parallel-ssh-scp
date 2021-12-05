@@ -123,7 +123,6 @@ if ( $via ) {
 }
 #print "$ssh\n" if $v;
 
-#my $shell_prompt = qr'[\~\$\>\#]\s$';
 # \s will match newline, use literal space instead
 my $shell_prompt = qr'\][\$\#] $';
 
@@ -154,7 +153,7 @@ $exp->expect($int_opts->{'timeout'},
   	  # Are you sure you want to continue connecting (yes/no/[fingerprint])?
 	[ '\(yes/no(/.*)?\)\?\s*$',		sub { print "The authenticity of host \'$host\' can't be established\n" if $v;
 						  &send_yes() } ],
-	[ qr/password.*:\s*$/i,			sub { &send_password(); exp_continue } ],
+	[ qr/password.*:\s*$/i,			sub { &send_password() } ],
 	[ qr/login:\s*$/i,			sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
 	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
@@ -177,7 +176,7 @@ if ( $sudo ) {
 	$exp->send("$sudo_cmd\n");
 	$exp->expect($int_opts->{'timeout'},
  		  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
-		[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
+		[ qr/password.*:\s*$/i,		sub { &send_password() } ],
 		[ 'unknown',			sub { &capture("[$host] (sudo) ") } ],
 		[ 'does not exist',		sub { &capture("[$host] (sudo) ") } ],
 		[ 'not allowed to execute',	sub { &capture("[$host] (sudo) ") } ],
@@ -209,7 +208,7 @@ my @cmd_output;
 $pw_sent = 0;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
-	[ qr/password.*:\s*$/i,		sub { &send_password(); exp_continue } ],
+	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
 	[ 'unknown',			sub { &capture("[$host] (sudo command) ") } ],
 	[ 'does not exist',		sub { &capture("[$host] (sudo command) ") } ],
 	[ 'not allowed to execute',	sub { &capture("[$host] (sudo command) ") } ],
@@ -300,13 +299,14 @@ sub send_password {
 	} else {
 		die "[$host] Password required\n";
 	}
+	exp_continue;
 }
 
 sub send_yes {
 	$exp->slave->stty(qw(-echo));
 	$exp->send("yes\n");
 	$exp->slave->stty(qw(echo));
-	exp_continue
+	exp_continue;
 }
 
 sub usage {
