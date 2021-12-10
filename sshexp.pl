@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 4.1\n";
-	print "Release date: 2021-12-03\n";
+	print "Release date: 2021-12-10\n";
 	exit;
 }
 
@@ -246,14 +246,19 @@ my $cmd_output_lines = scalar @cmd_output;
 $int_opts->{'olines'} = $cmd_output_lines if $int_opts->{'olines'} == 0;
 
 my $status_msg = "OK\n";
-if ( $rc ) {
-	$status_msg = "Error";
-	if ( looks_like_number($rc) ) {
-		$status_msg .= " (RC=$rc)\n"
-	} else {
-		$status_msg .= ": Unexpected exit code\n";
-		$rc = -1;
+if ( defined $rc ) {
+	if ( $rc ne '0' ) {
+		$status_msg = "Error";
+		if ( looks_like_number($rc) ) {
+			$status_msg .= " (RC=$rc)\n"
+		} else {
+			$status_msg .= ": Unexpected exit code\n";
+			$rc = -1;
+		}
 	}
+} else {
+	$status_msg = "Unknown: Could not get exit code\n";
+	$rc = 10;
 }
 
 if ( defined $int_opts->{'o'} && $int_opts->{'o'} == 1 && $cmd_output_lines ) {
