@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 4.1\n";
-	print "Release date: 2021-12-03\n";
+	print "Release date: 2021-12-10\n";
 	exit;
 }
 
@@ -154,14 +154,11 @@ $exp->expect($timeout,
 					  print "[$host] $output\n" if ( !$q && $output =~ /(%|ETA)/ );
 					  exp_continue; } ],
 );
-
 $exp->soft_close();
-
 $ret =~ s{^\Q$/\E}{};		# Remove newline character from start of string
 
-my $rc = ( $exp->exitstatus() >> 8 );
 my $status_msg = 'OK';
-
+my $rc = ( $exp->exitstatus() >> 8 );
 if ( $rc ) {
 	$status_msg = "Error (RC=$rc)\n$ret";
 }
