@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.1\n";
-	print "Release date: 2021-12-10\n";
+	print "Version: 4.2\n";
+	print "Release date: 2021-12-13\n";
 	exit;
 }
 
@@ -167,25 +167,32 @@ $exp->expect($int_opts->{'timeout'},
 $pw_sent = 0;
 my $sudo_user;
 if ( $sudo ) {
-	my $sudo_cmd;
 	$sudo_user = $sudo eq '1' ? 'root' : $sudo;
 	print "[$host] Sudoing to user $sudo_user\n" if $v;
-#	$sudo_cmd = "sudo su - $sudo_user";
-	$sudo_cmd = "sudo -i -u $sudo_user";
+	my $sudo_cmd1 = "sudo -i -u $sudo_user";
+	my $sudo_cmd2 = "sudo su - $sudo_user";
 
-	$exp->send("$sudo_cmd\n");
-	$exp->expect($int_opts->{'timeout'},
- 		  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
-		[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-		[ 'unknown',			sub { &capture("[$host] (sudo) ") } ],
-		[ 'does not exist',		sub { &capture("[$host] (sudo) ") } ],
-		[ 'not allowed to execute',	sub { &capture("[$host] (sudo) ") } ],
-		[ 'not in the sudoers file',	sub { &capture("[$host] (sudo) ") } ],
-		[ '\r\n',			sub { exp_continue } ],
-		[ 'eof',			sub { &capture("[$host] (sudo) EOF\n") } ],
-		[ 'timeout',			sub { die "[$host] (sudo) Timeout\n" } ],
-		[ $shell_prompt ]
-	);
+	&send_sudo($sudo_cmd1);
+
+	sub send_sudo {
+		my $sudo_cmd = shift;
+		$exp->send("$sudo_cmd\n");
+		$exp->expect($int_opts->{'timeout'},
+			  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
+			[ qr/password.*:\s*$/i,		sub { &send_password() } ],
+			[ 'unknown',			sub { &capture("[$host] (sudo) ") } ],
+			[ 'does not exist',		sub { &capture("[$host] (sudo) ") } ],
+			[ 'not allowed to execute',	sub { &capture("[$host] (sudo) ") } ],
+			[ 'not in the sudoers file',	sub { &capture("[$host] (sudo) ") } ],
+			[ 'Need at least 3 arguments',	sub { print "[$host] Sudo issue... trying different sudo command\n";
+							  &send_sudo($sudo_cmd2);
+							  exp_continue } ],
+			[ '\r\n',			sub { exp_continue } ],
+			[ 'eof',			sub { &capture("[$host] (sudo) EOF\n") } ],
+			[ 'timeout',			sub { die "[$host] (sudo) Timeout\n" } ],
+			[ $shell_prompt ]
+		)
+	}
 }
 
 if ( !defined $cmd ) {
