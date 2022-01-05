@@ -1,6 +1,6 @@
 #!/usr/bin/perl -ws
 
-# Copyright 2021 Mariano Dominguez
+# Copyright 2022 Mariano Dominguez
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 4.2\n";
-	print "Release date: 2021-12-13\n";
+	print "Release date: 2022-01-05\n";
 	exit;
 }
 
@@ -152,7 +152,7 @@ if ( $v ) {
 }
 
 if ( $scp ) {
-	$target = $ENV{HOME} if !$target;
+	$target = '.' if !$target;
 	if ( $v ) {
 		print "Executing SCP (copy ";
 		print $tolocal ? "to " : "from ";
@@ -348,7 +348,7 @@ sub usage {
 	print "\t              If permissions allow it, non-existent local directories will be created\n";
 	print "\t   -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
 	print "\t   -r : Recursively copy entire directories\n";
-	print "\t   -target : Target path (default: \$HOME)\n";
+	print "\t   -target : Target path (default: '.' -dot, or current directory-)\n";
 	print "\t   -meter : Display scp progress (default: disabled)\n";
 	print "\t -tcount : Number of forked processes before throttling (default: $tcount_default)\n";
 	print "\t -ttime : Throttling time (default: $ttime_default seconds)\n";
