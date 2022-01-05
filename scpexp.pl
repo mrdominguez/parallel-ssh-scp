@@ -1,6 +1,6 @@
 #!/usr/bin/perl -ws
 
-# Copyright 2021 Mariano Dominguez
+# Copyright 2022 Mariano Dominguez
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 4.2\n";
-	print "Release date: 2021-12-13\n";
+	print "Release date: 2022-01-05\n";
 	exit;
 }
 
@@ -47,7 +47,7 @@ $timeout = $timeout_default unless $timeout;
 die "-timeout ($timeout) is not an integer\n" if $timeout =~ /\D/;
 
 my ($spath, $host) = @ARGV;
-my $tpath = $ARGV[2] || $ENV{HOME};
+my $tpath = $ARGV[2] || '.';
 
 if ( $host =~ /(.+),([^\s].+[^\s])?/ ) {
 	$host = $1;
@@ -213,7 +213,7 @@ sub usage {
 	print "\t -v : Enable verbose messages\n";
 	print "\t -d : Expect debugging\n";
 	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
-	print "\t If omitted, <target_path> default value is \$HOME\n";
+	print "\t If omitted, <target_path> defaults to '.' (dot, or current directory)\n";
 	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n\n";
 	exit;
 }
