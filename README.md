@@ -204,7 +204,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
                   If permissions allow it, non-existent local directories will be created
        -multiauth : Always authenticate when password prompted (default: single authentication attempt)
        -r : Recursively copy entire directories
-       -target : Target path (default: $HOME)
+       -target : Target path (default: '.' -dot, or current directory-)
        -meter : Display scp progress (default: disabled)
      -tcount : Number of forked processes before throttling (default: 25)
      -ttime : Throttling time (default: 5 seconds)
@@ -286,7 +286,7 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -v : Enable verbose messages
      -d : Expect debugging
      Use environment variables $SSH_USER and $SSH_PASS to pass credentials
-     If omitted, <target_path> default value is $HOME
+     If omitted, <target_path> defaults to '.' (dot, or current directory) 
      Enable -multiauth along with -tolocal when <source_path> uses brace expansion
 ```
 
