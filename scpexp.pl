@@ -33,8 +33,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.3\n";
-	print "Release date: 2022-01-05\n";
+	print "Version: 4.4\n";
+	print "Release date: 2022-01-06\n";
 	exit;
 }
 
@@ -80,7 +80,7 @@ if ( $v ) {
 	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
 
-if ( $u && $u eq '1' && !$via ) {
+if ( $u && $u eq '1' ) {
 	$u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
 	die "Timed out\n" if $u->timedout;
 	print "Using default username\n" if $u->defaulted;
@@ -88,7 +88,7 @@ if ( $u && $u eq '1' && !$via ) {
 my $username = ( $via && $ru ) ? $ru : ( $u || $ENV{SSH_USER} || $ENV{USER} );
 print "username = $username\n" if $v;
 
-if ( $p && $p eq '1' && !$via ) {
+if ( $p && $p eq '1' ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
 	die "Timed out\n" if $p->timedout;
 }
@@ -142,19 +142,21 @@ print "PID: $pid\n" if $v;
 
 $exp->expect($timeout,
           # Are you sure you want to continue connecting (yes/no/[fingerprint])?
-	[ '\(yes/no(/.*)?\)\?\s*$',	sub { print "The authenticity of host \'$host\' can't be established\n" if $v;
-	  				  &send_yes() } ],
-	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-	[ qr/login:\s*$/i,		sub { $exp->send("$username\n"); exp_continue } ],
+	[ '\(yes/no(/.*)?\)\?\s*$',		sub {
+						  print "The authenticity of host \'$host\' can't be established\n" if $v;
+		  				  &send_yes() } ],
+	[ qr/password.*:\s*$/i,			sub { &send_password() } ],
+	[ qr/login:\s*$/i,			sub { $exp->send("$username\n"); exp_continue } ],
 	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
-	[ qr/Add to known_hosts\?.*/i,	sub { &send_yes() } ],
+	[ qr/Add to known_hosts\?.*/i,		sub { &send_yes() } ],
 	  # Expect TIMEOUT
-	[ 'timeout',			sub { die "[$host] Timeout\n" } ],
+	[ 'timeout',				sub { die "[$host] Timeout\n" } ],
 	  # Use \r (instead of \r\n) so there is a match to restart the timeout as the progress meter changes
-	[ '\r',				sub { my $output = $exp->before();
-					  $ret .= $output;
-					  print "[$host] $output\n" if ( !$q && $output =~ /(%|ETA)/ );
-					  exp_continue; } ],
+	[ '\r',					sub {
+						  my $output = $exp->before();
+						  $ret .= $output;
+						  print "[$host] $output\n" if ( !$q && $output =~ /(%|ETA)/ );
+						  exp_continue; } ],
 );
 $exp->soft_close();
 $ret =~ s{^\Q$/\E}{};		# Remove newline character from start of string
