@@ -201,8 +201,9 @@ sub usage {
 	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
-	print "\t   -bu : Bastion user (default: Okta username -sft login-)\n";
-	print "\t   -ru : Remote user (default: Okta username)\n";
+	print "\t   -bu : Bastion user\n";
+	print "\t   -ru : Remote user\n";
+	print "\t         (default: Okta username -sft login-)\n";
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no -o UserKnownHostsFile=/dev/null)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
