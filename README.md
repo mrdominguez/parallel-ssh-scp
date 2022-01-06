@@ -183,7 +183,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
     [-o[=0|1] -olines=n -odir=path] [-v [-timestamp]]
-    (-s="[username1@]host1[,$via1] [username2@]host2[,$via2] ..." | -f=hosts_file) <command|source_path>
+    (-s="[user1@]host1[,$via1] [user2@]host2[,$via2] ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
      -version : Display version information
