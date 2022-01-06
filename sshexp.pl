@@ -21,7 +21,8 @@ use strict;
 use Expect;
 use File::Basename;
 use IO::Prompter;
-use Scalar::Util qw(looks_like_number);
+
+BEGIN { $| = 1 }
 
 our ($help, $version, $u, $p, $sudo, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $v, $d);
 
@@ -33,8 +34,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.3\n";
-	print "Release date: 2022-01-05\n";
+	print "Version: 4.4\n";
+	print "Release date: 2022-01-06\n";
 	exit;
 }
 
@@ -86,7 +87,7 @@ if ( $v ) {
 	print "sshOpts = $sshOpts\n" if $sshOpts;
 }
 
-if ( $u && $u eq '1' && !$via ) {
+if ( $u && $u eq '1' ) {
         $u = prompt "Username [$ENV{USER}]:", -in=>*STDIN, -timeout=>30, -default=>"$ENV{USER}";
         die "Timed out\n" if $u->timedout;
 	print "Using default username\n" if $u->defaulted;
@@ -94,7 +95,7 @@ if ( $u && $u eq '1' && !$via ) {
 my $username = $u || $ENV{SSH_USER} || $ENV{USER};
 print "username = $username\n" if $v;
 
-if ( $p && $p eq '1' && !$via ) {
+if ( $p && $p eq '1' ) {
 	$p = prompt 'Password:', -in=>*STDIN, -timeout=>30, -echo=>'';
 	die "Timed out\n" if $p->timedout;
 }
@@ -153,16 +154,17 @@ print "PID: $pid\n" if $v;
 
 $exp->expect($int_opts->{'timeout'},
   	  # Are you sure you want to continue connecting (yes/no/[fingerprint])?
-	[ '\(yes/no(/.*)?\)\?\s*$',		sub { print "The authenticity of host \'$host\' can't be established\n" if $v;
-						  &send_yes() } ],
-	[ qr/password.*:\s*$/i,			sub { &send_password() } ],
-	[ qr/login:\s*$/i,			sub { $exp->send("$username\n"); exp_continue } ],
-	[ 'Host key verification failed',	sub { die "[$host] (auth) Host key verification failed\n" } ],
+	[ '\(yes/no(/.*)?\)\?\s*$',			sub {
+							  print "The authenticity of host \'$host\' can't be established\n" if $v;
+							  &send_yes() } ],
+	[ qr/password.*:\s*$/i,				sub { &send_password() } ],
+	[ qr/login:\s*$/i,				sub { $exp->send("$username\n"); exp_continue } ],
+	[ 'Host key verification failed',		sub { die "[$host] (auth) Host key verification failed\n" } ],
 	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
-	[ 'eof',				sub { &capture("[$host] (auth) EOF\n") } ],
-	[ qr/Add to known_hosts\?.*/i,		sub { &send_yes() } ],
+	[ 'eof',					sub { &capture("[$host] (auth) EOF\n") } ],
+	[ qr/Add to known_hosts\?.*/i,			sub { &send_yes() } ],
 	  # Expect TIMEOUT
-	[ 'timeout',				sub { die "[$host] (auth) Timeout\n" } ], 
+	[ 'timeout',					sub { die "[$host] (auth) Timeout\n" } ], 
 	[ $shell_prompt ]
 );
 
@@ -186,7 +188,8 @@ if ( $sudo ) {
 			[ 'does not exist',		sub { &capture("[$host] (sudo) ") } ],
 			[ 'not allowed to execute',	sub { &capture("[$host] (sudo) ") } ],
 			[ 'not in the sudoers file',	sub { &capture("[$host] (sudo) ") } ],
-			[ 'Need at least 3 arguments',	sub { print "[$host] Sudo issue... trying different sudo command\n";
+			[ 'Need at least 3 arguments',	sub {
+							  print "[$host] Sudo issue... trying different sudo command\n";
 							  &send_sudo($sudo_cmd2);
 							  exp_continue } ],
 			[ '\r\n',			sub { exp_continue } ],
@@ -222,9 +225,11 @@ $exp->expect($int_opts->{'timeout'},
 	[ 'does not exist',		sub { &capture("[$host] (sudo command) ") } ],
 	[ 'not allowed to execute',	sub { &capture("[$host] (sudo command) ") } ],
 	[ 'not in the sudoers file',	sub { &capture("[$host] (sudo command) ") } ],
-	[ '\r\n',			sub { push @cmd_output, $exp->before() if $exp->before();
-				 	  print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 && $exp->before() );
-					  exp_continue } ],
+	[ '\r\n',			sub {
+					  push @cmd_output, $exp->before() if $exp->before();
+  					  print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 && $exp->before() );
+					  exp_continue
+					} ],
 	[ 'eof',			sub { &capture("[$host] (cmd) EOF\n") } ],
 	[ 'timeout',			sub { die "[$host] (cmd) Timeout\n" } ],
 	[ $shell_prompt ]
@@ -233,9 +238,9 @@ $exp->expect($int_opts->{'timeout'},
 shift @cmd_output;
 
 my $rc;
-$exp->send("echo \$\?\n");
+$exp->send("echo \"sshexp rc: \$\?\"\n");
 $exp->expect($int_opts->{'timeout'},
-	[ '\r\n',	sub { $rc = $exp->before(); exp_continue } ],
+	[ '\r\n',	sub { ( $exp->before() && $exp->before =~ /sshexp rc: \d+/ ) ? $rc = $exp->before() : exp_continue } ],
 	[ 'eof',	sub { &capture("[$host] (rc) EOF\n") } ],
 	[ 'timeout',	sub { die "[$host] (rc) Timeout\n" } ],
 	[ $shell_prompt ]
@@ -256,15 +261,8 @@ $int_opts->{'olines'} = $cmd_output_lines if $int_opts->{'olines'} == 0;
 
 my $status_msg = "OK\n";
 if ( defined $rc ) {
-	if ( $rc ne '0' ) {
-		$status_msg = "Error";
-		if ( looks_like_number($rc) ) {
-			$status_msg .= " (RC=$rc)\n"
-		} else {
-			$status_msg .= ": Unexpected exit code\n";
-			$rc = -1;
-		}
-	}
+	($rc) = $rc =~ /: (.+)$/;
+	$status_msg = "Error (RC=$rc)\n" if ( $rc != 0 );
 } else {
 	$status_msg = "Unknown: Could not get exit code\n";
 	$rc = 10;
@@ -300,7 +298,7 @@ sub capture {
 		$msg .= $exp_output;
 	}
 	print $msg;
-	exit -1;
+	exit 12;
 }
 
 sub send_password {
