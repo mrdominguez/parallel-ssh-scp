@@ -191,8 +191,9 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -via : Bastion host for Okta ASA sft client
-       -bu : Bastion user (default: Okta username -sft login-)
-       -ru : Remote user (default: Okta username)
+       -bu : Bastion user
+       -ru : Remote user
+             (default: Okta username -sft login-)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
@@ -243,8 +244,9 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -via : Bastion host for Okta ASA sft client
-       -bu : Bastion user (default: Okta username -sft login-)
-       -ru : Remote user (default: Okta username)
+       -bu : Bastion user
+       -ru : Remote user
+             (default: Okta username -sft login-)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
@@ -272,8 +274,9 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
      -p : Password or path to password file (default: undef)
      -via : Bastion host for Okta ASA sft client
-       -bu : Bastion user (default: Okta username -sft login-)
-       -ru : Remote user (default: Okta username)
+       -bu : Bastion user
+       -ru : Remote user
+             (default: Okta username -sft login-)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
