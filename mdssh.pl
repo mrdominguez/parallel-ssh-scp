@@ -23,10 +23,13 @@ use POSIX qw/:sys_wait_h strftime/;
 use Data::Dumper;
 use File::Path qw(make_path);
 use IO::Prompter;
+use Time::HiRes qw( time );
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
+my $start = time();
+
+our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
 my $threads_default = 10;
 my $tcount_default = 25;
 my $ttime_default = 5;
@@ -37,8 +40,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.4\n";
-	print "Release date: 2022-01-06\n";
+	print "Version: 5.0\n";
+	print "Release date: 2022-01-07\n";
 	exit;
 }
 
@@ -108,6 +111,7 @@ if ( $v ) {
 	print "bu = $bu\n" if $bu;
 	print "ru = $ru\n" if $ru;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
+	print "Background mode enabled\n" if $bg;
 }
 
 if ( $u && $u eq '1' ) {
@@ -222,7 +226,11 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 	}
 }
 
-print "\n";
+print "\n-----\n";
+my $end = time();
+printf("Execution Time: %0.02f s\n", $end - $start);
+
+# End of script
 
 sub log_trace {
 	my $date = strftime "%m/%d/%Y %H:%M:%S", localtime;
@@ -282,6 +290,7 @@ sub fork_process {
 		system $cmd;
 	} else {
 		$app .= " -sudo=$sudo_user" if $sudo;
+		$app .= " -bg" if $bg;
 		$app .= " -o=$int_opts->{'o'}" if defined $int_opts->{'o'};
 		$app .= " -olines=$int_opts->{'olines'}" if defined $olines;
 		$app .= " -odir=$odir" if defined $odir;
@@ -336,6 +345,7 @@ sub usage {
 	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
+	print "\t -bg : Background mode (exit after sending command)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
 	print "\t   -bu : Bastion user\n";
 	print "\t   -ru : Remote user\n";
@@ -358,7 +368,7 @@ sub usage {
 	print "\t -o : (Not defined) Buffer the output and display it after command completion\n";
 	print "\t      (0) Do not display command output\n";
 	print "\t      (1) Display command output as it happens\n";
-	print "\t -olines : Ignore -o and display the last n lines of buffered output (default: $olines_default | full output: 0)\n";
+	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=0)\n";
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
 	print "\t -v : Enable verbose messages / progress information\n";
