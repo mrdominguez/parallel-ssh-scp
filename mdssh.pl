@@ -333,7 +333,7 @@ sub check_process {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
+	print "\t[-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
