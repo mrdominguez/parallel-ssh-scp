@@ -21,10 +21,11 @@ use strict;
 use Expect;
 use File::Basename;
 use IO::Prompter;
+use Time::HiRes qw( time );
 
-BEGIN { $| = 1 }
+my $start = time();
 
-our ($help, $version, $u, $p, $sudo, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $v, $d);
+our ($help, $version, $u, $p, $sudo, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $v, $d);
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging	
@@ -34,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.4\n";
-	print "Release date: 2022-01-06\n";
+	print "Version: 5.0\n";
+	print "Release date: 2022-01-07\n";
 	exit;
 }
 
@@ -85,6 +86,7 @@ if ( $v ) {
 	print "bu = $bu\n" if $bu;
 	print "ru = $ru\n" if $ru;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
+	print "Background mode enabled\n" if $bg;
 }
 
 if ( $u && $u eq '1' ) {
@@ -152,6 +154,7 @@ my $pw_sent = 0;
 
 print "PID: $pid\n" if $v;
 
+my @exp_output;
 $exp->expect($int_opts->{'timeout'},
   	  # Are you sure you want to continue connecting (yes/no/[fingerprint])?
 	[ '\(yes/no(/.*)?\)\?\s*$',			sub {
@@ -159,8 +162,9 @@ $exp->expect($int_opts->{'timeout'},
 							  &send_yes() } ],
 	[ qr/password.*:\s*$/i,				sub { &send_password() } ],
 	[ qr/login:\s*$/i,				sub { $exp->send("$username\n"); exp_continue } ],
-	[ 'Host key verification failed',		sub { die "[$host] (auth) Host key verification failed\n" } ],
-	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
+#	[ 'Host key verification failed',		sub { die "[$host] (auth) Host key verification failed\n" } ],
+#	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
+	[ '\r\n',					sub { &collect_output($exp->before()) } ],
 	[ 'eof',					sub { &capture("[$host] (auth) EOF\n") } ],
 	[ qr/Add to known_hosts\?.*/i,			sub { &send_yes() } ],
 	  # Expect TIMEOUT
@@ -168,6 +172,7 @@ $exp->expect($int_opts->{'timeout'},
 	[ $shell_prompt ]
 );
 
+@exp_output = ();
 $pw_sent = 0;
 my $sudo_user;
 if ( $sudo ) {
@@ -216,31 +221,28 @@ if ( !defined $cmd ) {
 	exit;
 }
 
-my @cmd_output;
 $pw_sent = 0;
 $exp->send("$cmd\n");
+if ( $bg ) {
+	$exp->send_slow(1,"exit\n");
+	$exp->send_slow(1,"exit\n") if $sudo;
+}
 $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
 	[ 'unknown',			sub { &capture("[$host] (sudo command) ") } ],
 	[ 'does not exist',		sub { &capture("[$host] (sudo command) ") } ],
 	[ 'not allowed to execute',	sub { &capture("[$host] (sudo command) ") } ],
 	[ 'not in the sudoers file',	sub { &capture("[$host] (sudo command) ") } ],
-	[ '\r\n',			sub {
-					  push @cmd_output, $exp->before() if $exp->before();
-  					  print "$cmd_output[-1]\n" if ( !defined $int_opts->{'o'} && $#cmd_output > 0 && $exp->before() );
-					  exp_continue
-					} ],
+	[ '\r\n',			sub { &collect_output($exp->before()) } ],
 	[ 'eof',			sub { &capture("[$host] (cmd) EOF\n") } ],
 	[ 'timeout',			sub { die "[$host] (cmd) Timeout\n" } ],
 	[ $shell_prompt ]
 );
 
-shift @cmd_output;
-
 my $rc;
-$exp->send("echo \"sshexp rc: \$\?\"\n");
+$exp->send("echo \"(cmd) rc: \$\?\"\n");
 $exp->expect($int_opts->{'timeout'},
-	[ '\r\n',	sub { ( $exp->before() && $exp->before =~ /sshexp rc: \d+/ ) ? $rc = $exp->before() : exp_continue } ],
+	[ '\r\n',	sub { ( $exp->before() && $exp->before =~ /\(cmd\) rc: \d+/ ) ? $rc = $exp->before() : exp_continue } ],
 	[ 'eof',	sub { &capture("[$host] (rc) EOF\n") } ],
 	[ 'timeout',	sub { die "[$host] (rc) Timeout\n" } ],
 	[ $shell_prompt ]
@@ -256,9 +258,6 @@ $exp->send("exit\n");
 #$exp->hard_close();
 $exp->soft_close();
 
-my $cmd_output_lines = scalar @cmd_output;
-$int_opts->{'olines'} = $cmd_output_lines if $int_opts->{'olines'} == 0;
-
 my $status_msg = "OK\n";
 if ( defined $rc ) {
 	($rc) = $rc =~ /: (.+)$/;
@@ -268,15 +267,13 @@ if ( defined $rc ) {
 	$rc = 10;
 }
 
-if ( defined $int_opts->{'o'} && $int_opts->{'o'} == 1 && $cmd_output_lines ) {
-	$status_msg .= ( $int_opts->{'olines'} < $cmd_output_lines ) ? join("\n", @cmd_output[-$int_opts->{'olines'}..-1]) : join("\n", @cmd_output);
-	$status_msg .= "\n";
-}
+my $msg_output = &format_output();
+$status_msg .= $msg_output if $msg_output;
 
 if ( defined $odir ) {
 	my $output_file = $odir . '/' . $host . '_' . "$pid.output";
         if ( open my $fh, '>', $output_file ) {
-		print $fh join("\n", @cmd_output);
+		print $fh join("\n", @exp_output);
 		close $fh;
 	} else {
 		$status_msg .= "Can't create file $output_file: $!\n";
@@ -284,6 +281,9 @@ if ( defined $odir ) {
 }
 
 print "[$host] [$pid] -> $status_msg";
+
+my $end = time();
+printf("Execution Time: %0.02f s\n", $end - $start);
 exit $rc;
 
 # End of script
@@ -293,12 +293,50 @@ sub capture {
 	my $exp_output = $exp->before() if $exp->before();
 	$exp_output .= $exp->match() if $exp->match();
 	$exp_output .= $exp->after() if $exp->after();
+
 	if ( $exp_output ) {
 		$exp_output =~ s/\r\n.*/\n/gs;
 		$msg .= $exp_output;
 	}
+
+        my $output = &format_output();
 	print $msg;
-	exit 12;
+	print $output if $output;
+
+	my $exit_code;
+	if ( $msg =~ /\(auth\)/ ) {
+		$exit_code=11
+	} elsif ( $msg =~ /\(sudo\)/ ) {
+		$exit_code=12
+	} elsif ( $msg =~ /\(sudo command\)/ ) {
+		$exit_code=13
+	} elsif ( $msg =~ /\(cmd\)/ ) {
+		$exit_code=14
+	} elsif ( $msg =~ /\(rc\)/ ) {
+		$exit_code=15
+	}
+	exit $exit_code;
+}
+
+sub collect_output {
+	push @exp_output, $exp->before() if $exp->before();
+	if ( !defined $int_opts->{'o'} && scalar(@exp_output) > 0 && $exp->before() ) {
+		print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n"; 
+	}
+	exp_continue;
+}
+
+sub format_output {
+	shift @exp_output;
+	my $exp_output_lines = scalar(@exp_output);
+	$int_opts->{'olines'} = $exp_output_lines if $int_opts->{'olines'} == 0;
+
+	my $output;
+	if ( defined $int_opts->{'o'} && $int_opts->{'o'} == 1 && $exp_output_lines ) {
+		$output .= ( $int_opts->{'olines'} < $exp_output_lines ) ? join("\n", @exp_output[-$int_opts->{'olines'}..-1]) : join("\n", @exp_output);
+		$output .= "\n";
+		return $output;
+	}
 }
 
 sub send_password {
@@ -323,7 +361,7 @@ sub send_yes {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
+	print "\t[-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]\n";
 	print "\t<[username|remote_user@]host[,\$via]> [<command>]\n\n";
 
@@ -332,6 +370,7 @@ sub usage {
 	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
+	print "\t -bg : Background mode (exit after sending command)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
 	print "\t   -bu : Bastion user\n";
 	print "\t   -ru : Remote user\n";
@@ -343,7 +382,7 @@ sub usage {
 	print "\t -o : (Not defined) Display command output as it happens\n";
 	print "\t      (0) Do not display command output\n";
 	print "\t      (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
-	print "\t -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)\n";
+	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=1)\n";
 	print "\t -odir : Directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t -v : Enable verbose messages\n";
 	print "\t -d : Expect debugging\n";
