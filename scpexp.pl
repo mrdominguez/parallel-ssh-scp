@@ -22,6 +22,9 @@ use Expect;
 use File::Basename;
 use File::Path qw(make_path);
 use IO::Prompter;
+use Time::HiRes qw( time );
+
+my $start = time();
 
 our ($help, $version, $u, $p, $via, $bu, $ru, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
 
@@ -33,8 +36,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 4.4\n";
-	print "Release date: 2022-01-06\n";
+	print "Version: 5.0\n";
+	print "Release date: 2022-01-07\n";
 	exit;
 }
 
@@ -168,6 +171,9 @@ if ( $rc ) {
 }
 
 print "[$host] [$pid] -> $status_msg\n";
+
+my $end = time();
+printf("Execution Time: %0.02f s\n", $end - $start);
 exit $rc;
 
 # End of script
