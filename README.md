@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 4.4
+VERSION: 5.0
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -178,7 +178,7 @@ Both username and password values are optional. If no value is provided, there w
 **mdssh.pl**
 ```
 Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
+    [-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
@@ -190,6 +190,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
+     -bg : Background mode (exit after sending command)
      -via : Bastion host for Okta ASA sft client
        -bu : Bastion user
        -ru : Remote user
@@ -212,7 +213,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -o : (Not defined) Buffer the output and display it after command completion
           (0) Do not display command output
           (1) Display command output as it happens
-     -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)
+     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -o=0)
      -odir : Local directory in which the command output will be stored as a file (default: $PWD -current folder-)
              If permissions allow it, the directory will be created if it does not exit
      -v : Enable verbose messages / progress information
@@ -234,7 +235,7 @@ NOTES:
 **sshexp.pl**
 ```
 Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-sudo[=sudo_user]] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
+    [-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]
     <[username|remote_user@]host[,$via]> [<command>]
 
@@ -243,6 +244,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
+     -bg : Background mode (exit after sending command)
      -via : Bastion host for Okta ASA sft client
        -bu : Bastion user
        -ru : Remote user
@@ -254,7 +256,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -o : (Not defined) Display command output as it happens
           (0) Do not display command output
           (1) Buffer the output and display it after command completion (useful for concurrent execution)
-     -olines : Ignore -o and display the last n lines of buffered output (default: 10 | full output: 0)
+     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -o=1)
      -odir : Directory in which the command output will be stored as a file (default: $PWD -current folder-)
      -v : Enable verbose messages
      -d : Expect debugging	 
