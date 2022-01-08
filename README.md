@@ -217,7 +217,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -odir : Local directory in which the command output will be stored as a file (default: $PWD -current folder-)
              If permissions allow it, the directory will be created if it does not exit
      -v : Enable verbose messages / progress information
-     -timestamp : Display timestamp
+     -timestamp : Display time (implies -v)
      -s : Space-separated list of hostnames (brace expansion supported)
      -f : File containing hostnames (one per line)
      Set -tcount or -ttime to 0 to disable throttling
