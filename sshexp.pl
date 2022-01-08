@@ -165,10 +165,10 @@ $exp->expect($int_opts->{'timeout'},
 #	[ 'Host key verification failed',		sub { die "[$host] (auth) Host key verification failed\n" } ],
 #	[ 'WARNING: REMOTE HOST IDENTIFICATION',	sub { die "[$host] (auth) Add correct host key in ~/.ssh/known_hosts\n" } ],
 	[ '\r\n',					sub { &collect_output() } ],
-	[ 'eof',					sub { &capture("[$host] (auth) EOF\n") } ],
+	[ 'eof',					sub { &capture('(auth) EOF') } ],
 	[ qr/Add to known_hosts\?.*/i,			sub { &send_yes() } ],
 	  # Expect TIMEOUT
-	[ 'timeout',					sub { die "[$host] (auth) Timeout\n" } ], 
+	[ 'timeout',					sub { &capture('(auth) Timeout') } ], 
 	[ $shell_prompt ]
 );
 
@@ -189,17 +189,17 @@ if ( $sudo ) {
 		$exp->expect($int_opts->{'timeout'},
 			  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
 			[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-			[ 'unknown',			sub { &capture("[$host] (sudo) ") } ],
-			[ 'does not exist',		sub { &capture("[$host] (sudo) ") } ],
-			[ 'not allowed to execute',	sub { &capture("[$host] (sudo) ") } ],
-			[ 'not in the sudoers file',	sub { &capture("[$host] (sudo) ") } ],
+			[ 'unknown user',		sub { &capture('(sudo)') } ],
+			[ 'does not exist',		sub { &capture('(sudo)') } ],
+			[ 'not allowed to execute',	sub { &capture('(sudo)') } ],
+			[ 'not in the sudoers file',	sub { &capture('(sudo)') } ],
 			[ 'Need at least 3 arguments',	sub {
 							  print "[$host] Sudo issue... trying different sudo command\n";
 							  &send_sudo($sudo_cmd2);
 							  exp_continue } ],
 			[ '\r\n',			sub { exp_continue } ],
-			[ 'eof',			sub { &capture("[$host] (sudo) EOF\n") } ],
-			[ 'timeout',			sub { die "[$host] (sudo) Timeout\n" } ],
+			[ 'eof',			sub { &capture('(sudo) EOF') } ],
+			[ 'timeout',			sub { &capture('(sudo) Timeout') } ],
 			[ $shell_prompt ]
 		)
 	}
@@ -221,21 +221,22 @@ if ( !defined $cmd ) {
 	exit;
 }
 
+@exp_output = ();
 $pw_sent = 0;
 $exp->send("$cmd\n");
 if ( $bg ) {
-	$exp->send_slow(1,"exit\n");
-	$exp->send_slow(1,"exit\n") if $sudo;
+	$exp->send("exit\n");
+	$exp->send("exit\n") if $sudo;
 }
 $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-	[ 'unknown',			sub { &capture("[$host] (sudo command) ") } ],
-	[ 'does not exist',		sub { &capture("[$host] (sudo command) ") } ],
-	[ 'not allowed to execute',	sub { &capture("[$host] (sudo command) ") } ],
-	[ 'not in the sudoers file',	sub { &capture("[$host] (sudo command) ") } ],
+	[ 'unknown user',		sub { &capture('(sudo command)') } ],
+	[ 'does not exist',		sub { &capture('(sudo command)') } ],
+	[ 'not allowed to execute',	sub { &capture('(sudo command)') } ],
+	[ 'not in the sudoers file',	sub { &capture('(sudo command)') } ],
 	[ '\r\n',			sub { &collect_output() } ],
-	[ 'eof',			sub { &capture("[$host] (cmd) EOF\n") } ],
-	[ 'timeout',			sub { die "[$host] (cmd) Timeout\n" } ],
+	[ 'eof',			sub { &capture('(cmd) EOF') } ],
+	[ 'timeout',			sub { &capture('(cmd) Timeout') } ],
 	[ $shell_prompt ]
 );
 
@@ -243,8 +244,8 @@ my $rc;
 $exp->send("echo \"(cmd) rc: \$\?\"\n");
 $exp->expect($int_opts->{'timeout'},
 	[ '\r\n',	sub { ( $exp->before() && $exp->before =~ /\(cmd\) rc: \d+/ ) ? $rc = $exp->before() : exp_continue } ],
-	[ 'eof',	sub { &capture("[$host] (rc) EOF\n") } ],
-	[ 'timeout',	sub { die "[$host] (rc) Timeout\n" } ],
+	[ 'eof',	sub { &capture('(rc) EOF') } ],
+	[ 'timeout',	sub { &capture('(rc) Timeout') } ],
 	[ $shell_prompt ]
 );
 
@@ -290,6 +291,7 @@ exit $rc;
 
 sub capture {
 	my $msg = shift;
+	$msg = "[$host] $msg\n";
 	my $exp_output = $exp->before() if $exp->before();
 	$exp_output .= $exp->match() if $exp->match();
 	$exp_output .= $exp->after() if $exp->after();
@@ -304,16 +306,26 @@ sub capture {
 	print $output if $output;
 
 	my $exit_code;
-	if ( $msg =~ /\(auth\)/ ) {
+	if ( $msg =~ /\(auth\) EOF/ ) {
 		$exit_code=11
-	} elsif ( $msg =~ /\(sudo\)/ ) {
+	} elsif ( $msg =~ /\(auth\) Timeout/ ) {
 		$exit_code=12
-	} elsif ( $msg =~ /\(sudo command\)/ ) {
+	} elsif ( $msg =~ /\(sudo\)/ ) {
 		$exit_code=13
-	} elsif ( $msg =~ /\(cmd\)/ ) {
+	} elsif ( $msg =~ /\(sudo\) EOF/ ) {
 		$exit_code=14
-	} elsif ( $msg =~ /\(rc\)/ ) {
+	} elsif ( $msg =~ /\(sudo\) Timeout/ ) {
 		$exit_code=15
+	} elsif ( $msg =~ /\(sudo command\)/ ) {
+		$exit_code=16
+	} elsif ( $msg =~ /\(cmd\) EOF/ ) {
+		$exit_code=17
+	} elsif ( $msg =~ /\(cmd\) Timeout/ ) {
+		$exit_code=18
+	} elsif ( $msg =~ /\(rc\) EOF/ ) {
+		$exit_code=19
+	} elsif ( $msg =~ /\(rc\) Timeout/ ) {
+		$exit_code=20
 	}
 	exit $exit_code;
 }
@@ -321,7 +333,7 @@ sub capture {
 sub collect_output {
 	push @exp_output, $exp->before() if $exp->before();
 	if ( !defined $int_opts->{'o'} && scalar(@exp_output) > 0 && $exp->before() ) {
-		print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n"; 
+		print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
 	}
 	exp_continue;
 }
