@@ -189,10 +189,10 @@ if ( $sudo ) {
 		$exp->expect($int_opts->{'timeout'},
 			  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
 			[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-			[ 'unknown user',		sub { &capture('(sudo)') } ],
-			[ 'does not exist',		sub { &capture('(sudo)') } ],
-			[ 'not allowed to execute',	sub { &capture('(sudo)') } ],
-			[ 'not in the sudoers file',	sub { &capture('(sudo)') } ],
+			[ 'unknown user',		sub { &capture('(sudo) Unknown user $sudo_user') } ],
+			[ 'does not exist',		sub { &capture('(sudo) User $sudo_user does not exist') } ],
+			[ 'not allowed to execute',	sub { &capture('(sudo) User $sudo_user not allowed to execute ...') } ],
+			[ 'not in the sudoers file',	sub { &capture('(sudo) User $sudo_user not in the sudoers file') } ],
 			[ 'Need at least 3 arguments',	sub {
 							  print "[$host] Sudo issue... trying different sudo command\n";
 							  &send_sudo($sudo_cmd2);
@@ -230,10 +230,10 @@ if ( $bg ) {
 }
 $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-	[ 'unknown user',		sub { &capture('(sudo command)') } ],
-	[ 'does not exist',		sub { &capture('(sudo command)') } ],
-	[ 'not allowed to execute',	sub { &capture('(sudo command)') } ],
-	[ 'not in the sudoers file',	sub { &capture('(sudo command)') } ],
+	[ 'unknown user',		sub { &capture('(sudo command) Unknown user $sudo_user') } ],
+	[ 'does not exist',		sub { &capture('(sudo command) User $sudo_user does not exist') } ],
+	[ 'not allowed to execute',	sub { &capture('(sudo command) User $sudo_user not allowed to execute ...') } ],
+	[ 'not in the sudoers file',	sub { &capture('(sudo command) User $sudo_user not in the sudoers file') } ],
 	[ '\r\n',			sub { &collect_output() } ],
 	[ 'eof',			sub { &capture('(cmd) EOF') } ],
 	[ 'timeout',			sub { &capture('(cmd) Timeout') } ],
