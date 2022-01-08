@@ -41,7 +41,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 5.0\n";
-	print "Release date: 2022-01-07\n";
+	print "Release date: 2022-01-08\n";
 	exit;
 }
 
@@ -98,6 +98,8 @@ if ( defined $odir ) {
 			or die "Can't create directory $odir: $!\n";
 	}
 }
+
+$v = 1 if $timestamp;
 
 if ( $v ) {
 	print "threads = $int_opts->{'threads'}\n";
@@ -227,15 +229,17 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 }
 
 print "\n-----\n";
-my $end = time();
-printf("Execution Time: %0.02f s\n", $end - $start);
+END {
+	my $end = time();
+	printf("Execution time: %0.02f s (aggregated)\n", $end - $start);
+}
 
 # End of script
 
 sub log_trace {
-	my $date = strftime "%m/%d/%Y %H:%M:%S", localtime;
+	my $date = strftime "%m/%d/%Y at %H:%M:%S", localtime;
 	my $trace = "@_";
-	$trace .= " ... [$date]" if $v && $timestamp;
+	$trace .= " _on_ $date" if $v && $timestamp;
 	print "$trace\n" if $v;
 }
 
@@ -372,7 +376,7 @@ sub usage {
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
 	print "\t -v : Enable verbose messages / progress information\n";
-	print "\t -timestamp : Display timestamp\n";
+	print "\t -timestamp : Display time (implies -v)\n";
 	print "\t -s : Space-separated list of hostnames (brace expansion supported)\n";
 	print "\t -f : File containing hostnames (one per line)\n";
 	print "\t Set -tcount or -ttime to 0 to disable throttling\n";
