@@ -184,7 +184,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
-    [-o[=0|1] -olines=n -odir=path] [-v [-timestamp]]
+    [-o[=0|1] -olines=n -odir=path] [-et] [-v [-timestamp]]
     (-s="[user1@]host1[,$via1] [user2@]host2[,$via2] ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
@@ -218,6 +218,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -o=0)
      -odir : Local directory in which the command output will be stored as a file (default: $PWD -current folder-)
              If permissions allow it, the directory will be created if it does not exit
+     -et : Hide execution time
      -v : Enable verbose messages / progress information
      -timestamp : Display time (implies -v)
      -s : Space-separated list of hostnames (brace expansion supported)
@@ -238,7 +239,7 @@ NOTES:
 ```
 Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
-    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]
+    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]
     <[username|remote_user@]host[,$via]> [<command>]
 
      -help : Display usage
@@ -260,6 +261,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
           (1) Buffer the output and display it after command completion (useful for concurrent execution)
      -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -o=1)
      -odir : Directory in which the command output will be stored as a file (default: $PWD -current folder-)
+     -et : Hide execution time
      -v : Enable verbose messages
      -d : Expect debugging	 
      Use environment variables $SSH_USER and $SSH_PASS to pass credentials
@@ -270,7 +272,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 ```
 Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
-    [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]
+    [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-et] [-v] [-d]
     <source_path> <[username|remote_user@]host[,$via]> [<target_path>]
 
      -help : Display usage
@@ -290,6 +292,7 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -multiauth : Always authenticate when password prompted (default: single authentication attempt)
      -q : Quiet mode disables the progress meter (default: enabled)
      -r : Recursively copy entire directories
+     -et : Hide execution time
      -v : Enable verbose messages
      -d : Expect debugging
      Use environment variables $SSH_USER and $SSH_PASS to pass credentials
