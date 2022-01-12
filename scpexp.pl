@@ -26,7 +26,7 @@ use Time::HiRes qw( time );
 
 my $start = time();
 
-our ($help, $version, $u, $p, $via, $bu, $ru, $sshOpts, $timeout, $tolocal, $r, $v, $multiauth, $q, $d);
+our ($help, $version, $u, $p, $via, $bu, $ru, $sshOpts, $timeout, $tolocal, $r, $et, $v, $multiauth, $q, $d);
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging
@@ -175,7 +175,7 @@ exit $rc;
 
 END {
 	my $end = time();
-	printf("Execution time: %0.02f s\n", $end - $start);
+	printf("Execution time: %0.02f s\n", $end - $start) unless $et;
 }
 
 # End of script
@@ -203,7 +203,7 @@ sub send_yes {
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-v] [-d]\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-et] [-v] [-d]\n";
 	print "\t<source_path> <[username|remote_user@]host[,\$via]> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
@@ -223,6 +223,7 @@ sub usage {
 	print "\t -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
 	print "\t -q : Quiet mode disables the progress meter (default: enabled)\n";
 	print "\t -r : Recursively copy entire directories\n";
+	print "\t -et : Hide execution time\n";
 	print "\t -v : Enable verbose messages\n";
 	print "\t -d : Expect debugging\n";
 	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
