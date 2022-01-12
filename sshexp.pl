@@ -25,7 +25,7 @@ use Time::HiRes qw( time );
 
 my $start = time();
 
-our ($help, $version, $u, $p, $sudo, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $v, $d);
+our ($help, $version, $u, $p, $sudo, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging	
@@ -287,7 +287,7 @@ exit $rc;
 
 END {
 	my $end = time();
-	printf("Execution time: %0.02f s\n", $end - $start);
+	printf("Execution time: %0.02f s\n", $end - $start) unless $et;
 }
 
 # End of script
@@ -379,7 +379,7 @@ sub send_yes {
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-v] [-d]\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]\n";
 	print "\t<[username|remote_user@]host[,\$via]> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
@@ -401,6 +401,7 @@ sub usage {
 	print "\t      (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
 	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=1)\n";
 	print "\t -odir : Directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
+	print "\t -et : Hide execution time\n";
 	print "\t -v : Enable verbose messages\n";
 	print "\t -d : Expect debugging\n";
 	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
