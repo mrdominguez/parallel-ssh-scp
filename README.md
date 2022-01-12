@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 5.0
+VERSION: 5.1
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -32,6 +32,8 @@ Note that SSH allows connecting to remote hosts though a proxy (or bastion) with
 ```
 -sshOpts='-J user@<bastion:port>'
 ```
+
+Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, since additional output can make the Expect library unreliable. For this reason, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
 
 ## Sample Output
 
