@@ -75,6 +75,7 @@ OK: 2 | kube-master localhost
 Error (RC=3): 1 | kube-node1
 ~
 Error (RC=255): 1 | kube-node2
+-----
 [mdom@localhost ~]$
 ```
 
@@ -114,6 +115,7 @@ Number of hosts: 4
 OK: 3 | kube-master kube-node1 localhost
 ~
 Error (RC=255): 1 | kube-node2
+-----
 [mdom@localhost ~]$
 ```
 
