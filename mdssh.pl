@@ -40,8 +40,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 5.0\n";
-	print "Release date: 2022-01-08\n";
+	print "Version: 5.1\n";
+	print "Release date: 2022-01-12\n";
 	exit;
 }
 
@@ -229,10 +229,8 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 }
 
 print "\n-----\n";
-END {
-	my $end = time();
-	printf("Execution time: %0.02f s (aggregated)\n", $end - $start);
-}
+my $end = time();
+printf("Execution time: %0.02f s (aggregated)\n", $end - $start);
 
 # End of script
 
@@ -315,16 +313,17 @@ sub check_process {
 		--$running_cnt;
 		my $completed_percent = sprintf("%d%%", 100*$completed_cnt/$num_hosts);
 		my $pending_cnt = $num_hosts-$completed_cnt;
-#		print "$child_pid exited with code " . ($?>>8) . "\n";
+		my $exit_code = $?>>8;
+#		print "$child_pid exited with code " . ($exit_code) . "\n";
 
 		my $host = $hosts->{$child_pid}->{'host'};
 		$host .= ",$hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
 
-		if ( $? == 0 ) {
+		if ( $? == 0 || ( $exit_code == 100 && $bg ) ) {
 			push @ok_hosts, $host;
 			++$ok_cnt;
 		} else {
-			push @{$error_hosts->{$?>>8}}, $host;
+			push @{$error_hosts->{$exit_code}}, $host;
 			++$error_cnt;
 		}
 
