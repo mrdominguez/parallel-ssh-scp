@@ -29,7 +29,7 @@ BEGIN { $| = 1 }
 
 my $start = time();
 
-our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir);
+our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
 my $threads_default = 10;
 my $tcount_default = 25;
 my $ttime_default = 5;
@@ -230,7 +230,7 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 
 print "\n-----\n";
 my $end = time();
-printf("Execution time: %0.02f s (aggregated)\n", $end - $start);
+printf("Execution time: %0.02f s (aggregated)\n", $end - $start) unless $et;
 
 # End of script
 
@@ -277,6 +277,7 @@ sub fork_process {
 	$app .= " -ru=$ru" if $ru;
 	$app .= " -sshOpts='$sshOpts'" if $sshOpts;
 	$app .= " -timeout=$timeout" if $timeout;
+	$app .= " -et" if $et;
 
 	my $cmd;
 	if ( $scp ) {
@@ -340,7 +341,7 @@ sub usage {
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
-	print "\t[-o[=0|1] -olines=n -odir=path] [-v [-timestamp]]\n";
+	print "\t[-o[=0|1] -olines=n -odir=path] [-et] [-v [-timestamp]]\n";
 	print "\t(-s=\"[user1@]host1[,\$via1] [user2@]host2[,\$via2] ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
@@ -374,6 +375,7 @@ sub usage {
 	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=0)\n";
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
+	print "\t -et : Hide execution time\n";
 	print "\t -v : Enable verbose messages / progress information\n";
 	print "\t -timestamp : Display time (implies -v)\n";
 	print "\t -s : Space-separated list of hostnames (brace expansion supported)\n";
