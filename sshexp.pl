@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 5.0\n";
-	print "Release date: 2022-01-08\n";
+	print "Version: 5.1\n";
+	print "Release date: 2022-01-12\n";
 	exit;
 }
 
@@ -169,7 +169,7 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/Add to known_hosts\?.*/i,			sub { &send_yes() } ],
 	  # Expect TIMEOUT
 	[ 'timeout',					sub { &capture('(auth) Timeout') } ], 
-	[ $shell_prompt ]
+	[ $shell_prompt,				sub { print $exp->before() . $exp->match() unless defined $int_opts->{'o'} } ]
 );
 
 @exp_output = ();
@@ -223,31 +223,30 @@ if ( !defined $cmd ) {
 
 @exp_output = ();
 $pw_sent = 0;
+my $cmd_sent = 0;
 $exp->send("$cmd\n");
-if ( $bg ) {
-	$exp->send("exit\n");
-	$exp->send("exit\n") if $sudo;
-}
 $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
 	[ 'unknown user',		sub { &capture('(sudo command) Unknown user') } ],
 	[ 'does not exist',		sub { &capture('(sudo command) User does not exist') } ],
 	[ 'not allowed to execute',	sub { &capture('(sudo command) User not allowed to execute ...') } ],
 	[ 'not in the sudoers file',	sub { &capture('(sudo command) User not in the sudoers file') } ],
-	[ '\r\n',			sub { &collect_output() } ],
+	[ '\r\n',			sub { $cmd_sent = 1 unless $cmd_sent; &collect_output() } ],
 	[ 'eof',			sub { &capture('(cmd) EOF') } ],
 	[ 'timeout',			sub { &capture('(cmd) Timeout') } ],
 	[ $shell_prompt ]
 );
 
 my $rc;
-$exp->send("echo \"(cmd) rc: \$\?\"\n");
-$exp->expect($int_opts->{'timeout'},
-	[ '\r\n',	sub { ( $exp->before() && $exp->before =~ /\(cmd\) rc: \d+/ ) ? $rc = $exp->before() : exp_continue } ],
-	[ 'eof',	sub { &capture('(rc) EOF') } ],
-	[ 'timeout',	sub { &capture('(rc) Timeout') } ],
-	[ $shell_prompt ]
-);
+unless ( $bg ) {
+	$exp->send("echo \"(cmd) rc: \$\?\"\n");
+	$exp->expect($int_opts->{'timeout'},
+		[ '\r\n',	sub { ( $exp->before() && $exp->before =~ /\(cmd\) rc: \d+/ ) ? $rc = $exp->before() : exp_continue } ],
+		[ 'eof',	sub { &capture('(rc) EOF') } ],
+		[ 'timeout',	sub { &capture('(rc) Timeout') } ],
+		[ $shell_prompt ]
+	)
+} else { $rc = 100 }
 
 if ( $sudo ) {
 	$exp->send("exit\n");
@@ -260,13 +259,15 @@ $exp->send("exit\n");
 $exp->soft_close();
 
 my $status_msg = "OK\n";
-if ( defined $rc ) {
-	($rc) = $rc =~ /: (.+)$/;
-	$status_msg = "Error (RC=$rc)\n" if ( $rc != 0 );
-} else {
-	$status_msg = "Unknown: Could not get exit code\n";
-	$rc = 10;
-}
+unless ( $bg ) {
+	if ( defined $rc ) {
+		($rc) = $rc =~ /: (.+)$/;
+		$status_msg = "Error (RC=$rc)\n" if ( $rc != 0 );
+	} else {
+		$status_msg = "Unknown: Could not get exit code\n";
+		$rc = 10;
+	}
+} else { $status_msg = "OK (BG)\n" }
 
 my $msg_output = &format_output();
 $status_msg .= $msg_output if $msg_output;
@@ -333,11 +334,13 @@ sub capture {
 }
 
 sub collect_output {
-	push @exp_output, $exp->before() if $exp->before();
-	if ( !defined $int_opts->{'o'} && scalar(@exp_output) > 0 && $exp->before() ) {
-		print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
+	if ( defined $exp->before() ) {
+		push @exp_output, $exp->before();
+		if ( !defined $int_opts->{'o'} && scalar(@exp_output) > 0 ) {
+			print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
+		}
 	}
-	exp_continue;
+	exp_continue unless ( $bg && $cmd_sent && ( $exp->before() !~ $shell_prompt || $exp->after() !~ $shell_prompt ) );
 }
 
 sub format_output {
