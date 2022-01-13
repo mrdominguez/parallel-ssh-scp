@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 5.1\n";
-	print "Release date: 2022-01-12\n";
+	print "Version: 6.0\n";
+	print "Release date: 2022-01-13\n";
 	exit;
 }
 
@@ -76,7 +76,7 @@ if ( $host =~ /(.+)\@(.+)/ ) {
 }
 
 if ( $v ) {
-	print "timeout = $int_opts->{'timeout'} seconds\n";
+	print "timeout = $int_opts->{'timeout'} s\n";
 	print "o = $int_opts->{'o'}\n" if defined $int_opts->{'o'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
@@ -286,8 +286,7 @@ print "[$host] [$pid] -> $status_msg";
 exit $rc;
 
 END {
-	my $end = time();
-	printf("Execution time: %0.02f s\n", $end - $start) unless $et;
+	printf("[$host] [$pid] Execution time: %0.02f s\n", &time() - $start) unless $et;
 }
 
 # End of script
@@ -395,7 +394,7 @@ sub usage {
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
-	print "\t -timeout : Timeout value for Expect (default: $timeout_default seconds)\n";
+	print "\t -timeout : Timeout value for Expect (default: $timeout_default s)\n";
 	print "\t -o : (Not defined) Display command output as it happens\n";
 	print "\t      (0) Do not display command output\n";
 	print "\t      (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
