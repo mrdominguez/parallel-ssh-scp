@@ -23,7 +23,7 @@ use POSIX qw/:sys_wait_h strftime/;
 use Data::Dumper;
 use File::Path qw(make_path);
 use IO::Prompter;
-use Time::HiRes qw( time );
+use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
@@ -40,8 +40,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 5.1\n";
-	print "Release date: 2022-01-12\n";
+	print "Version: 6.0\n";
+	print "Release date: 2022-01-13\n";
 	exit;
 }
 
@@ -103,7 +103,7 @@ $v = 1 if $timestamp;
 
 if ( $v ) {
 	print "threads = $int_opts->{'threads'}\n";
-	print "timeout = $int_opts->{'timeout'} seconds\n";
+	print "timeout = $int_opts->{'timeout'} s\n";
 	print "o = $int_opts->{'o'}\n" if defined $int_opts->{'o'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
@@ -154,7 +154,7 @@ if ( $v ) {
 	if ( $int_opts->{'tcount'} == 0 || $int_opts->{'ttime'} == 0 ) {
 		print "Throttling is disabled\n";
 	} else {
-		print "tcount = $int_opts->{'tcount'}\nttime = $int_opts->{'ttime'} seconds\n";
+		print "tcount = $int_opts->{'tcount'}\nttime = $int_opts->{'ttime'} s\n";
 	}
 }
 
@@ -184,32 +184,47 @@ my $num_hosts = 0;
 foreach (@hosts) { ++$num_hosts unless ( /^\s*$/ || /(#+)/ ) }
 
 my $throttle_cnt = 0;
+my $throttle_flag = 0;
+my $throttle_start;
 my $ok_cnt = 0;
 my $error_cnt = 0;
 my $child_pid;
 
-foreach my $host (@hosts) {
+while ( $forked_cnt <= $#hosts ) {
+	my $host = $hosts[$forked_cnt];
 	chomp($host);
 	next if $host =~ /(#+)/;
 	next if $host =~ /^\s*$/;
-	++$throttle_cnt;
 
-	&fork_process($host, $via, $cmd_spath);
+	unless ( $throttle_flag ) {
+		&fork_process($host, $via, $cmd_spath);
+		++$throttle_cnt;
+	} else {
+		# Option 1: Set manual timer with random microsleep (less CPU intensive)
+		usleep(rand(1000));
+		$throttle_flag = 0 if ( &time() - $throttle_start > $int_opts->{'ttime'} ); 
 
-	if ( $running_cnt >= $int_opts->{'threads'} ) {
-		do { &check_process } until ( $running_cnt < $int_opts->{'threads'} || $child_pid == -1 );	
+		# Option 2: Set alarm and catch the SIGALRM signal
+#		$SIG{ALRM} = sub {	# Option 2: Set alarm and catch the SIGALRM signal
+#			$throttle_flag = 0;
+#			print "Throttle timeout reached\n" if $v;
+#		};
 	}
 
+	do { &check_process } until ( $running_cnt < $int_opts->{'threads'} || $child_pid == -1 );
+
 	if ( $throttle_cnt == $int_opts->{'tcount'} && $forked_cnt != $num_hosts && $int_opts->{'ttime'} != 0 ) {
-		&log_trace("Throttling... resuming in $int_opts->{'ttime'} seconds");
-		sleep $int_opts->{'ttime'};
+		&log_trace("Throttling... forking in $int_opts->{'ttime'} s") if $v;
 		$throttle_cnt = 0;
+		$throttle_flag = 1;
+		$throttle_start = time();
+#		alarm $int_opts->{'ttime'};
 	}
 }
 
 do { &check_process } until $child_pid == -1;
 
-&log_trace("All processes completed");
+&log_trace("All processes completed") if $v;
 
 my @sorted_ok_hosts = sort @ok_hosts;
 #print Dumper $error_hosts;
@@ -229,16 +244,15 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 }
 
 print "\n-----\n";
-my $end = time();
-printf("Execution time: %0.02f s (aggregated)\n", $end - $start) unless $et;
+printf("Execution time: %0.02f s (aggregated)\n", &time() - $start) unless $et;
 
 # End of script
 
 sub log_trace {
 	my $date = strftime "%m/%d/%Y at %H:%M:%S", localtime;
 	my $trace = "@_";
-	$trace .= " _on_ $date" if $v && $timestamp;
-	print "$trace\n" if $v;
+	$trace .= " _on_ $date" if $timestamp;
+	print "$trace\n";
 }
 
 sub fork_process {
@@ -265,7 +279,7 @@ sub fork_process {
 		my $log_msg = "[$host";
 		$log_msg .= " __via__ $via" if $via;
 		$log_msg .= "] [$p] process_$id->{$p} forked"; 
-		&log_trace($log_msg);
+		&log_trace($log_msg) if $v;
 		return $p;
 	}
 
@@ -328,10 +342,18 @@ sub check_process {
 			++$error_cnt;
 		}
 
-		my $log_msg = "[$hosts->{$child_pid}->{'host'}";
-		$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
-		$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | Completed: $completed_cnt/$num_hosts -$completed_percent- | OK: $ok_cnt | Error: $error_cnt)";
-		&log_trace($log_msg);
+		unless ( $v ) {
+			print "... $completed_cnt/$num_hosts";
+			printf(" in %0.02f s", &time() - $start) unless $et;
+			print "\n";
+		} else {
+			my $log_msg = "[$hosts->{$child_pid}->{'host'}";
+			$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
+			$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | $completed_cnt/$num_hosts -$completed_percent-";
+			$log_msg .= sprintf(" in %0.02f s", &time() - $start) unless $et;
+			$log_msg .= " | OK: $ok_cnt | Error: $error_cnt)";
+			&log_trace($log_msg);
+		}
 	}
 }
 
@@ -357,7 +379,7 @@ sub usage {
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
-	print "\t -timeout : Timeout value for Expect (default: $timeout_default seconds)\n";
+	print "\t -timeout : Timeout value for Expect (default: $timeout_default s)\n";
 	print "\t -threads : Number of concurrent processes (default: $threads_default)\n";
 	print "\t -scp : Copy <source_path> from local host to \@remote_hosts:<target_path>\n";
 	print "\t   -tolocal : Copy \@remote_hosts:<source_path> to <target_path> in local host\n";
@@ -368,7 +390,7 @@ sub usage {
 	print "\t   -target : Target path (default: '.' -dot, or current directory-)\n";
 	print "\t   -meter : Display scp progress (default: disabled)\n";
 	print "\t -tcount : Number of forked processes before throttling (default: $tcount_default)\n";
-	print "\t -ttime : Throttling time (default: $ttime_default seconds)\n";
+	print "\t -ttime : Throttling time (default: $ttime_default s)\n";
 	print "\t -o : (Not defined) Buffer the output and display it after command completion\n";
 	print "\t      (0) Do not display command output\n";
 	print "\t      (1) Display command output as it happens\n";
@@ -376,7 +398,7 @@ sub usage {
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
 	print "\t -et : Hide execution time\n";
-	print "\t -v : Enable verbose messages / progress information\n";
+	print "\t -v : Enable verbose messages\n";
 	print "\t -timestamp : Display time (implies -v)\n";
 	print "\t -s : Space-separated list of hostnames (brace expansion supported)\n";
 	print "\t -f : File containing hostnames (one per line)\n";
