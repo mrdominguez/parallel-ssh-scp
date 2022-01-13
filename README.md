@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 5.1
+VERSION: 6.0
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -221,7 +221,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -odir : Local directory in which the command output will be stored as a file (default: $PWD -current folder-)
              If permissions allow it, the directory will be created if it does not exit
      -et : Hide execution time
-     -v : Enable verbose messages / progress information
+     -v : Enable verbose messages
      -timestamp : Display time (implies -v)
      -s : Space-separated list of hostnames (brace expansion supported)
      -f : File containing hostnames (one per line)
