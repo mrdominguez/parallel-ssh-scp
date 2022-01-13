@@ -36,8 +36,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 5.1\n";
-	print "Release date: 2022-01-12\n";
+	print "Version: 6.0\n";
+	print "Release date: 2022-01-13\n";
 	exit;
 }
 
@@ -74,7 +74,7 @@ if ( $tolocal && !-e $tpath ) {
 }
 
 if ( $v ) {
-	print "timeout = $timeout seconds\n";
+	print "timeout = $timeout s\n";
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
@@ -174,8 +174,7 @@ print "[$host] [$pid] -> $status_msg\n";
 exit $rc;
 
 END {
-	my $end = time();
-	printf("Execution time: %0.02f s\n", $end - $start) unless $et;
+	printf("[$host] [$pid] Execution time: %0.02f s\n", &time() - $start) unless $et;
 }
 
 # End of script
@@ -217,7 +216,7 @@ sub usage {
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no -o UserKnownHostsFile=/dev/null)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
-	print "\t -timeout : Timeout value for Expect (default: $timeout_default seconds)\n";
+	print "\t -timeout : Timeout value for Expect (default: $timeout_default s)\n";
 	print "\t -tolocal : Copy from remote host to local host (default: local -> remote)\n";
 	print "\t            If permissions allow it, non-existent local directories in <target_path> will be created\n";
 	print "\t -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
