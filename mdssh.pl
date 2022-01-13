@@ -244,7 +244,7 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 }
 
 print "\n-----\n";
-printf("Execution time: %0.02f s (aggregated)\n", &time() - $start) unless $et;
+printf("Execution time: %0.03f s (aggregated)\n", &time() - $start) unless $et;
 
 # End of script
 
@@ -344,13 +344,13 @@ sub check_process {
 
 		unless ( $v ) {
 			print "... $completed_cnt/$num_hosts";
-			printf(" in %0.02f s", &time() - $start) unless $et;
+			printf(" in %0.03f s", &time() - $start) unless $et;
 			print "\n";
 		} else {
 			my $log_msg = "[$hosts->{$child_pid}->{'host'}";
 			$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
 			$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | $completed_cnt/$num_hosts -$completed_percent-";
-			$log_msg .= sprintf(" in %0.02f s", &time() - $start) unless $et;
+			$log_msg .= sprintf(" in %0.03f s", &time() - $start) unless $et;
 			$log_msg .= " | OK: $ok_cnt | Error: $error_cnt)";
 			&log_trace($log_msg);
 		}
