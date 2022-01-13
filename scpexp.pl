@@ -174,7 +174,7 @@ print "[$host] [$pid] -> $status_msg\n";
 exit $rc;
 
 END {
-	printf("[$host] [$pid] Execution time: %0.02f s\n", &time() - $start) unless $et;
+	printf("[$host] [$pid] Execution time: %0.03f s\n", &time() - $start) unless $et;
 }
 
 # End of script
