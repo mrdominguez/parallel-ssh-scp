@@ -249,9 +249,11 @@ printf("Execution time: %0.03f s (aggregated)\n", &time() - $start) unless $et;
 # End of script
 
 sub log_trace {
-	my $date = strftime "%m/%d/%Y at %H:%M:%S", localtime;
 	my $trace = "@_";
-	$trace .= " _on_ $date" if $timestamp;
+	if ( $timestamp ) {
+		my $date = strftime "%m/%d/%Y at %H:%M:%S", localtime;
+		$trace .= " _on_ $date";
+	}
 	print "$trace\n";
 }
 
@@ -343,7 +345,7 @@ sub check_process {
 		}
 
 		unless ( $v ) {
-			print "... $completed_cnt/$num_hosts";
+			print "___ $completed_cnt/$num_hosts";
 			printf(" in %0.03f s", &time() - $start) unless $et;
 			print "\n";
 		} else {
