@@ -17,7 +17,7 @@ VERSION: 6.0
 
 FEEDBACK/BUGS: Please contact me by email.
 
-`mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys. It enables process concurrency and calls `sshexp.pl` or `scpexp.pl` in the background to connect to remote hosts (one host per process) through `ssh` and `scp` respectively.
+`mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys. It enables process multithreading and calls `sshexp.pl` or `scpexp.pl` to connect to remote hosts (one host per process) through `ssh` and `scp` respectively.
 
 *Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` *(preferred method)* or using the `sudo` command.
 
