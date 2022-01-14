@@ -169,7 +169,8 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/Add to known_hosts\?.*/i,			sub { &send_yes() } ],
 	  # Expect TIMEOUT
 	[ 'timeout',					sub { &capture('(auth) Timeout') } ], 
-	[ $shell_prompt,				sub { print $exp->before() . $exp->match() unless defined $int_opts->{'o'} } ]
+#	[ $shell_prompt,				sub { print $exp->before() . $exp->match() unless defined $int_opts->{'o'} } ]
+	[ $shell_prompt ]
 );
 
 @exp_output = ();
@@ -189,15 +190,16 @@ if ( $sudo ) {
 		$exp->expect($int_opts->{'timeout'},
 			  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
 			[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-			[ 'unknown user',		sub { &capture("(sudo) Unknown user $sudo_user") } ],
-			[ 'does not exist',		sub { &capture("(sudo) User $sudo_user does not exist") } ],
+			[ qr/sudo: unknown user: \w+/,	sub { &capture("(sudo) Unknown user $sudo_user") } ],
+			[ qr/user \w+ does not exist/,	sub { &capture("(sudo) User $sudo_user does not exist") } ],
 			[ 'not allowed to execute',	sub { &capture("(sudo) User $sudo_user not allowed to execute ...") } ],
 			[ 'not in the sudoers file',	sub { &capture("(sudo) User $sudo_user not in the sudoers file") } ],
 			[ 'Need at least 3 arguments',	sub {
 							  print "[$host] Sudo issue... trying different sudo command\n";
 							  &send_sudo($sudo_cmd2);
 							  exp_continue } ],
-			[ '\r\n',			sub { exp_continue } ],
+#			[ '\r\n',			sub { exp_continue } ],
+			[ '\r\n',			sub { &collect_output() } ],
 			[ 'eof',			sub { &capture('(sudo) EOF') } ],
 			[ 'timeout',			sub { &capture('(sudo) Timeout') } ],
 			[ $shell_prompt ]
@@ -227,8 +229,8 @@ my $cmd_sent = 0;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-	[ 'unknown user',		sub { &capture('(sudo command) Unknown user') } ],
-	[ 'does not exist',		sub { &capture('(sudo command) User does not exist') } ],
+	[ qr/sudo: unknown user: \w+/,	sub { &capture('(sudo command) Unknown user') } ],
+	[ qr/user \w+ does not exist/,	sub { &capture('(sudo command) User does not exist') } ],
 	[ 'not allowed to execute',	sub { &capture('(sudo command) User not allowed to execute ...') } ],
 	[ 'not in the sudoers file',	sub { &capture('(sudo command) User not in the sudoers file') } ],
 	[ '\r\n',			sub { $cmd_sent = 1 unless $cmd_sent; &collect_output() } ],
