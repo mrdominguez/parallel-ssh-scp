@@ -41,7 +41,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 6.0\n";
-	print "Release date: 2022-01-13\n";
+	print "Release date: 2022-01-14\n";
 	exit;
 }
 
@@ -200,18 +200,32 @@ while ( $forked_cnt <= $#hosts ) {
 		&fork_process($host, $via, $cmd_spath);
 		++$throttle_cnt;
 	} else {
-		# Option 1: Set manual timer with random microsleep (less CPU intensive)
-		usleep(rand(1000));
-		$throttle_flag = 0 if ( &time() - $throttle_start > $int_opts->{'ttime'} ); 
+		if ( $running_cnt != 0 ) {
+			# Option 1: Set manual timer with random microsleep (less CPU intensive)
+			usleep(rand(1000));
+			$throttle_flag = 0 if ( &time() - $throttle_start > $int_opts->{'ttime'} ); 
 
-		# Option 2: Set alarm and catch the SIGALRM signal
-#		$SIG{ALRM} = sub {	# Option 2: Set alarm and catch the SIGALRM signal
-#			$throttle_flag = 0;
-#			print "Throttle timeout reached\n" if $v;
-#		};
+			# Option 2: Set alarm and catch the SIGALRM signal
+#			$SIG{ALRM} = sub {
+#				$throttle_flag = 0;
+#				print "Throttle timeout reached\n" if $v;
+#			};
+		} else {
+			my $throttle_diff = $int_opts->{'ttime'} - (&time() - $throttle_start);
+			print "No children running,";
+			if ( $throttle_diff > 0 ) {
+				printf(" sleeping %0.03f s\n", $throttle_diff);
+				usleep($throttle_diff);
+			} else {
+				print " moving along\n";
+			}
+			$throttle_flag = 0;
+		}
 	}
 
-	do { &check_process } until ( $running_cnt < $int_opts->{'threads'} || $child_pid == -1 );
+	if ( $running_cnt > 0 ) {
+		do { usleep(rand(250)); &check_process } until ( $running_cnt < $int_opts->{'threads'} || $child_pid == -1 );
+	}
 
 	if ( $throttle_cnt == $int_opts->{'tcount'} && $forked_cnt != $num_hosts && $int_opts->{'ttime'} != 0 ) {
 		&log_trace("Throttling... forking in $int_opts->{'ttime'} s") if $v;
