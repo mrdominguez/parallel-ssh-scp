@@ -23,9 +23,9 @@ use File::Basename;
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-my $start = time() unless ( $et || $help || $version );
-
 our ($help, $version, $u, $p, $sudo, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
+
+my $start = time() unless ( $et || $help || $version );
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging	
