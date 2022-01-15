@@ -24,9 +24,9 @@ use File::Path qw(make_path);
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-my $start = time() unless ( $et || $help || $version );
-
 our ($help, $version, $u, $p, $via, $bu, $ru, $sshOpts, $timeout, $tolocal, $r, $et, $v, $multiauth, $q, $d);
+
+my $start = time() unless ( $et || $help || $version );
 
 if ( $d ) {
 	$Expect::Exp_Internal = 1;	# Set/unset 'exp_internal' debugging
