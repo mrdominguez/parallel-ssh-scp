@@ -27,9 +27,9 @@ use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
-my $start = time() unless ( $et || $help || $version );
-
 our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
+
+my $start = time() unless ( $et || $help || $version );
 my $threads_default = 10;
 my $tcount_default = 25;
 my $ttime_default = 5;
