@@ -27,7 +27,7 @@ use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
-my $start = time();
+my $start = time() unless ( $et || $help || $version );
 
 our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
 my $threads_default = 10;
@@ -41,7 +41,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 6.0\n";
-	print "Release date: 2022-01-14\n";
+	print "Release date: 2022-01-15\n";
 	exit;
 }
 
@@ -258,7 +258,7 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 }
 
 print "\n-----\n";
-printf("Execution time: %0.03f s (aggregated)\n", &time() - $start) unless $et;
+printf("Execution time: %0.03f s (aggregated)\n", &time() - $start) unless ( $et || $help || $version );
 
 # End of script
 
