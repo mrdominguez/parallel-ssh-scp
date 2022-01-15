@@ -23,7 +23,7 @@ use File::Basename;
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-my $start = time();
+my $start = time() unless ( $et || $help || $version );
 
 our ($help, $version, $u, $p, $sudo, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
 
@@ -36,7 +36,7 @@ if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 6.0\n";
-	print "Release date: 2022-01-14\n";
+	print "Release date: 2022-01-15\n";
 	exit;
 }
 
