@@ -260,19 +260,19 @@ $exp->send("exit\n");
 #$exp->hard_close();
 $exp->soft_close();
 
-my $status_msg = "OK\n";
+my $msg_status = "OK\n";
 unless ( $bg ) {
 	if ( defined $rc ) {
 		($rc) = $rc =~ /: (.+)$/;
-		$status_msg = "Error (RC=$rc)\n" if ( $rc != 0 );
+		$msg_status = "Error (RC=$rc)\n" if ( $rc != 0 );
 	} else {
-		$status_msg = "Unknown: Could not get exit code\n";
+		$msg_status = "Unknown: Could not get exit code\n";
 		$rc = 10;
 	}
-} else { $status_msg = "OK (BG)\n" }
+} else { $msg_status = "OK (BG)\n" }
 
 my $msg_output = &format_output();
-$status_msg .= $msg_output if $msg_output;
+$msg_status .= $msg_output if $msg_output;
 
 if ( defined $odir ) {
 	my $output_file = $odir . '/' . $host . '_' . "$pid.output";
@@ -280,11 +280,11 @@ if ( defined $odir ) {
 		print $fh join("\n", @exp_output);
 		close $fh;
 	} else {
-		$status_msg .= "Can't create file $output_file: $!\n";
+		$msg_status .= "Can't create file $output_file: $!\n";
 	}
 }
 
-print "[$host] [$pid] -> $status_msg";
+print "[$host] [$pid] -> $msg_status";
 exit $rc;
 
 END {
@@ -305,8 +305,9 @@ sub capture {
 		$msg .= $exp_output;
 	}
 
-        my $output = &format_output();
 	print $msg;
+
+	my $output = &format_output();
 	print $output if $output;
 
 	my $exit_code;
