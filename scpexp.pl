@@ -24,7 +24,7 @@ use File::Path qw(make_path);
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-my $start = time();
+my $start = time() unless ( $et || $help || $version );
 
 our ($help, $version, $u, $p, $via, $bu, $ru, $sshOpts, $timeout, $tolocal, $r, $et, $v, $multiauth, $q, $d);
 
@@ -37,7 +37,7 @@ if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 6.0\n";
-	print "Release date: 2022-01-14\n";
+	print "Release date: 2022-01-15\n";
 	exit;
 }
 
