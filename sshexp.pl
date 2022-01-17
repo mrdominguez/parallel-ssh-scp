@@ -173,8 +173,8 @@ $exp->expect($int_opts->{'timeout'},
 	[ $shell_prompt ]
 );
 
-@exp_output = ();
 $pw_sent = 0;
+@exp_output = ();
 my $sudo_user;
 if ( $sudo ) {
 	$sudo_user = $sudo eq '1' ? 'root' : $sudo;
@@ -214,8 +214,8 @@ if ( !defined $cmd ) {
 	exit;
 }
 
-@exp_output = ();
 $pw_sent = 0;
+@exp_output = ();
 my $cmd_sent = 0;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
