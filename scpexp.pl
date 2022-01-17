@@ -42,6 +42,7 @@ if ( $version ) {
 }
 
 my $timeout_default = 20;
+my $pid = 0;
 
 &usage if $help;
 die "Required arguments: <source_path>, <host>\nUse -help for options\n" if @ARGV < 2;
@@ -136,13 +137,11 @@ if ( $v ) {
 }
 
 $exp->spawn($scp) or die "Cannot spawn scp: $!\n";
-
-my $pid = $exp->pid();
-my $pw_sent = 0;
-my $ret;
-
+$pid = $exp->pid();
 print "PID: $pid\n" if $v;
 
+my $pw_sent = 0;
+my $ret;
 $exp->expect($timeout,
           # Are you sure you want to continue connecting (yes/no/[fingerprint])?
 	[ '\(yes/no(/.*)?\)\?\s*$',		sub {
