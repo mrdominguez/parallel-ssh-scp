@@ -43,6 +43,7 @@ if ( $version ) {
 my $timeout_default = 20;
 my $olines_default = 10;
 my $odir_default = $ENV{PWD};
+my $pid = 0;
 
 &usage if $help;
 die "Missing argument: <host>\nUse -help for options\n" if @ARGV < 1;
@@ -149,12 +150,10 @@ sub winch {
 print "[$host] Executing SSH... " if $v;
 
 $exp->spawn($ssh) or die "Cannot spawn ssh: $!\n";
-
-my $pid = $exp->pid();
-my $pw_sent = 0;
-
+$pid = $exp->pid();
 print "PID: $pid\n" if $v;
 
+my $pw_sent = 0;
 my @exp_output;
 $exp->expect($int_opts->{'timeout'},
   	  # Are you sure you want to continue connecting (yes/no/[fingerprint])?
