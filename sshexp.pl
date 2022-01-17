@@ -130,6 +130,7 @@ if ( $via ) {
 
 # \s will match newline, use literal space instead
 my $shell_prompt = qr'\][\$\#] $';
+#my $shell_prompt = qr' [%\#] ';
 
 my $exp = new Expect;
 $exp->raw_pty(0);
@@ -192,8 +193,8 @@ if ( $sudo ) {
 			[ qr/password.*:\s*$/i,		sub { &send_password() } ],
 			[ qr/sudo: unknown user: \w+/,	sub { &capture("(sudo) Unknown user $sudo_user") } ],
 			[ qr/user \w+ does not exist/,	sub { &capture("(sudo) User $sudo_user does not exist") } ],
-			[ 'not allowed to execute',	sub { &capture("(sudo) User $sudo_user not allowed to execute ...") } ],
-			[ 'not in the sudoers file',	sub { &capture("(sudo) User $sudo_user not in the sudoers file") } ],
+			[ 'not allowed to execute',	sub { &capture("(sudo) User $username not allowed to execute ...") } ],
+			[ 'not in the sudoers file',	sub { &capture("(sudo) User $username not in the sudoers file") } ],
 			[ 'Need at least 3 arguments',	sub {
 							  print "[$host] Sudo issue... trying different sudo command\n";
 							  &send_sudo($sudo_cmd2);
@@ -208,16 +209,7 @@ if ( $sudo ) {
 }
 
 if ( !defined $cmd ) {
-	my $user = $sudo ? $sudo_user : $username;
-	my $msg = '';
-	
-	# Comment out to remove message
-	$msg = "echo -e \"#\\n# Connected to `hostname -f`\\n# Logged in as `whoami`";
-	$msg .= " through sudo" if $sudo;
-	$msg .= "\\n#\"";
-	$msg .= '; date';
-
-	$exp->send("$msg\n");
+	$exp->send("\n");
 	$exp->interact();
 	$exp->soft_close();
 	exit;
@@ -336,7 +328,7 @@ sub capture {
 }
 
 sub collect_output {
-	if ( defined $exp->before() ) {
+	if ( $exp->before() ) {
 		push @exp_output, $exp->before();
 		if ( !defined $int_opts->{'o'} && scalar(@exp_output) > 0 ) {
 			print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
