@@ -27,7 +27,7 @@ use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
+our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
 
 my $start = time() unless ( $et || $help || $version );
 my $threads_default = 10;
@@ -40,8 +40,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.0\n";
-	print "Release date: 2022-01-15\n";
+	print "Version: 6.1\n";
+	print "Release date: 2022-01-18\n";
 	exit;
 }
 
@@ -322,6 +322,7 @@ sub fork_process {
 #		print "$cmd\n" if $v;
 		system $cmd;
 	} else {
+		$app .= " -prompt=$prompt" if $prompt;
 		$app .= " -sudo=$sudo_user" if $sudo;
 		$app .= " -bg" if $bg;
 		$app .= " -o=$int_opts->{'o'}" if defined $int_opts->{'o'};
@@ -386,6 +387,7 @@ sub usage {
 	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
+	print "\t -prompt : Shell prompt regex (default: '\][\$\#] $' )\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -bg : Background mode (exit after sending command)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
