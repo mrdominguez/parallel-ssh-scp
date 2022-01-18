@@ -23,7 +23,7 @@ use File::Basename;
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-our ($help, $version, $u, $p, $sudo, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
+our ($help, $version, $u, $p, $sudo, $prompt, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
 
 my $start = time() unless ( $et || $help || $version );
 
@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.0\n";
-	print "Release date: 2022-01-15\n";
+	print "Version: 6.1\n";
+	print "Release date: 2022-01-18\n";
 	exit;
 }
 
@@ -130,8 +130,7 @@ if ( $via ) {
 #print "$ssh\n" if $v;
 
 # \s will match newline, use literal space instead
-my $shell_prompt = qr'\][\$\#] $';
-#my $shell_prompt = qr' [%\#] ';
+my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'\][\$\#] $';
 
 my $exp = new Expect;
 $exp->raw_pty(0);
@@ -189,17 +188,17 @@ if ( $sudo ) {
 		$exp->send("$sudo_cmd\n");
 		$exp->expect($int_opts->{'timeout'},
 			  # If $password is undefined and ssh does not require it, sudo may still prompt for password...
-			[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-			[ qr/sudo: unknown user: \w+/,	sub { &capture("(sudo) Unknown user $sudo_user") } ],
-			[ qr/user \w+ does not exist/,	sub { &capture("(sudo) User $sudo_user does not exist") } ],
-			[ 'not allowed to execute',	sub { &capture("(sudo) User $username not allowed to execute ...") } ],
-			[ 'not in the sudoers file',	sub { &capture("(sudo) User $username not in the sudoers file") } ],
+			[ qr/password.*:\s*$/i,			sub { &send_password() } ],
+			[ qr/sudo: unknown user: \w+/,		sub { &capture("(sudo) Unknown user $sudo_user") } ],
+			[ qr/user \w+ does not exist/,		sub { &capture("(sudo) User $sudo_user does not exist") } ],
+			[ qr/\w+ is not allowed to execute .+/,	sub { &capture("(sudo) User $username not allowed to execute ...") } ],
+			[ qr/\w+ is not in the sudoers file/,	sub { &capture("(sudo) User $username not in the sudoers file") } ],
 			[ 'Need at least 3 arguments',	sub {
 							  print "[$host] Sudo issue... trying different sudo command\n";
 							  &send_sudo($sudo_cmd2);
 							  exp_continue } ],
 #			[ '\r\n',			sub { exp_continue } ],
-			[ '\r\n',			sub { &collect_output() } ],
+			[ '\r\n',			sub { $exp->before() =~ /$sudo_cmd/ ? exp_continue : &collect_output() } ],
 			[ 'eof',			sub { &capture('(sudo) EOF') } ],
 			[ 'timeout',			sub { &capture('(sudo) Timeout') } ],
 			[ $shell_prompt ]
@@ -219,12 +218,14 @@ $pw_sent = 0;
 my $cmd_sent = 0;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
-	[ qr/password.*:\s*$/i,		sub { &send_password() } ],
-	[ qr/sudo: unknown user: \w+/,	sub { &capture('(sudo command) Unknown user') } ],
-	[ qr/user \w+ does not exist/,	sub { &capture('(sudo command) User does not exist') } ],
-	[ 'not allowed to execute',	sub { &capture('(sudo command) User not allowed to execute ...') } ],
-	[ 'not in the sudoers file',	sub { &capture('(sudo command) User not in the sudoers file') } ],
-	[ '\r\n',			sub { $cmd_sent = 1 unless $cmd_sent; &collect_output() } ],
+	[ qr/password.*:\s*$/i,			sub { &send_password() } ],
+	[ qr/sudo: unknown user: \w+/,		sub { &capture('(sudo command) Unknown user') } ],
+	[ qr/user \w+ does not exist/,		sub { &capture('(sudo command) User does not exist') } ],
+	[ qr/\w+ is not allowed to execute .+/,	sub { &capture('(sudo command) User not allowed to execute ...') } ],
+	[ qr/\w+ is not in the sudoers file/,	sub { &capture('(sudo command) User not in the sudoers file') } ],
+	[ '\r\n',			sub {
+					  unless ( $cmd_sent ) { $cmd_sent = 1; print "--- output ---\n" unless defined $int_opts->{'o'} }
+					  $exp->before() =~ /$cmd/ ? exp_continue : &collect_output() } ],
 	[ 'eof',			sub { &capture('(cmd) EOF') } ],
 	[ 'timeout',			sub { &capture('(cmd) Timeout') } ],
 	[ $shell_prompt ]
@@ -287,12 +288,10 @@ END {
 sub capture {
 	my $msg = shift;
 	$msg = "[$host] $msg\n";
-	my $exp_output = $exp->before() if $exp->before();
-	$exp_output .= $exp->match() if $exp->match();
-	$exp_output .= $exp->after() if $exp->after();
+	my $exp_output = $exp->match() . $exp->after() . "\n";
 
 	if ( $exp_output ) {
-		$exp_output =~ s/\r\n.*/\n/gs;
+		$exp_output =~ s/\r\n/\n/gs;
 		$msg .= $exp_output;
 	}
 
@@ -327,7 +326,7 @@ sub capture {
 }
 
 sub collect_output {
-	if ( $exp->before() ) {
+	unless ( scalar(@exp_output) == 0 && !$exp->before() && !$exp->after() ) {
 		push @exp_output, $exp->before();
 		if ( !defined $int_opts->{'o'} && scalar(@exp_output) > 0 ) {
 			print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
@@ -337,7 +336,7 @@ sub collect_output {
 }
 
 sub format_output {
-	shift @exp_output;
+#	shift @exp_output;
 	my $exp_output_lines = scalar(@exp_output);
 	$int_opts->{'olines'} = $exp_output_lines if $int_opts->{'olines'} == 0;
 
@@ -370,7 +369,7 @@ sub send_yes {
 }
 
 sub usage {
-	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
+	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]] [-prompt=regex]\n";
 	print "\t[-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]\n";
 	print "\t<[username|remote_user@]host[,\$via]> [<command>]\n\n";
@@ -379,6 +378,7 @@ sub usage {
 	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
+	print "\t -prompt : Shell prompt regex (default: '\][\$\#] $' )\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -bg : Background mode (exit after sending command)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
