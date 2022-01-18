@@ -127,9 +127,14 @@ These utilities are written in *Perl* and have been tested using version *5.1x.x
 
 Automation for authentication is managed with the **Expect.pm** module. **IO::Prompter** is used for username/password prompting and the interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
-Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modules; alternately, download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
+Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modules or download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
 
-**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination, as the default value `'\][\$\#] $'` may not always work**.
+**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination, as the default value `'\][\$\#] $'` may not always work. Alternatively, use the `-prompt` option from the command line, like so:**
+
+```
+sshexp -prompt=' [%\#] ' ...
+mdssh -prompt="' [%\#] '" ...
+``` 
 
 The following is an example of an unattended installation script for RHEL-based distributions:
 ```
@@ -184,7 +189,8 @@ Both username and password values are optional. If no value is provided, there w
 **mdssh.pl**
 ```
 Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
+    [-sudo[=sudo_user]] [-bg] [-prompt=regex]
+    [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
@@ -197,6 +203,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
+     -prompt : Shell prompt regex (default: '\][\$\#] $' )
      -via : Bastion host for Okta ASA sft client
        -bu : Bastion user
        -ru : Remote user
@@ -242,7 +249,8 @@ NOTES:
 **sshexp.pl**
 ```
 Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
+    [-sudo[=sudo_user]] [-bg] [-prompt=regex]
+    [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]
     <[username|remote_user@]host[,$via]> [<command>]
 
@@ -252,6 +260,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
+     -prompt : Shell prompt regex (default: '\][\$\#] $' )
      -via : Bastion host for Okta ASA sft client
        -bu : Bastion user
        -ru : Remote user
