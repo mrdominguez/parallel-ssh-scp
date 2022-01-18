@@ -369,8 +369,9 @@ sub send_yes {
 }
 
 sub usage {
-	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]] [-prompt=regex]\n";
-	print "\t[-sudo[=sudo_user]] [-bg] [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
+	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
+	print "\t[-sudo[=sudo_user]] [-bg] [-prompt=regex]\n";
+	print "\t[-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]\n";
 	print "\t<[username|remote_user@]host[,\$via]> [<command>]\n\n";
 
@@ -378,7 +379,7 @@ sub usage {
 	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
-	print "\t -prompt : Shell prompt regex (default: '\][\$\#] $' )\n";
+	print "\t -prompt : Shell prompt regex (default: '" . '\][\$\#] $' . "' )\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -bg : Background mode (exit after sending command)\n";
 	print "\t -via : Bastion host for Okta ASA sft client\n";
