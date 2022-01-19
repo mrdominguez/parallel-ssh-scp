@@ -129,7 +129,7 @@ Automation for authentication is managed with the **Expect.pm** module. **IO::Pr
 
 Use [cpan](http://perldoc.perl.org/cpan.html) to install the aforementioned modules or download them from the [CPAN Search Site](http://search.cpan.org/) for manual installation.
 
-**IMPORTANT: Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination, as the default value (that is, `'\][\$\#] $'`) may not always work. Alternatively, use the `-prompt` option from the command line. Example:**
+**IMPORTANT! Set the `$shell_prompt` variable in `sshexp.pl` to a regex matching the end of `$PS1` (prompt shell variable) for Expect to correctly catch command execution termination, as the default value (that is, `'\][\$\#] $'`) may not always work. Alternatively, use the `-prompt` option from the command line. Example:**
 
 ```
 sshexp -prompt=' [%\#] ' ...
