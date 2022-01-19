@@ -319,8 +319,6 @@ sub fork_process {
 		}
 		$app .= " -multiauth" if $multiauth;
 		$cmd = "$app \"$c\" $host $target";
-#		print "$cmd\n" if $v;
-		system $cmd;
 	} else {
 		$app .= " -prompt=$prompt" if $prompt;
 		$app .= " -sudo=$sudo_user" if $sudo;
@@ -329,9 +327,9 @@ sub fork_process {
 		$app .= " -olines=$int_opts->{'olines'}" if defined $olines;
 		$app .= " -odir=$odir" if defined $odir;
 		$cmd = "$app $host \"$c\"";
-#		print "$cmd\n" if $v;
-		system $cmd;
 	}
+#	print "$cmd\n" if $v;
+	system $cmd;
 
 	$exit_code = $?>>8;
 #	print "$exit_code\n";
