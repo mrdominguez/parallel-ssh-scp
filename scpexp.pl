@@ -163,11 +163,8 @@ $exp->expect($timeout,
 $exp->soft_close();
 $ret =~ s{^\Q$/\E}{};		# Remove newline character from start of string
 
-my $msg_status = 'OK';
 my $rc = ( $exp->exitstatus() >> 8 );
-if ( $rc ) {
-	$msg_status = "Error (RC=$rc)\n$ret";
-}
+my $msg_status = $rc ? "Error (RC=$rc)\n$ret" : 'OK';
 
 print "[$host] [$pid] -> $msg_status\n";
 exit $rc;
