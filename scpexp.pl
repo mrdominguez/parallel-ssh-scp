@@ -181,8 +181,8 @@ END {
 sub send_password {
 	if ( defined $password ) {
 		if ( $pw_sent == 0 ) {
-			$pw_sent = 1;
 			$exp->send("$password\n");
+			$pw_sent = 1 unless $multiauth;
 		} else {
 			die "[$host] Wrong credentials\n"; }
 	} else {
