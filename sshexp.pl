@@ -235,7 +235,7 @@ my $rc;
 unless ( $bg ) {
 	$exp->send("echo \"(cmd) rc: \$\?\"\n");
 	$exp->expect($int_opts->{'timeout'},
-		[ '\r\n',	sub { ( $exp->before() && $exp->before =~ /\(cmd\) rc: \d+/ ) ? $rc = $exp->before() : exp_continue } ],
+		[ '\r\n',	sub { $exp->before() =~ /\(cmd\) rc: \d+/ ? $rc = $exp->before() : exp_continue } ],
 		[ 'eof',	sub { &capture('(rc) EOF') } ],
 		[ 'timeout',	sub { &capture('(rc) Timeout') } ],
 		[ $shell_prompt ]
@@ -252,11 +252,11 @@ $exp->send("exit\n");
 #$exp->hard_close();
 $exp->soft_close();
 
-my $msg_status = "OK\n";
+my $msg_status;
 unless ( $bg ) {
 	if ( defined $rc ) {
 		($rc) = $rc =~ /: (.+)$/;
-		$msg_status = "Error (RC=$rc)\n" if ( $rc != 0 );
+		$msg_status = ( $rc ? "Error (RC=$rc)" : "OK" ) . "\n";
 	} else {
 		$msg_status = "Unknown: Could not get exit code\n";
 		$rc = 10;
