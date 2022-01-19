@@ -288,12 +288,7 @@ END {
 sub capture {
 	my $msg = shift;
 	$msg = "[$host] $msg\n";
-	my $exp_output = $exp->match() . $exp->after() . "\n";
-
-	if ( $exp_output ) {
-		$exp_output =~ s/\r\n/\n/gs;
-		$msg .= $exp_output;
-	}
+	$msg .= ( $exp->match() . "\n" ) if $exp->match();
 
 	print $msg;
 
