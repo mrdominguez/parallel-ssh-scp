@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.1
+VERSION: 6.2
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -32,8 +32,10 @@ Also, it is compatible with the Okta ASA ScaleFT client when using the `-via=bas
 Note that SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` like so:
 
 ```
--sshOpts='-J user@<bastion:port>'
+-sshOpts='-J user@bastion:port'
 ```
+
+Or simply use the equivalent `-proxy` option. One difference between `-via` and `-proxy` is that, in the absence of `-bu` (bastion user) and/or `-ru` (remote user), the latter can take `-u` to access both proxy and remote hosts.
 
 Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, since additional output can make the Expect library unreliable. For this reason, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
 
@@ -190,12 +192,12 @@ Both username and password values are optional. If no value is provided, there w
 ```
 Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sudo[=sudo_user]] [-bg] [-prompt=regex]
-    [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
+    [-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
     [-o[=0|1] -olines=n -odir=path] [-et] [-v [-timestamp]]
-    (-s="[user1@]host1[,$via1] [user2@]host2[,$via2] ..." | -f=hosts_file) <command|source_path>
+    (-s="[user1@]host1[,$via1|proxy1] [user2@]host2[,$via2|proxy2] ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
      -version : Display version information
@@ -204,7 +206,8 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
      -prompt : Shell prompt regex (default: '\][\$\#] $' )
-     -via : Bastion host for Okta ASA sft client
+     -via : Bastion host for Okta ASA sft client (default over -proxy)
+     -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
        -ru : Remote user
              (default: Okta username -sft login-)
@@ -250,9 +253,9 @@ NOTES:
 ```
 Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sudo[=sudo_user]] [-bg] [-prompt=regex]
-    [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
+    [-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]
-    <[username|remote_user@]host[,$via]> [<command>]
+    <[username|remote_user@]host[,$via|proxy]> [<command>]
 
      -help : Display usage
      -version : Display version information
@@ -261,7 +264,8 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
      -prompt : Shell prompt regex (default: '\][\$\#] $' )
-     -via : Bastion host for Okta ASA sft client
+     -via : Bastion host for Okta ASA sft client (default over -proxy)
+     -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
        -ru : Remote user
              (default: Okta username -sft login-)
@@ -284,15 +288,16 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 **scpexp.pl**
 ```
 Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
-    [-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
+    [-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
     [-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-et] [-v] [-d]
-    <source_path> <[username|remote_user@]host[,$via]> [<target_path>]
+    <source_path> <[username|remote_user@]host[,$via|proxy]> [<target_path>]
 
      -help : Display usage
      -version : Display version information
      -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
      -p : Password or path to password file (default: undef)
-     -via : Bastion host for Okta ASA sft client
+     -via : Bastion host for Okta ASA sft client (default over -proxy)
+     -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
        -ru : Remote user
              (default: Okta username -sft login-)
