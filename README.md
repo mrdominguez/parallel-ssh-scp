@@ -35,7 +35,7 @@ Note that SSH allows connecting to remote hosts though a proxy (or bastion) with
 -sshOpts='-J user@bastion:port'
 ```
 
-Or simply use the equivalent `-proxy` option. One difference between `-via` (Okta) and `-proxy` is that, in the absence of `-bu` (bastion user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode (`-via`), `-u` gets ignored and is replaced with the underlying Okta credentials.
+Or simply use the equivalent `-proxy` option. One difference between `-via` (Okta) and `-proxy` is that, in the absence of `-bu` (bastion user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode (`-via`), `-u` gets ignored and is replaced with the underlying Okta credentials (see [Usage](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#usage)).
 
 Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, since additional output can make the Expect library unreliable. For this reason, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
 
