@@ -89,7 +89,7 @@ if ( $u && $u eq '1' ) {
 	die "Timed out\n" if $u->timedout;
 	print "Using default username\n" if $u->defaulted;
 }
-my $username = ( $via && $ru ) ? $ru : ( $u || $ENV{SSH_USER} || $ENV{USER} );
+my $username = $u || $ENV{SSH_USER} || $ENV{USER};
 print "username = $username\n" if $v;
 
 if ( $p && $p eq '1' ) {
@@ -120,6 +120,7 @@ if ( $via ) {
 }
 $scp .= " $sshOpts" if defined $sshOpts;
 $scp .= " -r" if $r;
+# $username below gets ignored when using $via (with or without $ru), what matters is the ProxyCommand
 $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$host:$tpath" );
 #print "$scp\n" if $v;
 
