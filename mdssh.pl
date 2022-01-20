@@ -27,7 +27,7 @@ use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
+our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $proxy, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
 
 my $start = time() unless ( $et || $help || $version );
 my $threads_default = 10;
@@ -40,14 +40,15 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.1\n";
-	print "Release date: 2022-01-18\n";
+	print "Version: 6.2\n";
+	print "Release date: 2022-01-20\n";
 	exit;
 }
 
 &usage if $help;
 die "No hosts specified: Set -s or -f (or both)\nUse -help for options\n" unless ( $f || $s );
 die "Missing argument: <command|source_path>\nUse -help for options\n" if @ARGV < 1;
+die "Set either -via or -proxy\nUse -help for options\n" if ( $via && $proxy );
 
 my $cmd_spath = $ARGV[0];
 my (@hosts, @hosts_file, @hosts_cli);
@@ -110,6 +111,7 @@ if ( $v ) {
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
+	print "proxy = $proxy\n" if $proxy;
 	print "bu = $bu\n" if $bu;
 	print "ru = $ru\n" if $ru;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
@@ -282,6 +284,7 @@ sub fork_process {
 		$via_override = $2 if $2;
 	}
 
+	$via = $proxy if $proxy;
 	$via = $via_override if $via_override;
 
 	my $p = fork();
@@ -302,7 +305,8 @@ sub fork_process {
 	my $dir = dirname($0);
 	my $app = $scp ? "$dir/scpexp.pl" : "$dir/sshexp.pl";
 	$app .= " -u=$username";
-	$app .= " -via='$via'" if $via;
+	$app .= " -via='$via'" if ( $via && !$proxy );
+	$app .= " -proxy='$via'" if $proxy;
 	$app .= " -bu=$bu" if $bu;
 	$app .= " -ru=$ru" if $ru;
 	$app .= " -sshOpts='$sshOpts'" if $sshOpts;
@@ -375,12 +379,12 @@ sub check_process {
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-bg] [-prompt=regex]\n";
-	print "\t[-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
+	print "\t[-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
 	print "\t[-o[=0|1] -olines=n -odir=path] [-et] [-v [-timestamp]]\n";
-	print "\t(-s=\"[user1@]host1[,\$via1] [user2@]host2[,\$via2] ...\" | -f=hosts_file) <command|source_path>\n\n";
+	print "\t(-s=\"[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
@@ -389,7 +393,8 @@ sub usage {
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -bg : Background mode (exit after sending command)\n";
 	print "\t -prompt : Shell prompt regex (default: '" . '\][\$\#] $' . "' )\n";
-	print "\t -via : Bastion host for Okta ASA sft client\n";
+	print "\t -via : Bastion host for Okta ASA sft client (default over -proxy)\n";
+	print "\t -proxy : Proxy host for ProxyJump (leave empty to enable over -via)\n";
 	print "\t   -bu : Bastion user\n";
 	print "\t   -ru : Remote user\n";
 	print "\t         (default: Okta username -sft login-)\n"; 
