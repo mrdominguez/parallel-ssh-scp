@@ -296,7 +296,7 @@ sub fork_process {
 		$id->{$p} = ++$forked_cnt;
 		++$running_cnt;
 		my $log_msg = "[$host";
-		$log_msg .= " __via__ $via" if $via;
+		$log_msg .= " __via__ $via" if ( $via && $via ne '1' );
 		$log_msg .= "] [$p] process_$id->{$p} forked"; 
 		&log_trace($log_msg) if $v;
 		return $p;
