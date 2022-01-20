@@ -231,7 +231,7 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/\w+ is not in the sudoers file/,	sub { &capture('(sudo command) User not in the sudoers file') } ],
 	[ '\r\n',			sub {
 					  unless ( $cmd_sent ) { print "--- output ---\n" unless defined $int_opts->{'o'} };
-					  if ( $cmd_sent ) { &collect_output() } else { $cmd_sent = 1; exp_continue } } ],
+					  if ( $cmd_sent ) { &collect_output() } else { $cmd_sent = 1; exp_continue } } ], # Do not collect the command
 	[ 'eof',			sub { &capture('(cmd) EOF') } ],
 	[ 'timeout',			sub { &capture('(cmd) Timeout') } ],
 	[ $shell_prompt ]
@@ -336,7 +336,7 @@ sub collect_output {
 }
 
 sub format_output {
-#	shift @exp_output;
+#	shift @exp_output; # Skip the command itself if collecting it
 	my $exp_output_lines = scalar(@exp_output);
 	$int_opts->{'olines'} = $exp_output_lines if $int_opts->{'olines'} == 0;
 
