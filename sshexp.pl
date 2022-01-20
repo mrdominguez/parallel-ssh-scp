@@ -23,7 +23,7 @@ use File::Basename;
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-our ($help, $version, $u, $p, $sudo, $prompt, $bg, $via, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
+our ($help, $version, $u, $p, $sudo, $prompt, $bg, $via, $proxy, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
 
 my $start = time() unless ( $et || $help || $version );
 
@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.1\n";
-	print "Release date: 2022-01-18\n";
+	print "Version: 6.2\n";
+	print "Release date: 2022-01-20\n";
 	exit;
 }
 
@@ -47,6 +47,7 @@ my $pid = 0;
 
 &usage if $help;
 die "Missing argument: <host>\nUse -help for options\n" if @ARGV < 1;
+die "Set either -via or -proxy\nUse -help for options\n" if ( $via && $proxy );
 
 my $int_opts = {};
 $int_opts->{'timeout'} = $timeout || $timeout_default;	# Use default value if 0 (or empty)
@@ -68,12 +69,12 @@ my ($host, $cmd) = @ARGV;
 
 if ( $host =~ /(.+),([^\s].+[^\s])?/ ) {
 	$host = $1;
-	$via = $2 if $2;
+	if ( $2 ) { $proxy ? $proxy = $2 : $via = $2 }
 }
 
 if ( $host =~ /(.+)\@(.+)/ ) {
 	$host = $2;
-	$via ? $ru = $1 : $u = $1
+	( $proxy || $via ) ? $ru = $1 : $u = $1
 }
 
 if ( $v ) {
@@ -84,6 +85,7 @@ if ( $v ) {
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
+	print "proxy = $proxy\n" if $proxy;
 	print "bu = $bu\n" if $bu;
 	print "ru = $ru\n" if $ru;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
@@ -117,12 +119,17 @@ if ( defined $password ) {
 }
 
 my $ssh;
-if ( $via ) {
+if ( $via && $via ne '1' ) {
 	$via = "$bu\@$via" if ( $via !~ /\@/ && $bu );
 	$ssh = "sft ssh --via $via ";
 	$ssh .= "$ru\@" if $ru;
 	$ssh .= $host
 } else {
+	if ( $proxy && $proxy ne '1' ) {
+		if ( $proxy !~ /\@/ ) { $proxy = ( $bu ? $bu : $username ) . "\@$proxy" }
+		$sshOpts .= " -J $proxy";
+		$username = $ru if $ru
+	}
 	$ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
 	$ssh .= " $sshOpts" if $sshOpts;
 	$ssh .= " $username\@$host"
@@ -365,9 +372,9 @@ sub send_yes {
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-bg] [-prompt=regex]\n";
-	print "\t[-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
+	print "\t[-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]\n";
-	print "\t<[username|remote_user@]host[,\$via]> [<command>]\n\n";
+	print "\t<[username|remote_user@]host[,\$via|proxy]> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
@@ -376,7 +383,8 @@ sub usage {
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -bg : Background mode (exit after sending command)\n";
 	print "\t -prompt : Shell prompt regex (default: '" . '\][\$\#] $' . "' )\n";
-	print "\t -via : Bastion host for Okta ASA sft client\n";
+	print "\t -via : Bastion host for Okta ASA sft client (default over -proxy)\n";
+	print "\t -proxy : Proxy host for ProxyJump (leave empty to enable over -via)\n";
 	print "\t   -bu : Bastion user\n";
 	print "\t   -ru : Remote user\n";
 	print "\t         (default: Okta username -sft login-)\n";
