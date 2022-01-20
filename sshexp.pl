@@ -144,13 +144,15 @@ $exp->raw_pty(0);
 $exp->log_stdout(0);		# Set (1) -default-, unset (0) logging to STDOUT
 #$exp->log_file("$0.log","a");	# Log session to file (a=append -default-, w=truncate)
 
-# Catch the signal WINCH ("window size changed"), change the terminal size and propagate the signal to the spawned application
-$exp->slave->clone_winsize_from(\*STDIN);
-$SIG{WINCH} = \&winch;
-sub winch {
+unless ( defined $cmd ) {
+	# Catch the signal WINCH ("window size changed"), change the terminal size and propagate the signal to the spawned application
 	$exp->slave->clone_winsize_from(\*STDIN);
-	kill WINCH => $exp->pid if $exp->pid;
 	$SIG{WINCH} = \&winch;
+	sub winch {
+		$exp->slave->clone_winsize_from(\*STDIN);
+		kill WINCH => $exp->pid if $exp->pid;
+		$SIG{WINCH} = \&winch;
+	}
 }
 
 print "[$host] Executing SSH... " if $v;
@@ -212,7 +214,7 @@ if ( $sudo ) {
 	}
 }
 
-if ( !defined $cmd ) {
+unless ( defined $cmd ) {
 	$exp->send("\n");
 	$exp->interact();
 	$exp->soft_close();
