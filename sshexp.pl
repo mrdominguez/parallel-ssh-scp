@@ -202,8 +202,7 @@ if ( $sudo ) {
 			[ qr/\w+ is not in the sudoers file/,	sub { &capture("(sudo) User $username not in the sudoers file") } ],
 			[ 'Need at least 3 arguments',	sub {
 							  print "[$host] Sudo issue... trying different sudo command\n";
-							  &send_sudo($sudo_cmd2);
-							  exp_continue } ],
+							  &send_sudo($sudo_cmd2); exp_continue } ],
 #			[ '\r\n',			sub { exp_continue } ],
 			[ '\r\n',			sub { $exp->before() =~ /$sudo_cmd/ ? exp_continue : &collect_output() } ],
 			[ 'eof',			sub { &capture('(sudo) EOF') } ],
@@ -231,8 +230,8 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/\w+ is not allowed to execute .+/,	sub { &capture('(sudo command) User not allowed to execute ...') } ],
 	[ qr/\w+ is not in the sudoers file/,	sub { &capture('(sudo command) User not in the sudoers file') } ],
 	[ '\r\n',			sub {
-					  unless ( $cmd_sent ) { $cmd_sent = 1; print "--- output ---\n" unless defined $int_opts->{'o'} }
-					  $exp->before() =~ /$cmd/ ? exp_continue : &collect_output() } ],
+					  unless ( $cmd_sent ) { print "--- output ---\n" unless defined $int_opts->{'o'} };
+					  if ( $cmd_sent ) { &collect_output() } else { $cmd_sent = 1; exp_continue } } ],
 	[ 'eof',			sub { &capture('(cmd) EOF') } ],
 	[ 'timeout',			sub { &capture('(cmd) Timeout') } ],
 	[ $shell_prompt ]
