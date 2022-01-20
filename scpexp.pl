@@ -24,7 +24,7 @@ use File::Path qw(make_path);
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-our ($help, $version, $u, $p, $via, $bu, $ru, $sshOpts, $timeout, $tolocal, $r, $et, $v, $multiauth, $q, $d);
+our ($help, $version, $u, $p, $via, $proxy, $bu, $ru, $sshOpts, $timeout, $tolocal, $r, $et, $v, $multiauth, $q, $d);
 
 my $start = time() unless ( $et || $help || $version );
 
@@ -36,8 +36,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.1\n";
-	print "Release date: 2022-01-18\n";
+	print "Version: 6.2\n";
+	print "Release date: 2022-01-20\n";
 	exit;
 }
 
@@ -46,6 +46,7 @@ my $pid = 0;
 
 &usage if $help;
 die "Required arguments: <source_path>, <host>\nUse -help for options\n" if @ARGV < 2;
+die "Set either -via or -proxy\nUse -help for options\n" if ( $via && $proxy );
 
 $timeout = $timeout_default unless $timeout;
 die "-timeout ($timeout) is not an integer\n" if $timeout =~ /\D/;
@@ -55,12 +56,12 @@ my $tpath = $ARGV[2] || '.';
 
 if ( $host =~ /(.+),([^\s].+[^\s])?/ ) {
 	$host = $1;
-	$via = $2 if $2;
+	if ( $2 ) { $proxy ? $proxy = $2 : $via = $2 }
 }
 
 if ( $host =~ /(.+)\@(.+)/ ) {
 	$host = $2;
-	$via ? $ru = $1 : $u = $1
+	( $proxy || $via ) ? $ru = $1 : $u = $1
 }
 
 if ( $tolocal && !-e $tpath ) {
@@ -79,6 +80,7 @@ if ( $v ) {
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
+	print "proxy = $proxy\n" if $proxy;
 	print "bu = $bu\n" if $bu;
 	print "ru = $ru\n" if $ru;
 	print "sshOpts = $sshOpts\n" if $sshOpts;
@@ -112,11 +114,15 @@ if ( defined $password ) {
 
 # Using -q (quiet mode) will make expect timeout for large files because the progress meter is disabled
 my $scp = 'scp -C -o StrictHostKeyChecking=no -o CheckHostIP=no';
-if ( $via ) {
+if ( $via && $via ne '1' ) {
 	$via = "$bu\@$via" if ( $via !~ /\@/ && $bu );
 	$scp .= " -o UserKnownHostsFile=/dev/null -o 'ProxyCommand sft proxycommand --via $via ";
 	$scp .= "$ru\@" if $ru;
 	$scp .= "$host'";
+} elsif ( $proxy && $proxy ne '1' ) {
+	if ( $proxy !~ /\@/ ) { $proxy = ( $bu ? $bu : $username ) . "\@$proxy" }
+	$sshOpts .= " -J $proxy";
+	$username = $ru if $ru
 }
 $scp .= " $sshOpts" if defined $sshOpts;
 $scp .= " -r" if $r;
@@ -198,15 +204,16 @@ sub send_yes {
 
 sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
-	print "\t[-via=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
+	print "\t[-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-tolocal] [-multiauth] [-q] [-r] [-et] [-v] [-d]\n";
-	print "\t<source_path> <[username|remote_user@]host[,\$via]> [<target_path>]\n\n";
+	print "\t<source_path> <[username|remote_user@]host[,\$via|proxy]> [<target_path>]\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
 	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
-	print "\t -via : Bastion host for Okta ASA sft client\n";
+	print "\t -via : Bastion host for Okta ASA sft client (default over -proxy)\n";
+	print "\t -proxy : Proxy host for ProxyJump (leave empty to enable over -via)\n";
 	print "\t   -bu : Bastion user\n";
 	print "\t   -ru : Remote user\n";
 	print "\t         (default: Okta username -sft login-)\n";
