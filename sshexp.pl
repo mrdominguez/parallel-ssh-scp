@@ -334,7 +334,7 @@ sub collect_output {
 			print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
 		}
 	}
-	exp_continue unless ( $bg && $cmd_sent && ( $exp->before() !~ $shell_prompt || $exp->after() !~ $shell_prompt ) );
+	exp_continue unless ( $bg && $cmd_sent );
 }
 
 sub format_output {
