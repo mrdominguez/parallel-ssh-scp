@@ -37,7 +37,7 @@ Note that SSH allows connecting to remote hosts though a proxy (or bastion) with
 
 Or simply use the equivalent `-proxy` option.
 
-Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, since additional output can make the Expect library unreliable. For this reason, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
+Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, because additional output can make the Expect library unreliable. For this reason, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
 
 ## Sample Output
 
@@ -186,7 +186,7 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 
 Both username and password values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
 
-Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode, `-u` gets ignored and is replaced with the underlying Okta credentials.
+Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead.
 
 ## Usage
 
@@ -248,7 +248,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
 NOTES:
 - Once a process is running, a timeout occurs when the executed command does not output anything after the `-timeout` value is reached.
 - Unless overridden by the SSH *ConnectTimeout* option, the system's TCP connect timeout value will be used (the default for Linux is 20 seconds). To change it, set `-sshOpts` as follows  `-sshOpts='-o ConnectTimeout=10'` (in seconds).
-- Both `-f` and `-s` can be used at the same time.
+- Both `-f` and `-s` can be set at the same time.
 - Lines containing the `#` character in the hosts file will be skipped.
 
 **sshexp.pl**
