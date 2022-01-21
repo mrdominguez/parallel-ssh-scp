@@ -186,7 +186,7 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 
 Both username and password values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
 
-One difference between `-via` (Okta/sft) and `-proxy` (ProxyJump) is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode (`-via`), `-u` gets ignored and is replaced with the underlying Okta credentials (see [Usage](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#usage)).
+Okta/sft is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode (`-via`), `-u` gets ignored and is replaced with the underlying Okta credentials (see [Usage](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#usage)).
 
 ## Usage
 
