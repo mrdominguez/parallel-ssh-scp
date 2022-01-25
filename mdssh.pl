@@ -27,7 +27,7 @@ use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $proxy, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $minimal, $et);
+our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $proxy, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et, $minimal);
 
 $et = 1 if $minimal;
 
@@ -387,7 +387,7 @@ sub usage {
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
-	print "\t[-o[=0|1] -olines=n -odir=path] [-et] [-v [-timestamp]]\n";
+	print "\t[-o[=0|1] -olines=n -odir=path] [-et|-minimal] [-v|-timestamp]\n";
 	print "\t(-s=\"[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
@@ -423,8 +423,8 @@ sub usage {
 	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=0)\n";
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
-	print "\t -minimal : Hide process termination tracking in non-verbose mode (implies -et)\n";
 	print "\t -et : Hide execution time\n";
+	print "\t -minimal : Hide process termination tracking in non-verbose mode (implies -et)\n";
 	print "\t -v : Enable verbose messages\n";
 	print "\t -timestamp : Display time (implies -v)\n";
 	print "\t -s : Space-separated list of hostnames (brace expansion supported)\n";
