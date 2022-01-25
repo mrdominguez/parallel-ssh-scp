@@ -198,7 +198,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
-    [-o[=0|1] -olines=n -odir=path] [-et] [-v [-timestamp]]
+    [-o[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]
     (-s="[user1@]host1[,$via1|proxy1] [user2@]host2[,$via2|proxy2] ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
@@ -235,6 +235,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -odir : Local directory in which the command output will be stored as a file (default: $PWD -current folder-)
              If permissions allow it, the directory will be created if it does not exit
      -et : Hide execution time
+     -minimal : Hide process termination tracking in non-verbose mode (implies -et)
      -v : Enable verbose messages
      -timestamp : Display time (implies -v)
      -s : Space-separated list of hostnames (brace expansion supported)
