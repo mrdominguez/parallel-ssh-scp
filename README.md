@@ -102,16 +102,16 @@ ttime = 5 seconds
 [localhost] [15197] process_4 forked
 [kube-node2] (auth) EOF
 ssh: connect to host kube-node2 port 22: Connection refused
-[kube-node2] [15195] process_3 exited (Pending: 3 | Forked: 4 | Completed: 1/4 -25%- | OK: 0 | Error: 1)
+[kube-node2] [15195] process_3 exited (Pending: 3 | Forked: 4 | 1/4 -25%- | OK: 0 | Error: 1)
 [localhost] [15203] -> OK
 Redirecting to /bin/systemctl restart  ntpd.service
-[localhost] [15197] process_4 exited (Pending: 2 | Forked: 4 | Completed: 2/4 -50%- | OK: 1 | Error: 1)
+[localhost] [15197] process_4 exited (Pending: 2 | Forked: 4 | 2/4 -50%- | OK: 1 | Error: 1)
 [kube-node1] [15201] -> OK
 Redirecting to /bin/systemctl restart ntpd.service
-[kube-node1] [15193] process_2 exited (Pending: 1 | Forked: 4 | Completed: 3/4 -75%- | OK: 2 | Error: 1)
+[kube-node1] [15193] process_2 exited (Pending: 1 | Forked: 4 | 3/4 -75%- | OK: 2 | Error: 1)
 [kube-master] [15202] -> OK
 Redirecting to /bin/systemctl restart ntpd.service
-[kube-master] [15192] process_1 exited (Pending: 0 | Forked: 4 | Completed: 4/4 -100%- | OK: 3 | Error: 1)
+[kube-master] [15192] process_1 exited (Pending: 0 | Forked: 4 | 4/4 -100%- | OK: 3 | Error: 1)
 All processes completed
 -----
 Number of hosts: 4
