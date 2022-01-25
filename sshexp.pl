@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.2\n";
-	print "Release date: 2022-01-20\n";
+	print "Version: 6.3\n";
+	print "Release date: 2022-01-25\n";
 	exit;
 }
 
