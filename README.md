@@ -87,14 +87,14 @@ Restart the `ntpd` service and use verbose output (`-v`), which is especially us
 ```
 [mdom@localhost ~]$ mdssh -v -sudo -s='kube-master kube-node{1,2} localhost' 'service ntpd restart'
 threads = 10
-timeout = 20 seconds
+timeout = 20 s
 o = 1
 olines = 10
 username = mdom
 Password file /home/mdom/ssh_pass found
 Sudoing to user root
 tcount = 25
-ttime = 5 seconds
+ttime = 5 s
 -----
 [kube-master] [15192] process_1 forked
 [kube-node1] [15193] process_2 forked
@@ -216,7 +216,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
-     -timeout : Timeout value for Expect (default: 20 seconds)
+     -timeout : Timeout value for Expect (default: 20 s)
      -threads : Number of concurrent processes (default: 10)
      -scp : Copy <source_path> from local host to @remote_hosts:<target_path>
        -tolocal : Copy @remote_hosts:<source_path> to <target_path> in local host
@@ -227,7 +227,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
        -target : Target path (default: '.' -dot, or current directory-)
        -meter : Display scp progress (default: disabled)
      -tcount : Number of forked processes before throttling (default: 25)
-     -ttime : Throttling time (default: 5 seconds)
+     -ttime : Throttling time (default: 5 s)
      -o : (Not defined) Buffer the output and display it after command completion
           (0) Do not display command output
           (1) Display command output as it happens
@@ -275,7 +275,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
-     -timeout : Timeout value for Expect (default: 20 seconds)
+     -timeout : Timeout value for Expect (default: 20 s)
      -o : (Not defined) Display command output as it happens
           (0) Do not display command output
           (1) Buffer the output and display it after command completion (useful for concurrent execution)
@@ -307,7 +307,7 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
-     -timeout : Timeout value for Expect (default: 20 seconds)
+     -timeout : Timeout value for Expect (default: 20 s)
      -tolocal : Copy from remote host to local host (default: local -> remote)
                 If permissions allow it, non-existent local directories in <target_path> will be created
      -multiauth : Always authenticate when password prompted (default: single authentication attempt)
