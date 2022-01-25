@@ -387,7 +387,7 @@ sub usage {
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
-	print "\t[-o[=0|1] -olines=n -odir=path] [-et|-minimal] [-v|-timestamp]\n";
+	print "\t[-o[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]\n";
 	print "\t(-s=\"[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
