@@ -27,7 +27,9 @@ use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $proxy, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et);
+our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $proxy, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $minimal, $et);
+
+$et = 1 if $minimal;
 
 my $start = time() unless ( $et || $help || $version );
 my $threads_default = 10;
@@ -40,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.2\n";
-	print "Release date: 2022-01-20\n";
+	print "Version: 6.3\n";
+	print "Release date: 2022-01-25\n";
 	exit;
 }
 
@@ -362,9 +364,11 @@ sub check_process {
 		}
 
 		unless ( $v ) {
-			print "___ $completed_cnt/$num_hosts";
-			printf(" in %0.03f s", &time() - $start) unless $et;
-			print "\n";
+			unless ( $minimal ) {
+				print "___ $completed_cnt/$num_hosts";
+				printf(" in %0.03f s", &time() - $start) unless $et;
+				print "\n";
+			}
 		} else {
 			my $log_msg = "[$hosts->{$child_pid}->{'host'}";
 			$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
@@ -419,6 +423,7 @@ sub usage {
 	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=0)\n";
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
+	print "\t -minimal : Hide process termination tracking in non-verbose mode (implies -et)\n";
 	print "\t -et : Hide execution time\n";
 	print "\t -v : Enable verbose messages\n";
 	print "\t -timestamp : Display time (implies -v)\n";
