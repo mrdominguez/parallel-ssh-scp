@@ -73,11 +73,11 @@ Redirecting to /bin/systemctl status ntpd.service
            └─16685 /usr/sbin/ntpd -u ntp:ntp -g
 -----
 Number of hosts: 4
-~
+
 OK: 2 | kube-master localhost
-~
+
 Error (RC=3): 1 | kube-node1
-~
+
 Error (RC=255): 1 | kube-node2
 -----
 [mdom@localhost ~]$
@@ -115,9 +115,9 @@ Redirecting to /bin/systemctl restart ntpd.service
 All processes completed
 -----
 Number of hosts: 4
-~
+
 OK: 3 | kube-master kube-node1 localhost
-~
+
 Error (RC=255): 1 | kube-node2
 -----
 [mdom@localhost ~]$
