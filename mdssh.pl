@@ -246,13 +246,13 @@ do { &check_process } until $child_pid == -1;
 
 my @sorted_ok_hosts = sort @ok_hosts;
 #print Dumper $error_hosts;
-print "-----\nNumber of hosts: $num_hosts\n~\n";
+print "-----\nNumber of hosts: $num_hosts\n\n";
 print "OK: $ok_cnt ";
 print "| @sorted_ok_hosts" if $ok_cnt;
 
 foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 	$error_cnt = scalar @{$error_hosts->{$rc}};
-	print "\n~\n";
+	print "\n\n";
 	print "Error (RC=$rc): $error_cnt ";
 
 	if ( $error_cnt ) {
@@ -365,7 +365,7 @@ sub check_process {
 
 		unless ( $v ) {
 			unless ( $minimal ) {
-				print "___ $completed_cnt/$num_hosts";
+				print " ___ $completed_cnt/$num_hosts";
 				printf(" in %0.03f s", &time() - $start) unless $et;
 				print "\n";
 			}
