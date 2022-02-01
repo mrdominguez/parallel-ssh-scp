@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.3
+VERSION: 6.4
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -198,7 +198,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sshOpts=ssh_options] [-timeout=n] [-threads=n]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
-    [-o[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]
+    [-out[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]
     (-s="[user1@]host1[,$via1|proxy1] [user2@]host2[,$via2|proxy2] ..." | -f=hosts_file) <command|source_path>
 
      -help : Display usage
@@ -228,10 +228,10 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
        -meter : Display scp progress (default: disabled)
      -tcount : Number of forked processes before throttling (default: 25)
      -ttime : Throttling time (default: 5 s)
-     -o : (Not defined) Buffer the output and display it after command completion
-          (0) Do not display command output
-          (1) Display command output as it happens
-     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -o=0)
+     -out : (Not defined) Buffer the output and display it after command completion
+            (0) Do not display command output
+            (1) Display command output as it happens
+     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -out=0)
      -odir : Local directory in which the command output will be stored as a file (default: $PWD -current folder-)
              If permissions allow it, the directory will be created if it does not exit
      -et : Hide execution time
@@ -257,7 +257,7 @@ NOTES:
 Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-sudo[=sudo_user]] [-bg] [-prompt=regex]
     [-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]
-    [-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]
+    [-sshOpts=ssh_options] [-timeout=n] [-out[=0|1] -olines=n -odir=path] [-et] [-v] [-d]
     <[username|remote_user@]host[,$via|proxy]> [<command>]
 
      -help : Display usage
@@ -276,10 +276,10 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
      -timeout : Timeout value for Expect (default: 20 s)
-     -o : (Not defined) Display command output as it happens
-          (0) Do not display command output
-          (1) Buffer the output and display it after command completion (useful for concurrent execution)
-     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -o=1)
+     -out : (Not defined) Display command output as it happens
+            (0) Do not display command output
+            (1) Buffer the output and display it after command completion (useful for concurrent execution)
+     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -out=1)
      -odir : Directory in which the command output will be stored as a file (default: $PWD -current folder-)
      -et : Hide execution time
      -v : Enable verbose messages
