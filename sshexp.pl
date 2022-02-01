@@ -23,7 +23,7 @@ use File::Basename;
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-our ($help, $version, $u, $p, $sudo, $prompt, $bg, $via, $proxy, $bu, $ru, $sshOpts, $timeout, $o, $olines, $odir, $et, $v, $d);
+our ($help, $version, $u, $p, $sudo, $prompt, $bg, $via, $proxy, $bu, $ru, $sshOpts, $timeout, $out, $olines, $odir, $et, $v, $d);
 
 my $start = time() unless ( $et || $help || $version );
 
@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.3\n";
-	print "Release date: 2022-01-25\n";
+	print "Version: 6.4\n";
+	print "Release date: 2022-02-01\n";
 	exit;
 }
 
@@ -53,9 +53,9 @@ my $int_opts = {};
 $int_opts->{'timeout'} = $timeout || $timeout_default;	# Use default value if 0 (or empty)
 
 if ( defined $olines ) {
-	$int_opts->{'o'} = 1;
-} elsif ( defined $o ) {
-	$int_opts->{'o'} = $o;
+	$int_opts->{'out'} = 1;
+} elsif ( defined $out ) {
+	$int_opts->{'out'} = $out;
 }
 
 $int_opts->{'olines'} = $olines // $olines_default;
@@ -79,7 +79,7 @@ if ( $host =~ /(.+)\@(.+)/ ) {
 
 if ( $v ) {
 	print "timeout = $int_opts->{'timeout'} s\n";
-	print "o = $int_opts->{'o'}\n" if defined $int_opts->{'o'};
+	print "out = $int_opts->{'out'}\n" if defined $int_opts->{'out'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
@@ -177,7 +177,7 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/Add to known_hosts\?.*/i,			sub { &send_yes() } ],
 	  # Expect TIMEOUT
 	[ 'timeout',					sub { &capture('(auth) Timeout') } ], 
-#	[ $shell_prompt,				sub { print $exp->before() . $exp->match() unless defined $int_opts->{'o'} } ]
+#	[ $shell_prompt,				sub { print $exp->before() . $exp->match() unless defined $int_opts->{'out'} } ]
 	[ $shell_prompt ]
 );
 
@@ -232,7 +232,7 @@ $exp->expect($int_opts->{'timeout'},
 	[ qr/\w+ is not allowed to execute .+/,	sub { &capture('(sudo command) User not allowed to execute ...') } ],
 	[ qr/\w+ is not in the sudoers file/,	sub { &capture('(sudo command) User not in the sudoers file') } ],
 	[ '\r\n',			sub {
-					  unless ( $cmd_sent ) { print "--- output ---\n" unless defined $int_opts->{'o'} };
+					  unless ( $cmd_sent ) { print "--- output ---\n" unless defined $int_opts->{'out'} };
 					  if ( $cmd_sent ) { &collect_output() } else { $cmd_sent = 1; exp_continue } } ], # Do not collect the command
 	[ 'eof',			sub { &capture('(cmd) EOF') } ],
 	[ 'timeout',			sub { &capture('(cmd) Timeout') } ],
@@ -330,7 +330,7 @@ sub capture {
 sub collect_output {
 	unless ( scalar(@exp_output) == 0 && !$exp->before() && !$exp->after() ) {
 		push @exp_output, $exp->before();
-		if ( !defined $int_opts->{'o'} && scalar(@exp_output) > 0 ) {
+		if ( !defined $int_opts->{'out'} && scalar(@exp_output) > 0 ) {
 			print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
 		}
 	}
@@ -343,7 +343,7 @@ sub format_output {
 	$int_opts->{'olines'} = $exp_output_lines if $int_opts->{'olines'} == 0;
 
 	my $output;
-	if ( defined $int_opts->{'o'} && $int_opts->{'o'} == 1 && $exp_output_lines ) {
+	if ( defined $int_opts->{'out'} && $int_opts->{'out'} == 1 && $exp_output_lines ) {
 		$output .= ( $int_opts->{'olines'} < $exp_output_lines ) ? join("\n", @exp_output[-$int_opts->{'olines'}..-1]) : join("\n", @exp_output);
 		$output .= "\n";
 		return $output;
@@ -374,7 +374,7 @@ sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-bg] [-prompt=regex]\n";
 	print "\t[-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-o[=0|1] -olines=n -odir=path] [-et] [-v] [-d]\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-out[=0|1] -olines=n -odir=path] [-et] [-v] [-d]\n";
 	print "\t<[username|remote_user@]host[,\$via|proxy]> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
@@ -393,10 +393,10 @@ sub usage {
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
 	print "\t -timeout : Timeout value for Expect (default: $timeout_default s)\n";
-	print "\t -o : (Not defined) Display command output as it happens\n";
-	print "\t      (0) Do not display command output\n";
-	print "\t      (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
-	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=1)\n";
+	print "\t -out : (Not defined) Display command output as it happens\n";
+	print "\t        (0) Do not display command output\n";
+	print "\t        (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
+	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -out=1)\n";
 	print "\t -odir : Directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t -et : Hide execution time\n";
 	print "\t -v : Enable verbose messages\n";
