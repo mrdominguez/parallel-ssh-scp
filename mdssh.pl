@@ -27,7 +27,7 @@ use Time::HiRes qw( time usleep );
 
 BEGIN { $| = 1 }
 
-our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $proxy, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $o, $olines, $odir, $et, $minimal);
+our ($help, $version, $u, $p, $prompt, $threads, $tcount, $ttime, $timeout, $scp, $r, $target, $tolocal, $multiauth, $meter, $sudo, $bg, $via, $proxy, $bu, $ru, $sshOpts, $s, $f, $v, $timestamp, $out, $olines, $odir, $et, $minimal);
 
 $et = 1 if $minimal;
 
@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.3\n";
-	print "Release date: 2022-01-25\n";
+	print "Version: 6.4\n";
+	print "Release date: 2022-02-01\n";
 	exit;
 }
 
@@ -76,16 +76,16 @@ $int_opts->{'tcount'} = $tcount // $tcount_default;
 $int_opts->{'ttime'} = $ttime // $ttime_default;
 $int_opts->{'timeout'} = $timeout || $timeout_default;
 
-if ( not defined $o ) { 
-	$int_opts->{'o'} = 1;
-} elsif ( $o eq '1' ) {
-	undef $o
+if ( not defined $out ) { 
+	$int_opts->{'out'} = 1;
+} elsif ( $out eq '1' ) {
+	undef $out;
 } else {
-	$int_opts->{'o'} = $o;
+	$int_opts->{'out'} = $out;
 }
 
 $int_opts->{'olines'} = $olines // $olines_default;
-$int_opts->{'o'} = 1 if ( defined $olines );
+$int_opts->{'out'} = 1 if ( defined $olines );
 
 foreach my $opt ( keys(%{$int_opts}) ) {
 	die "-$opt ($int_opts->{$opt}) is not an integer\n" if $int_opts->{$opt} =~ /\D/;
@@ -107,7 +107,7 @@ $v = 1 if $timestamp;
 if ( $v ) {
 	print "threads = $int_opts->{'threads'}\n";
 	print "timeout = $int_opts->{'timeout'} s\n";
-	print "o = $int_opts->{'o'}\n" if defined $int_opts->{'o'};
+	print "out = $int_opts->{'out'}\n" if defined $int_opts->{'out'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
@@ -329,7 +329,7 @@ sub fork_process {
 		$app .= " -prompt=$prompt" if $prompt;
 		$app .= " -sudo=$sudo_user" if $sudo;
 		$app .= " -bg" if $bg;
-		$app .= " -o=$int_opts->{'o'}" if defined $int_opts->{'o'};
+		$app .= " -out=$int_opts->{'out'}" if defined $int_opts->{'out'};
 		$app .= " -olines=$int_opts->{'olines'}" if defined $olines;
 		$app .= " -odir=$odir" if defined $odir;
 		$cmd = "$app $host \"$c\"";
@@ -387,7 +387,7 @@ sub usage {
 	print "\t[-sshOpts=ssh_options] [-timeout=n] [-threads=n]\n";
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
-	print "\t[-o[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]\n";
+	print "\t[-out[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]\n";
 	print "\t(-s=\"[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...\" | -f=hosts_file) <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
@@ -417,10 +417,10 @@ sub usage {
 	print "\t   -meter : Display scp progress (default: disabled)\n";
 	print "\t -tcount : Number of forked processes before throttling (default: $tcount_default)\n";
 	print "\t -ttime : Throttling time (default: $ttime_default s)\n";
-	print "\t -o : (Not defined) Buffer the output and display it after command completion\n";
-	print "\t      (0) Do not display command output\n";
-	print "\t      (1) Display command output as it happens\n";
-	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -o=0)\n";
+	print "\t -out : (Not defined) Buffer the output and display it after command completion\n";
+	print "\t        (0) Do not display command output\n";
+	print "\t        (1) Display command output as it happens\n";
+	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -out=0)\n";
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
 	print "\t -et : Hide execution time\n";
