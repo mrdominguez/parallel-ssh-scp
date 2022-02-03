@@ -224,6 +224,7 @@ unless ( defined $cmd ) {
 $pw_sent = 0;
 @exp_output = ();
 my $cmd_sent = 0;
+#print "$cmd\n" if $v;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,			sub { &send_password() } ],
@@ -288,7 +289,7 @@ print "[$host] [$pid] -> $msg_status";
 exit $rc;
 
 END {
-	printf("[$host] [$pid] Execution time: %0.03f s\n", &time() - $start) unless ( $et || $help || $version );
+	printf("[$host] [$pid] Execution time: %0.03f s\n", &time() - $start) unless ( $et || $help || $version || !$host );
 }
 
 # End of script
