@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.4\n";
-	print "Release date: 2022-02-01\n";
+	print "Version: 6.5\n";
+	print "Release date: 2022-02-04\n";
 	exit;
 }
 
@@ -183,10 +183,6 @@ my $running_cnt = 0;
 my $error_hosts = {};
 my @ok_hosts = ();
 my $pid = $$;
-my $num_hosts = 0;
-
-foreach (@hosts) { ++$num_hosts unless ( /^\s*$/ || /(#+)/ ) }
-
 my $throttle_cnt = 0;
 my $throttle_flag = 0;
 my $throttle_start;
@@ -194,11 +190,12 @@ my $ok_cnt = 0;
 my $error_cnt = 0;
 my $child_pid;
 
+@hosts = grep !( /^\s*$/ || /(#+)/ ), @hosts;
+my $num_hosts = scalar(@hosts);
+
 while ( $forked_cnt <= $#hosts ) {
 	my $host = $hosts[$forked_cnt];
 	chomp($host);
-	next if $host =~ /(#+)/;
-	next if $host =~ /^\s*$/;
 
 	unless ( $throttle_flag ) {
 		&fork_process($host, $via, $cmd_spath);
