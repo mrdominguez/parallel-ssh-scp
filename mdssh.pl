@@ -196,6 +196,7 @@ my $num_hosts = scalar(@hosts);
 while ( $forked_cnt <= $#hosts ) {
 	my $host = $hosts[$forked_cnt];
 	chomp($host);
+	$host =~ s/^\s+|\s+$//g;
 
 	unless ( $throttle_flag ) {
 		&fork_process($host, $via, $cmd_spath);
