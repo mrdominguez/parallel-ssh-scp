@@ -190,7 +190,7 @@ my $ok_cnt = 0;
 my $error_cnt = 0;
 my $child_pid;
 
-@hosts = grep !( /^\s*$/ || /(#+)/ ), @hosts;
+@hosts = grep !/^\s*$|(#+)/, @hosts;
 my $num_hosts = scalar(@hosts);
 
 while ( $forked_cnt <= $#hosts ) {
