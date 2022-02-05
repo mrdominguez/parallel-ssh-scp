@@ -324,7 +324,7 @@ sub fork_process {
 		$app .= " -multiauth" if $multiauth;
 		$cmd = "$app \"$c\" $host $target";
 	} else {
-		$app .= " -prompt=$prompt" if $prompt;
+		$app .= " -prompt=\'$prompt\'" if $prompt;
 		$app .= " -sudo=$sudo_user" if $sudo;
 		$app .= " -bg" if $bg;
 		$app .= " -out=$int_opts->{'out'}" if defined $int_opts->{'out'};
