@@ -137,7 +137,7 @@ if ( $via && $via ne '1' ) {
 #print "$ssh\n" if $v;
 
 # \s will match newline, use literal space instead
-my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'\][\$\#] $';
+my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'\][\$#] $';
 
 my $exp = new Expect;
 $exp->raw_pty(0);
