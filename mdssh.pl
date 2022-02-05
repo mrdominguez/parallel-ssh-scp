@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.5\n";
-	print "Release date: 2022-02-04\n";
+	print "Version: 6.5.1\n";
+	print "Release date: 2022-02-05\n";
 	exit;
 }
 
