@@ -44,7 +44,7 @@ sshexp host "awk '{print \$3 \"\t\" \$4}' file"
 mdssh -s=host "awk '{print \\\$3 \\\"\t\\\" \\\$4}' file"
 ```
 
-Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, because additional output can make the Expect library unreliable. For this reason, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
+Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, because additional output can make the Expect library unreliable. Thus, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
 
 ## Sample Output
 
