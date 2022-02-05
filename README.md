@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.5
+VERSION: 6.5.1
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -36,6 +36,13 @@ Note that SSH allows connecting to remote hosts though a proxy (or bastion) with
 ```
 
 Or simply use the equivalent `-proxy` option.
+
+Commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following is equivalent:
+
+```
+sshexp host "awk '{print \$3 \"\t\" \$4}' file"
+mdssh -s=host "awk '{print \\\$3 \\\"\t\\\" \\\$4}' file"
+```
 
 Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, because additional output can make the Expect library unreliable. For this reason, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
 
