@@ -19,17 +19,17 @@ FEEDBACK/BUGS: Please contact me by email.
 
 `mdssh.pl` (as in my initials, MD) is an asynchronous parallel SSH/SCP command-line utility that does not require setting up SSH keys. It enables process multithreading and calls `sshexp.pl` or `scpexp.pl` to connect to remote hosts (one host per process) through `ssh` and `scp` respectively.
 
-*Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` *(preferred method)* or using the `sudo` command.
+*Sudo* operations that require password input are also supported either by setting `-sudo[=sudo_user]` or using the `sudo` command.
 
 The latest release contains performance enhancements, specifically, optimizations to the concurrency management logic (among other code improvements).
 
-Also, it is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm). The `-via` option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
+It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm). The `-via` option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
 
 ```
 [remote_user@]host,[bastion_user@]bastion
 ```
 
-Note that SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` like so:
+Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` like so:
 
 ```
 -sshOpts='-J user@bastion:port'
@@ -37,7 +37,7 @@ Note that SSH allows connecting to remote hosts though a proxy (or bastion) with
 
 Or simply use the equivalent `-proxy` option.
 
-Commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following is equivalent:
+Note that commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following is equivalent:
 
 ```
 sshexp host "awk '{print \$3 \"\t\" \$4}' file"
