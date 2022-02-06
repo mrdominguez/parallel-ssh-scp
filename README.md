@@ -37,7 +37,7 @@ Further, SSH allows connecting to remote hosts though a proxy (or bastion) with 
 
 Or simply use the equivalent `-proxy` option.
 
-Note that commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following is equivalent:
+Note that commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following yields identical results:
 
 ```
 sshexp host "awk '{print \$3 \"\t\" \$4}' file"
