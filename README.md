@@ -29,13 +29,12 @@ It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` 
 [remote_user@]host,[bastion_user@]bastion
 ```
 
-Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` like so:
+Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
 
 ```
 -sshOpts='-J user@bastion:port'
+-proxy=user@bastion:port
 ```
-
-Or simply use the equivalent `-proxy` option.
 
 Note that commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following yields identical results:
 
