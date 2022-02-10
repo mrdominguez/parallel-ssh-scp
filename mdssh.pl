@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.5.1\n";
-	print "Release date: 2022-02-05\n";
+	print "Version: 6.5.2\n";
+	print "Release date: 2022-02-09\n";
 	exit;
 }
 
@@ -76,7 +76,7 @@ $int_opts->{'tcount'} = $tcount // $tcount_default;
 $int_opts->{'ttime'} = $ttime // $ttime_default;
 $int_opts->{'timeout'} = $timeout || $timeout_default;
 
-if ( not defined $out ) { 
+if ( !defined $out ) { 
 	$int_opts->{'out'} = 1;
 } elsif ( $out eq '1' ) {
 	undef $out;
@@ -418,7 +418,7 @@ sub usage {
 	print "\t -out : (Not defined) Buffer the output and display it after command completion\n";
 	print "\t        (0) Do not display command output\n";
 	print "\t        (1) Display command output as it happens\n";
-	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -out=0)\n";
+	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies undefined -out)\n";
 	print "\t -odir : Local directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
 	print "\t         If permissions allow it, the directory will be created if it does not exit\n";
 	print "\t -et : Hide execution time\n";
