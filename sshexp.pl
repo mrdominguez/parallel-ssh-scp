@@ -134,7 +134,7 @@ if ( $via && $via ne '1' ) {
 	$ssh .= " $sshOpts" if $sshOpts;
 	$ssh .= " $username\@$host"
 }
-#print "$ssh\n" if $v;
+print "$ssh\n" if $v;
 
 # \s will match newline, use literal space instead
 my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'\][\$#] $';
@@ -224,7 +224,7 @@ unless ( defined $cmd ) {
 $pw_sent = 0;
 @exp_output = ();
 my $cmd_sent = 0;
-#print "$cmd\n" if $v;
+print "command = $cmd\n" if $v;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
 	[ qr/password.*:\s*$/i,			sub { &send_password() } ],
