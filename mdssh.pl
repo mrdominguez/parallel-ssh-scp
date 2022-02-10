@@ -168,9 +168,11 @@ if ( $scp ) {
 		print "Executing SCP (copy ";
 		print $tolocal ? "to " : "from ";
 		print "local)\n";
-		print "Source path: $cmd_spath\n";
-		print "Target path: $target\n";
+		print "source_path = $cmd_spath\n";
+		print "target_path = $target\n";
 	}
+} else {
+	print "command = $cmd_spath\n" if $v;
 }
 
 print "-----\n" if $v;
