@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.5.1
+VERSION: 6.5.2
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -94,7 +94,7 @@ Restart the `ntpd` service and use verbose output (`-v`), which is especially us
 [mdom@localhost ~]$ mdssh -v -sudo -s='kube-master kube-node{1,2} localhost' 'service ntpd restart'
 threads = 10
 timeout = 20 s
-o = 1
+out = 1
 olines = 10
 username = mdom
 Password file /home/mdom/ssh_pass found
@@ -232,7 +232,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -out : (Not defined) Buffer the output and display it after command completion
             (0) Do not display command output
             (1) Display command output as it happens
-     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies -out=0)
+     -olines : Display the last n lines of buffered output (default: 10 | full output: 0, implies undefined -out)
      -odir : Local directory in which the command output will be stored as a file (default: $PWD -current folder-)
              If permissions allow it, the directory will be created if it does not exit
      -et : Hide execution time
