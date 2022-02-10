@@ -136,8 +136,8 @@ $exp->log_stdout(0);		# Set (1) -default-, unset (0) logging to STDOUT
 #$exp->log_file("$0.log","a");	# Log session to file (a=append -default-, w=truncate)
 
 if ( $v ) {
-	print "Source path = $spath\n";
-	print "Target path = $tpath\n";
+	print "source_path = $spath\n";
+	print "target_path = $tpath\n";
 	print "[$host] Executing SCP (copy ";
 	print $tolocal ? "to " : "from ";
 	print "local)... ";
