@@ -36,8 +36,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.5.1\n";
-	print "Release date: 2022-02-05\n";
+	print "Version: 6.5.2\n";
+	print "Release date: 2022-02-09\n";
 	exit;
 }
 
