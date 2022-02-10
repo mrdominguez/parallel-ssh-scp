@@ -128,7 +128,7 @@ $scp .= " $sshOpts" if defined $sshOpts;
 $scp .= " -r" if $r;
 # $username below gets ignored when using $via (with or without $ru), what matters is the ProxyCommand
 $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$host:$tpath" );
-#print "$scp\n" if $v;
+print "$scp\n" if $v;
 
 my $exp = new Expect;
 $exp->raw_pty(0);
