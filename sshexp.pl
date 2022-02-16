@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.5.2\n";
-	print "Release date: 2022-02-09\n";
+	print "Version: 6.5.3\n";
+	print "Release date: 2022-02-16\n";
 	exit;
 }
 
@@ -279,6 +279,7 @@ if ( defined $odir ) {
 	my $output_file = $odir . '/' . $host . '_' . "$pid.output";
         if ( open my $fh, '>', $output_file ) {
 		print $fh join("\n", @exp_output);
+		print $fh "\n" if @exp_output;
 		close $fh;
 	} else {
 		$msg_status .= "Can't create file $output_file: $!\n";
