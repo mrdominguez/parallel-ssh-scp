@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.5.3\n";
-	print "Release date: 2022-02-16\n";
+	print "Version: 6.6\n";
+	print "Release date: 2022-02-25\n";
 	exit;
 }
 
@@ -53,23 +53,27 @@ die "Missing argument: <command|source_path>\nUse -help for options\n" if @ARGV 
 die "Set either -via or -proxy\nUse -help for options\n" if ( $via && $proxy );
 
 my $cmd_spath = $ARGV[0];
-my (@hosts, @hosts_file, @hosts_cli);
+my (@hosts, @hosts_from_files, @hosts_from_cli);
 
 if ( $f ) {
-	my $hosts_file = $f;
-	open my $fh, '<', $hosts_file or die "Can't open file $hosts_file: $!\n";
-	@hosts_file = <$fh>;
-	close $fh;
+	foreach ( split " ", $f ) {
+			my @files = glob $_ or die "$_ not found\n"; 
+			foreach ( @files ) {
+				open my $fh, '<', $_ or die "Can't open file $_: $!\n";
+				push @hosts_from_files, <$fh>;
+				close $fh;
+		}
+	}
 }
 
 if ( $s ) {
-	@hosts_cli = split " ", qx/echo $s/;
+	@hosts_from_cli = split " ", qx/echo $s/;
 	# http://perldoc.perl.org/functions/split.html
 	# any contiguous whitespace (not just a single space character) is used as a separator
 	# equivalent to /\s+/ 
 }
 
-@hosts = (@hosts_file, @hosts_cli);
+@hosts = (@hosts_from_files, @hosts_from_cli);
 my $int_opts = {};
 $int_opts->{'threads'} = $threads || $threads_default; # use default value if 0 or empty
 $int_opts->{'tcount'} = $tcount // $tcount_default;
@@ -388,7 +392,7 @@ sub usage {
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
 	print "\t[-out[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]\n";
-	print "\t(-s=\"[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...\" | -f=hosts_file) <command|source_path>\n\n";
+	print "\t(-s='[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...' -f='host_file1 host_file2 ...') <command|source_path>\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
@@ -428,7 +432,7 @@ sub usage {
 	print "\t -v : Enable verbose messages\n";
 	print "\t -timestamp : Display time (implies -v)\n";
 	print "\t -s : Space-separated list of hostnames (brace expansion supported)\n";
-	print "\t -f : File containing hostnames (one per line)\n";
+	print "\t -f : Space-separated list of files containing hostnames, one per line (globbing supported)\n";
 	print "\t Set -tcount or -ttime to 0 to disable throttling\n";
 	print "\t Use environment variables \$SSH_USER and \$SSH_PASS to pass credentials\n";
 	print "\t Enable -multiauth along with -tolocal when <source_path> uses brace expansion\n";
