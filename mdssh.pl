@@ -392,7 +392,8 @@ sub usage {
 	print "\t[-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]\n";
 	print "\t[-tcount=throttle_count] [-ttime=throttle_time]\n";
 	print "\t[-out[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]\n";
-	print "\t(-s='[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...' -f='host_file1 host_file2 ...') <command|source_path>\n\n";
+	print "\t(-s='[user1@]host1[,\$via1|proxy1] [user2@]host2[,\$via2|proxy2] ...' -f='host_file1 host_file2 ...')\n";
+	print "\t< command | source_path >\n\n";
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
