@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.5.3
+VERSION: 6.6
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -39,11 +39,22 @@ Further, SSH allows connecting to remote hosts though a proxy (or bastion) with 
 Note that commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following yields identical results:
 
 ```
+sshexp host 'VAR=value; echo $VAR'
+mdssh -s=host 'VAR=value; echo \$VAR'
+```
+
+```
 sshexp host "awk '{print \$3 \"\t\" \$4}' file"
 mdssh -s=host "awk '{print \\\$3 \\\"\t\\\" \\\$4}' file"
 ```
 
 Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, because additional output can make the Expect library unreliable. Thus, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
+
+A space-separated list of host files (globbing supported) can be used:
+
+```
+mdssh -f='/path/to/host_files/* /additional/host_file.txt' -s='192.168.0.10{0..9}' <command>
+```
 
 ## Sample Output
 
@@ -200,7 +211,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
     [-out[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]
-    (-s="[user1@]host1[,$via1|proxy1] [user2@]host2[,$via2|proxy2] ..." | -f=hosts_file) <command|source_path>
+    (-s='[user1@]host1[,$via1|proxy1] [user2@]host2[,$via2|proxy2] ...' -f='host_file1 host_file2 ...') <command|source_path>
 
      -help : Display usage
      -version : Display version information
@@ -240,7 +251,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -v : Enable verbose messages
      -timestamp : Display time (implies -v)
      -s : Space-separated list of hostnames (brace expansion supported)
-     -f : File containing hostnames (one per line)
+     -f : Space-separated list of files containing hostnames, one per line (globbing supported)
      Set -tcount or -ttime to 0 to disable throttling
      Use environment variables $SSH_USER and $SSH_PASS to pass credentials
      Enable -multiauth along with -tolocal when <source_path> uses brace expansion
