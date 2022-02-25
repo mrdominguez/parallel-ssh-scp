@@ -211,7 +211,8 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
     [-scp [-tolocal] [-multiauth] [-r] [-target=target_path] [-meter]]
     [-tcount=throttle_count] [-ttime=throttle_time]
     [-out[=0|1] -olines=n -odir=path] [-et|minimal] [-v|timestamp]
-    (-s='[user1@]host1[,$via1|proxy1] [user2@]host2[,$via2|proxy2] ...' -f='host_file1 host_file2 ...') <command|source_path>
+    (-s='[user1@]host1[,$via1|proxy1] [user2@]host2[,$via2|proxy2] ...' -f='host_file1 host_file2 ...')
+    < command | source_path >
 
      -help : Display usage
      -version : Display version information
