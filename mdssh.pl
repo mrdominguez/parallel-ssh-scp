@@ -55,6 +55,9 @@ die "Set either -via or -proxy\nUse -help for options\n" if ( $via && $proxy );
 my $cmd_spath = $ARGV[0];
 my (@hosts, @hosts_from_files, @hosts_from_cli);
 
+# http://perldoc.perl.org/functions/split.html
+# any contiguous whitespace (not just a single space character) is used as a separator
+# equivalent to /\s+/
 if ( $f ) {
 	foreach ( split " ", $f ) {
 			my @files = glob $_ or die "$_ not found\n"; 
@@ -65,15 +68,9 @@ if ( $f ) {
 		}
 	}
 }
-
-if ( $s ) {
-	@hosts_from_cli = split " ", qx/echo $s/;
-	# http://perldoc.perl.org/functions/split.html
-	# any contiguous whitespace (not just a single space character) is used as a separator
-	# equivalent to /\s+/ 
-}
-
+@hosts_from_cli = split " ", qx/echo $s/ if $s;
 @hosts = (@hosts_from_files, @hosts_from_cli);
+
 my $int_opts = {};
 $int_opts->{'threads'} = $threads || $threads_default; # use default value if 0 or empty
 $int_opts->{'tcount'} = $tcount // $tcount_default;
