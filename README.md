@@ -50,7 +50,7 @@ mdssh -s=host "awk '{print \\\$3 \\\"\t\\\" \\\$4}' file"
 
 Pushing a command to the background can be done by appending ampersand (`&`). This works just fine if no output is returned other than `[job_id] pid`, because additional output can make the Expect library unreliable. Thus, when enabling background mode (`-bg`), the exit code of the command will not be checked. Instead, once the command gets sent, the script will end and return `OK (BG) | RC=100`.
 
-A space-separated list of host files (globbing supported) can be used:
+A space-separated list of host files ([globbing](https://perldoc.perl.org/functions/glob) supported) can be used:
 
 ```
 mdssh -f='/path/to/host_files/* /additional/host_file.txt' -s='192.168.0.10{0..9}' <command>
