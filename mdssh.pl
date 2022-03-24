@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.6\n";
-	print "Release date: 2022-02-25\n";
+	print "Version: 6.6.1\n";
+	print "Release date: 2022-03-24\n";
 	exit;
 }
 
@@ -394,7 +394,7 @@ sub usage {
 
 	print "\t -help : Display usage\n";
 	print "\t -version : Display version information\n";
-	print "\t -u : Username (default: \$USER -current user-, ignored when using -via or Okta credentials)\n";
+	print "\t -u : Username (default: \$USER -current user-, ignored when using Okta credentials -sft login-)\n";
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -bg : Background mode (exit after sending command)\n";
@@ -403,7 +403,6 @@ sub usage {
 	print "\t -proxy : Proxy host for ProxyJump (leave empty to enable over -via)\n";
 	print "\t   -bu : Bastion user\n";
 	print "\t   -ru : Remote user\n";
-	print "\t         (default: Okta username -sft login-)\n"; 
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
