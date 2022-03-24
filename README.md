@@ -29,7 +29,7 @@ It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` 
 [remote_user@]host,[bastion_user@]bastion
 ```
 
-NOTE: As of release 1.58.0 of the Advanced Server Access client, the `<user>@<hostname>` syntax in `sft ssh` is no longer supported due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only the hostname can be specified, otherwise the command errors out:
+NOTE: As of release 1.58.0 of the Advanced Server Access client, the `<username>@<hostname>` syntax in `sft ssh` is no longer supported due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only the hostname can be specified, otherwise the command errors out:
 
 ```
 % sft ssh mariano.dominguez@web0.example.com
