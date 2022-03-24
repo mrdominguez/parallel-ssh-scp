@@ -29,6 +29,13 @@ It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` 
 [remote_user@]host,[bastion_user@]bastion
 ```
 
+NOTE: As of release 1.58.0 of the Advanced Server Access client, the `<user>@<hostname>` syntax in `sft ssh` is no longer supported due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only the hostname can be specified, otherwise the command errors out:
+
+```
+% sft ssh mariano.dominguez@web0.example.com
+error: Not a valid server name
+```
+
 Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
 
 ```
@@ -198,7 +205,13 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 
 Both username and password values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
 
-Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead.
+Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead:
+
+```
+% sft list-accounts --columns username
+USERNAME
+mariano.dominguez
+```
 
 ## Usage
 
