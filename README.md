@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.6
+VERSION: 6.6.1
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -29,7 +29,7 @@ It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` 
 [remote_user@]host,[bastion_user@]bastion
 ```
 
-NOTE: As of release 1.58.0 of the Advanced Server Access client, the `<username>@<hostname>` syntax in `sft ssh` is no longer supported due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only the hostname can be specified, otherwise the command errors out:
+NOTE: As of release 1.58.0 of the Advanced Server Access client, the `<username>@<hostname>` syntax in `sft ssh` is no longer supported due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only `<hostname>` can be specified, otherwise the command errors out:
 
 ```
 % sft ssh mariano.dominguez@web0.example.com
@@ -231,7 +231,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
 
      -help : Display usage
      -version : Display version information
-     -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
+     -u : Username (default: $USER -current user-, ignored when using Okta credentials -sft login-)
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
@@ -240,7 +240,6 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
        -ru : Remote user
-             (default: Okta username -sft login-)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
@@ -290,7 +289,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 
      -help : Display usage
      -version : Display version information
-     -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
+     -u : Username (default: $USER -current user-, ignored when using Okta credentials -sft login-)
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
@@ -299,7 +298,6 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
        -ru : Remote user
-             (default: Okta username -sft login-)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
@@ -325,13 +323,12 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 
      -help : Display usage
      -version : Display version information
-     -u : Username (default: $USER -current user-, ignored when using -via or Okta credentials)
+     -u : Username (default: $USER -current user-, ignored when using Okta credentials -sft login-)
      -p : Password or path to password file (default: undef)
      -via : Bastion host for Okta ASA sft client (default over -proxy)
      -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
        -ru : Remote user
-             (default: Okta username -sft login-)
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
