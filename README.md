@@ -213,7 +213,7 @@ USERNAME
 mariano.dominguez
 ```
 
-NOTE: As of Advanced Server Access client 1.58.0, `-via` does not support `-bu` / `-ru` (see [Synopsis](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#synopsis)).
+NOTE: As of Advanced Server Access client 1.58.0, `-via` does not support `-bu`/`-ru` (see [Synopsis](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#synopsis)).
 
 ## Usage
 
