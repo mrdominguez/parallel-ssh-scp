@@ -197,13 +197,13 @@ $
 
 ## Setting Credentials
 
-The username can be set as `username@host`, by using the `-u` option in the command line, or the `$SSH_USER` environment variable (in that order of precedence). If not set, the default username is the value of the environtment variable `$USER`.
+The username can be set as `<username>@<hostname>`, by using the `-u` option in the command line, or the `$SSH_USER` environment variable (in that order of precedence). If not set, the default username is the value of the environtment variable `$USER`.
 
 The password can be passed by setting the `-p` option or the `$SSH_PASS` environment variable to:
 - The actual password string (**not recommended**).
 - A file containing the password.
 
-Both username and password values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
+Both username (`-u`) and password (`-p`) values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
 
 Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead:
 
