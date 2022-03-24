@@ -32,6 +32,8 @@ It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` 
 NOTE: As of release 1.58.0 of the Advanced Server Access client, the `username@hostname` syntax in `sft ssh` is no longer supported due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only `hostname` can be specified, otherwise the command errors out:
 
 ```
+% sft -v
+sft version 1.58.0
 % sft ssh mariano.dominguez@web0.example.com
 error: Not a valid server name
 ```
