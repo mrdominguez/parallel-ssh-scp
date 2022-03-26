@@ -23,7 +23,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 The latest release contains performance enhancements, specifically, optimizations to the concurrency management logic (among other code improvements).
 
-It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm). The `-via` option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
+It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm). The `-via` (and `-proxy`) option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
 
 ```
 [remote_user@]host,[bastion_user@]bastion
@@ -207,7 +207,7 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 
 Both username (`-u`) and password (`-p`) values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
 
-Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access both proxy and remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead:
+Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access proxy as well as remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead:
 
 ```
 % sft list-accounts --columns username
