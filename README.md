@@ -199,7 +199,7 @@ $
 
 ## Setting Credentials
 
-The username can be set as `username@hostname`, by using the `-u` option in the command line, or the `$SSH_USER` environment variable (in that order of precedence). If not set, the default username is the value of the environtment variable `$USER`.
+The username can be set as `username@hostname`, by using the `-u` command-line option, or the `$SSH_USER` environment variable (in that order of precedence). If not set, the default username is the value of the environtment variable `$USER` or the Okta username.
 
 The password can be passed by setting the `-p` option or the `$SSH_PASS` environment variable to:
 - The actual password string (**not recommended**).
