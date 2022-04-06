@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.6.1
+VERSION: 6.7
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -23,13 +23,13 @@ FEEDBACK/BUGS: Please contact me by email.
 
 The latest release contains performance enhancements, specifically, optimizations to the concurrency management logic (among other code improvements).
 
-It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. See Okta documentation [Use Advanced Server Access with SSH bastions](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm). The `-via` (and `-proxy`) option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
+It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. The `-via` (and `-proxy`) option can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
 
 ```
 [remote_user@]host,[bastion_user@]bastion
 ```
 
-NOTE: As of release 1.58.0 of the Advanced Server Access client, the `username@hostname` syntax in `sft ssh` is no longer supported due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only `hostname` can be specified, otherwise the command errors out:
+NOTE: As of release 1.58.0 of the Advanced Server Access client, `sft ssh` does no longer support the `username@hostname` syntax due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only `hostname` can be specified, otherwise the command errors out:
 
 ```
 % sft -v
@@ -37,6 +37,11 @@ sft version 1.58.0
 % sft ssh mariano.dominguez@web0.example.com
 error: Not a valid server name
 ```
+
+However, `sft proxycommand` does support it. See Okta documentation:
+- [SSH setup](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm)
+- [Customize SSH configurations for clients](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/custom-ssh-client.htm)
+- [Use the Advanced Server Access client](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/client.htm)
 
 Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
 
@@ -207,15 +212,13 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 
 Both username (`-u`) and password (`-p`) values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
 
-Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access proxy as well as remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead:
+Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access proxy and remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead:
 
 ```
 % sft list-accounts --columns username
 USERNAME
 mariano.dominguez
 ```
-
-NOTE: As of Advanced Server Access client 1.58.0, `-via` does not support `-bu`/`-ru` (see [Synopsis](https://github.com/mrdominguez/parallel-ssh-scp/blob/master/README.md#synopsis)).
 
 ## Usage
 
