@@ -36,8 +36,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.6.1\n";
-	print "Release date: 2022-03-24\n";
+	print "Version: 6.7\n";
+	print "Release date: 2022-04-06\n";
 	exit;
 }
 
@@ -121,10 +121,10 @@ if ( $via && $via ne '1' ) {
 	$scp .= "$host'";
 } elsif ( $proxy && $proxy ne '1' ) {
 	if ( $proxy !~ /\@/ ) { $proxy = ( $bu ? $bu : $username ) . "\@$proxy" }
-	$sshOpts .= " -J $proxy";
+	$scp .= " -J $proxy";
 	$username = $ru if $ru
 }
-$scp .= " $sshOpts" if defined $sshOpts;
+$scp .= " $sshOpts" if $sshOpts;
 $scp .= " -r" if $r;
 # $username below gets ignored when using $via (with or without $ru), what matters is the ProxyCommand
 $scp .= ( $tolocal ? " $username\@$host:$spath $tpath" : " $spath $username\@$host:$tpath" );
