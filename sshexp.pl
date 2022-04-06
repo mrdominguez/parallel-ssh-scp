@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.6.1\n";
-	print "Release date: 2022-03-24\n";
+	print "Version: 6.7\n";
+	print "Release date: 2022-04-06\n";
 	exit;
 }
 
@@ -118,22 +118,19 @@ if ( defined $password ) {
 	print "No password set\n" if $v;
 }
 
-my $ssh;
+my $ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
 if ( $via && $via ne '1' ) {
 	$via = "$bu\@$via" if ( $via !~ /\@/ && $bu );
-	$ssh = "sft ssh --via $via ";
+	$ssh .= " -o UserKnownHostsFile=/dev/null -o 'ProxyCommand sft proxycommand --via $via ";
 	$ssh .= "$ru\@" if $ru;
-	$ssh .= $host
-} else {
-	if ( $proxy && $proxy ne '1' ) {
-		if ( $proxy !~ /\@/ ) { $proxy = ( $bu ? $bu : $username ) . "\@$proxy" }
-		$sshOpts .= " -J $proxy";
-		$username = $ru if $ru
-	}
-	$ssh = 'ssh -o StrictHostKeyChecking=no -o CheckHostIP=no';
-	$ssh .= " $sshOpts" if $sshOpts;
-	$ssh .= " $username\@$host"
+	$ssh .= "$host'";
+} elsif ( $proxy && $proxy ne '1' ) {
+	if ( $proxy !~ /\@/ ) { $proxy = ( $bu ? $bu : $username ) . "\@$proxy" }
+	$ssh .= " -J $proxy";
+	$username = $ru if $ru
 }
+$ssh .= " $sshOpts" if $sshOpts;
+$ssh .= " $username\@$host";
 print "$ssh\n" if $v;
 
 # \s will match newline, use literal space instead
