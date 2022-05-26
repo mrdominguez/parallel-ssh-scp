@@ -13,7 +13,7 @@ AUTHOR: Mariano Dominguez
 <marianodominguez@hotmail.com>  
 https://www.linkedin.com/in/marianodominguez
 
-VERSION: 6.7
+VERSION: 6.7.1
 
 FEEDBACK/BUGS: Please contact me by email.
 
@@ -28,20 +28,12 @@ It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` 
 ```
 [remote_user@]host,[bastion_user@]bastion
 ```
-
-NOTE: As of release 1.58.0 of the Advanced Server Access client, `sft ssh` does no longer support the `username@hostname` syntax due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only `hostname` can be specified, otherwise the command errors out:
+Set the override to `,1` to skip using bastion/proxy host:
 
 ```
-% sft -v
-sft version 1.58.0
-% sft ssh mariano.dominguez@web0.example.com
-error: Not a valid server name
+mdssh.pl -via=bastion1 -s='host1 host2,bastion2 host3,1 host4' command
 ```
-
-However, `sft proxycommand` does support it. See Okta documentation:
-- [SSH setup](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm)
-- [Customize SSH configurations for clients](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/custom-ssh-client.htm)
-- [Use the Advanced Server Access client](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/client.htm)
+In the example above, `host1` and `host4` will use `bastion1`, `host2` will use `bastion2` and `host3` will not use any bastion (direct SSH access).
 
 Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
 
@@ -50,7 +42,7 @@ Further, SSH allows connecting to remote hosts though a proxy (or bastion) with 
 -proxy=user@bastion:port
 ```
 
-Note that commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following yields identical results:
+Commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following yields identical results:
 
 ```
 sshexp host 'VAR=value; echo $VAR'
@@ -69,6 +61,20 @@ A space-separated list of host files ([globbing](https://perldoc.perl.org/functi
 ```
 mdssh -f='/path/to/host_files/* /additional/host_file.txt' -s='192.168.0.10{0..9}' <command>
 ```
+
+NOTE: As of release 1.58.0 of the Advanced Server Access client, `sft ssh` does no longer support the `username@hostname` syntax due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only `hostname` can be specified, otherwise the command errors out:
+
+```
+% sft -v
+sft version 1.58.0
+% sft ssh mariano.dominguez@web0.example.com
+error: Not a valid server name
+```
+
+However, `sft proxycommand` does support it. See Okta documentation:
+- [SSH setup](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm)
+- [Customize SSH configurations for clients](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/custom-ssh-client.htm)
+- [Use the Advanced Server Access client](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/client.htm)
 
 ## Sample Output
 
