@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.7\n";
-	print "Release date: 2022-04-06\n";
+	print "Version: 6.7.1\n";
+	print "Release date: 2022-05-26\n";
 	exit;
 }
 
@@ -282,7 +282,8 @@ sub fork_process {
 	my $host = $h;
 	my $via_override;
 
-	if ( $h =~ /(.+),([^\s].+[^\s])?/ ) {
+#	if ( $h =~ /(.+),([^\s].+[^\s])?/ ) {
+	if ( $h =~ /(.+),(.+)/ ) {
 		$host = $1;
 		$via_override = $2 if $2;
 	}
@@ -295,7 +296,7 @@ sub fork_process {
 
 	if ($p) {
 		$hosts->{$p}->{'host'} = $host;
-		$hosts->{$p}->{'via'} = $via if $via_override;
+		$hosts->{$p}->{'via'} = $via if ( $via_override && $via_override ne '1' );
 		$id->{$p} = ++$forked_cnt;
 		++$running_cnt;
 		my $log_msg = "[$host";
@@ -372,7 +373,7 @@ sub check_process {
 			}
 		} else {
 			my $log_msg = "[$hosts->{$child_pid}->{'host'}";
-			$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if $hosts->{$child_pid}->{'via'};
+			$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if ( $hosts->{$child_pid}->{'via'} && $hosts->{$child_pid}->{'via'} ne '1' );
 			$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | $completed_cnt/$num_hosts -$completed_percent-";
 			$log_msg .= sprintf(" in %0.03f s", &time() - $start) unless $et;
 			$log_msg .= " | OK: $ok_cnt | Error: $error_cnt)";
