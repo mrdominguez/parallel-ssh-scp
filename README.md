@@ -133,10 +133,10 @@ Sudoing to user root
 tcount = 25
 ttime = 5 s
 -----
-[kube-master] [15192] process_1 forked
-[kube-node1] [15193] process_2 forked
-[kube-node2] [15195] process_3 forked
-[localhost] [15197] process_4 forked
+[kube-master] [15192] process_1 of 4 forked
+[kube-node1] [15193] process_2 of 4 forked
+[kube-node2] [15195] process_3 of 4 forked
+[localhost] [15197] process_4 of 4 forked
 [kube-node2] (auth) EOF
 ssh: connect to host kube-node2 port 22: Connection refused
 [kube-node2] [15195] process_3 exited (Pending: 3 | Forked: 4 | 1/4 -25%- | OK: 0 | Error: 1)
