@@ -43,7 +43,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 6.7.1\n";
-	print "Release date: 2022-05-26\n";
+	print "Release date: 2022-05-30\n";
 	exit;
 }
 
@@ -301,7 +301,7 @@ sub fork_process {
 		++$running_cnt;
 		my $log_msg = "[$host";
 		$log_msg .= " __via__ $via" if ( $via && $via ne '1' );
-		$log_msg .= "] [$p] process_$id->{$p} of $num_hosts forked"; 
+		$log_msg .= "] [$p] process_$id->{$p}_of_$num_hosts forked"; 
 		&log_trace($log_msg) if $v;
 		return $p;
 	}
@@ -374,7 +374,7 @@ sub check_process {
 		} else {
 			my $log_msg = "[$hosts->{$child_pid}->{'host'}";
 			$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if ( $hosts->{$child_pid}->{'via'} && $hosts->{$child_pid}->{'via'} ne '1' );
-			$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | $completed_cnt/$num_hosts -$completed_percent-";
+			$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | Done: $completed_cnt/$num_hosts -$completed_percent-";
 			$log_msg .= sprintf(" in %0.03f s", &time() - $start) unless $et;
 			$log_msg .= " | OK: $ok_cnt | Error: $error_cnt)";
 			&log_trace($log_msg);
