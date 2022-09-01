@@ -62,16 +62,7 @@ A space-separated list of host files ([globbing](https://perldoc.perl.org/functi
 mdssh -f='/path/to/host_files/* /additional/host_file.txt' -s='192.168.0.10{0..9}' <command>
 ```
 
-NOTE: As of release 1.58.0 of the Advanced Server Access client, `sft ssh` does no longer support the `username@hostname` syntax due to vulnerability [CVE-2022-1030](https://trust.okta.com/security-advisories/okta-advanced-server-access-client-cve-2022-1030/); only `hostname` can be specified, otherwise the command errors out:
-
-```
-% sft -v
-sft version 1.58.0
-% sft ssh mariano.dominguez@web0.example.com
-error: Not a valid server name
-```
-
-However, `sft proxycommand` does support it. See Okta documentation:
+Related Okta documentation:
 - [SSH setup](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/setup/ssh.htm)
 - [Customize SSH configurations for clients](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/custom-ssh-client.htm)
 - [Use the Advanced Server Access client](https://help.okta.com/asa/en-us/Content/Topics/Adv_Server_Access/docs/client.htm)
