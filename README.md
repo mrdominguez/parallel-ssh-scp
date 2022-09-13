@@ -23,8 +23,8 @@ FEEDBACK/BUGS: Please contact me by email.
 
 The latest release contains performance enhancements, specifically, optimizations to the concurrency management logic (among other code improvements).
 
-It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for SSH as well as SCP protocols. 
-Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
+It is compatible with the Okta ASA ScaleFT client when using the `-via` option, which works for SSH as well as SCP protocols. 
+Further, SSH allows connecting to remote hosts though a jump host (bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
 
 ```
 -sshOpts='-J user@bastion:port'
