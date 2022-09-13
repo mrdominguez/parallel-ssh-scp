@@ -23,7 +23,14 @@ FEEDBACK/BUGS: Please contact me by email.
 
 The latest release contains performance enhancements, specifically, optimizations to the concurrency management logic (among other code improvements).
 
-It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for SSH as well as SCP protocols. The `-via` and `-proxy` options can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
+It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for SSH as well as SCP protocols. 
+Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
+
+```
+-sshOpts='-J user@bastion:port'
+-proxy=user@bastion:port
+```
+The `-via` and `-proxy` options can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
 
 ```
 [remote_user@]host,[bastion_user@]bastion
@@ -34,13 +41,6 @@ Set the override to `,1` to skip using bastion/proxy host:
 mdssh.pl -via=bastion1 -s='host1 host2,bastion2 host3,1 host4' command
 ```
 In the example above, `host1` and `host4` will use `bastion1`, `host2` will use `bastion2` and `host3` will not use any bastion (direct SSH access).
-
-Further, SSH allows connecting to remote hosts though a proxy (or bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
-
-```
--sshOpts='-J user@bastion:port'
--proxy=user@bastion:port
-```
 
 Commands in `mdssh.pl` are interpreted twice; therefore, escaped characters need to be double escaped (`\\\`). The following yields identical results:
 
