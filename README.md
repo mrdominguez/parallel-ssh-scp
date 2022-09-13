@@ -23,7 +23,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 The latest release contains performance enhancements, specifically, optimizations to the concurrency management logic (among other code improvements).
 
-It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for both SSH and SCP protocols. Both `-via` and `-proxy` options can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
+It is compatible with the Okta ASA ScaleFT client when using the `-via=bastion` option, which works for SSH as well as SCP protocols. The `-via` and `-proxy` options can be overriden on a per host basis by adding the bastion/proxy server to the host name separated by a comma:
 
 ```
 [remote_user@]host,[bastion_user@]bastion
