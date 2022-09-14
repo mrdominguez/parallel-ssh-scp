@@ -23,7 +23,7 @@ FEEDBACK/BUGS: Please contact me by email.
 
 The latest release contains performance enhancements, specifically, optimizations to the concurrency management logic (among other code improvements).
 
-It is compatible with the Okta ASA ScaleFT client when using the `-via` option, which works with SSH as well as SCP protocols. 
+It is compatible with the Okta ASA ScaleFT client when using the `-via` option, which works with both SSH and SCP protocols. 
 Further, SSH allows connecting to remote hosts though a jump host (bastion) with [ProxyJump](https://www.redhat.com/sysadmin/ssh-proxy-bastion-proxyjump). Set `-sshOpts` or simply use the equivalent `-proxy` option:
 
 ```
@@ -207,7 +207,7 @@ The password can be passed by setting the `-p` option or the `$SSH_PASS` environ
 - The actual password string (**not recommended**).
 - A file containing the password.
 
-Both username (`-u`) and password (`-p`) values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
+Username (`-u`) and password (`-p`) values are optional. If no value is provided, there will be a prompt for one, and if the password is not set, its value will be undefined.
 
 Okta/sft (`-via`) is the default mode when dealing with bastion/proxy hosts. To enable ProxyJump, set the `-proxy` option. One difference between `-via` and `-proxy` regarding authentication is that, in the absence of `-bu` (bastion/proxy user) and/or `-ru` (remote user), the latter can take the `-u` option to access proxy and remote hosts. In Okta mode, `-u` gets ignored since the underlying Okta credentials are utilized instead:
 
