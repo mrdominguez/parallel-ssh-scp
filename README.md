@@ -35,7 +35,7 @@ The `-via` and `-proxy` options can be overriden on a per host basis by adding t
 ```
 [remote_user@]host,[bastion_user@]bastion
 ```
-Set the override to `,1` to skip using bastion/proxy host:
+Set the override to `,1` to skip using bastion host:
 
 ```
 mdssh.pl -via=bastion1 -s='host1 host2,bastion2 host3,1 host4' command
