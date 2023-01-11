@@ -1,6 +1,6 @@
 #!/usr/bin/perl -ws
 
-# Copyright 2022 Mariano Dominguez
+# Copyright 2023 Mariano Dominguez
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.7\n";
-	print "Release date: 2022-04-06\n";
+	print "Version: 6.7.2\n";
+	print "Release date: 2023-01-11\n";
 	exit;
 }
 
@@ -134,7 +134,7 @@ $ssh .= " $username\@$host";
 print "$ssh\n" if $v;
 
 # \s will match newline, use literal space instead
-my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'\][\$#] $';
+my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'][$#] $';
 
 my $exp = new Expect;
 $exp->raw_pty(0);
@@ -248,13 +248,8 @@ unless ( $bg ) {
 	)
 } else { $rc = 100 }
 
-if ( $sudo ) {
-	$exp->send("exit\n");
-	$exp->expect($int_opts->{'timeout'}, [ $shell_prompt ]);
-}
-
-$exp->send("exit\n");
-#$exp->expect($int_opts->{'timeout'}, 'logout');
+&send_exit() if ( $sudo );
+&send_exit();
 #$exp->hard_close();
 $exp->soft_close();
 
@@ -367,6 +362,11 @@ sub send_yes {
 	$exp->send("yes\n");
 	$exp->slave->stty(qw(echo));
 	exp_continue;
+}
+
+sub send_exit {
+	$exp->send("exit\n");
+	$exp->expect($int_opts->{'timeout'}, 'logout');
 }
 
 sub usage {
