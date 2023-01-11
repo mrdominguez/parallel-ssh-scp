@@ -1,6 +1,6 @@
 #!/usr/bin/perl -ws
 
-# Copyright 2022 Mariano Dominguez
+# Copyright 2023 Mariano Dominguez
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.7.1\n";
-	print "Release date: 2022-05-30\n";
+	print "Version: 6.7.2\n";
+	print "Release date: 2023-01-11\n";
 	exit;
 }
 
