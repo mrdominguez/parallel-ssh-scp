@@ -153,7 +153,7 @@ Error (RC=255): 1 | kube-node2
 
 ## Installation
 
-These utilities are written in *Perl* and have been tested using version *5.1x.x* on *RHEL 6/7*, as well as *macOS Sierra (10.12)* and after.
+These utilities are written in Perl and have been tested using version 5.1x.x on RHEL 6/7, as well as macOS Sierra (10.12) and after.
 
 Automation for authentication is managed with the **Expect.pm** module. **IO::Prompter** is used for username/password prompting and the interactive mode functionality in `sshexp.pl` requires **IO::Stty**.
 
@@ -188,7 +188,7 @@ mdssh -help
 echo "Run 'source ~/.bashrc' to refresh environment variables"
 ```
 
-If you run into the issue below, particularly in *RHEL 6*, install or update these packages: `nss curl libcurl`.
+If you run into the issue below, particularly in RHEL 6, install or update these packages: `nss curl libcurl`.
 
 ```
 $ git clone https://github.com/mrdominguez/parallel-ssh-scp
@@ -201,7 +201,7 @@ $
 
 ## Setting Credentials
 
-The username can be set as `username@hostname`, by using the `-u` command-line option, or the `$SSH_USER` environment variable (in that order of precedence). If not set, the default username is the value of the environtment variable `$USER` or the Okta username.
+The username can be set as `username@hostname`, by using the `-u` command-line option, or the `$SSH_USER` environment variable (in that order of precedence). If not set, the default username is the value of the  variable `$USER` or the Okta username.
 
 The password can be passed by setting the `-p` option or the `$SSH_PASS` environment variable to:
 - The actual password string (**not recommended**).
@@ -277,7 +277,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
 
 NOTES:
 - Once a process is running, a timeout occurs when the executed command does not output anything after the `-timeout` value is reached.
-- Unless overridden by the SSH *ConnectTimeout* option, the system's TCP connect timeout value will be used (the default for Linux is 20 seconds). To change it, set `-sshOpts` as follows  `-sshOpts='-o ConnectTimeout=10'` (in seconds).
+- Unless overridden by the SSH `ConnectTimeout` option, the system's TCP connect timeout value will be used (the default for Linux is 20 seconds). To change it, set `-sshOpts` as follows  `-sshOpts='-o ConnectTimeout=10'` (in seconds).
 - Both `-f` and `-s` can be set at the same time.
 - Lines containing the `#` character in the hosts file will be skipped.
 
