@@ -43,7 +43,7 @@ if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
 	print "Version: 6.7.2\n";
-	print "Release date: 2023-01-11\n";
+	print "Release date: 2023-02-16\n";
 	exit;
 }
 
@@ -399,7 +399,7 @@ sub usage {
 	print "\t -p : Password or path to password file (default: undef)\n";
 	print "\t -sudo : Sudo to sudo_user and run <command> (default: root)\n";
 	print "\t -bg : Background mode (exit after sending command)\n";
-	print "\t -prompt : Shell prompt regex (default: '" . '\][\$\#] $' . "' )\n";
+	print "\t -prompt : Shell prompt regex (default: '" . '][$#] $' . "' )\n";
 	print "\t -via : Bastion host for Okta ASA sft client (default over -proxy)\n";
 	print "\t -proxy : Proxy host for ProxyJump (leave empty to enable over -via)\n";
 	print "\t   -bu : Bastion user\n";
