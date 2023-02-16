@@ -237,7 +237,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
-     -prompt : Shell prompt regex (default: '\][\$\#] $' )
+     -prompt : Shell prompt regex (default: '][$#] $' )
      -via : Bastion host for Okta ASA sft client (default over -proxy)
      -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
@@ -295,7 +295,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -p : Password or path to password file (default: undef)
      -sudo : Sudo to sudo_user and run <command> (default: root)
      -bg : Background mode (exit after sending command)
-     -prompt : Shell prompt regex (default: '\][\$\#] $' )
+     -prompt : Shell prompt regex (default: '][$#] $' )
      -via : Bastion host for Okta ASA sft client (default over -proxy)
      -proxy : Proxy host for ProxyJump (leave empty to enable over -via)
        -bu : Bastion user
@@ -375,3 +375,4 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 * Pull `/var/log/messages` to the local `./remote_files` directory:
 
 	`mdssh.pl -f=hosts -scp -tolocal -target=remote_files /var/log/messages`
+
