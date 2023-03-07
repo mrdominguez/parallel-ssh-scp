@@ -367,7 +367,7 @@ sub check_process {
 
 		unless ( $v ) {
 			unless ( $minimal ) {
-				print " ___ $completed_cnt/$num_hosts";
+				print "\\___ $completed_cnt/$num_hosts";
 				printf(" in %0.03f s", &time() - $start) unless $et;
 				print "\n";
 			}
