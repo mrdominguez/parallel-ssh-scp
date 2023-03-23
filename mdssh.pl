@@ -296,7 +296,7 @@ sub fork_process {
 
 	if ($p) {
 		$hosts->{$p}->{'host'} = $host;
-		$hosts->{$p}->{'via'} = $via if ( $via_override && $via_override ne '1' );
+		$hosts->{$p}->{'via'} = $via if $via_override;
 		$id->{$p} = ++$forked_cnt;
 		++$running_cnt;
 		my $log_msg = "[$host";
