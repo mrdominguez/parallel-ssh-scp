@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.7.2\n";
-	print "Release date: 2023-02-16\n";
+	print "Version: 6.7.3\n";
+	print "Release date: 2023-10-01\n";
 	exit;
 }
 
@@ -322,7 +322,7 @@ sub capture {
 }
 
 sub collect_output {
-	unless ( scalar(@exp_output) == 0 && !$exp->before() && !$exp->after() ) {
+	unless ( scalar(@exp_output) == 0 && !defined $exp->before() && !defined $exp->after() ) {
 		push @exp_output, $exp->before();
 		if ( !defined $int_opts->{'out'} && scalar(@exp_output) > 0 ) {
 			print scalar(@exp_output) == 1 ? "$exp_output[0]\n" : "$exp_output[-1]\n";
