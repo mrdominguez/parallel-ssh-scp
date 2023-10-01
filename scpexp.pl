@@ -76,7 +76,7 @@ if ( $tolocal && !-e $tpath ) {
 }
 
 if ( $v ) {
-	print "timeout = $timeout s\n";
+	print "timeout = ${timeout}s\n";
 	print "SSH_USER = $ENV{SSH_USER}\n" if $ENV{SSH_USER};
 	print "SSH_PASS is set\n" if $ENV{SSH_PASS};
 	print "via = $via\n" if $via;
@@ -177,7 +177,7 @@ print "[$host] [$pid] -> $msg_status\n";
 exit $rc;
 
 END {
-	printf("[$host] [$pid] Execution time: %0.03f s\n", &time() - $start) unless ( $et || $help || $version || !$host );
+	printf("[$host] [$pid] Execution time: %0.03fs\n", &time() - $start) unless ( $et || $help || $version || !$host );
 }
 
 # End of script
@@ -219,7 +219,7 @@ sub usage {
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no -o UserKnownHostsFile=/dev/null)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
-	print "\t -timeout : Timeout value for Expect (default: $timeout_default s)\n";
+	print "\t -timeout : Timeout value for Expect (default: ${timeout_default}s)\n";
 	print "\t -tolocal : Copy from remote host to local host (default: local -> remote)\n";
 	print "\t            If permissions allow it, non-existent local directories in <target_path> will be created\n";
 	print "\t -multiauth : Always authenticate when password prompted (default: single authentication attempt)\n";
