@@ -78,7 +78,7 @@ if ( $host =~ /(.+)\@(.+)/ ) {
 }
 
 if ( $v ) {
-	print "timeout = $int_opts->{'timeout'} s\n";
+	print "timeout = $int_opts->{'timeout'}s\n";
 	print "out = $int_opts->{'out'}\n" if defined $int_opts->{'out'};
 	print "olines = $int_opts->{'olines'}\n";
 	print "odir = $odir\n" if defined $odir;
@@ -282,7 +282,7 @@ print "[$host] [$pid] -> $msg_status";
 exit $rc;
 
 END {
-	printf("[$host] [$pid] Execution time: %0.03f s\n", &time() - $start) unless ( $et || $help || $version || !$host );
+	printf("[$host] [$pid] Execution time: %0.03fs\n", &time() - $start) unless ( $et || $help || $version || !$host );
 }
 
 # End of script
@@ -390,7 +390,7 @@ sub usage {
 	print "\t -sshOpts : Additional SSH options\n";
 	print "\t            (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)\n";
 	print "\t            Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'\n";
-	print "\t -timeout : Timeout value for Expect (default: $timeout_default s)\n";
+	print "\t -timeout : Timeout value for Expect (default: ${timeout_default}s)\n";
 	print "\t -out : (Not defined) Display command output as it happens\n";
 	print "\t        (0) Do not display command output\n";
 	print "\t        (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
