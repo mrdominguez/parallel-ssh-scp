@@ -115,14 +115,14 @@ Restart the `ntpd` service and use verbose output (`-v`), which is especially us
 ```
 [mdom@localhost ~]$ mdssh -v -sudo -s='kube-master kube-node{1,2} localhost' 'service ntpd restart'
 threads = 10
-timeout = 20 s
+timeout = 20s
 out = 1
 olines = 10
 username = mdom
 Password file /home/mdom/ssh_pass found
 Sudoing to user root
 tcount = 25
-ttime = 5 s
+ttime = 5s
 -----
 [kube-master] [15192] process_1_of_4 forked
 [kube-node1] [15193] process_2_of_4 forked
@@ -130,16 +130,16 @@ ttime = 5 s
 [localhost] [15197] process_4_of_4 forked
 [kube-node2] (auth) EOF
 ssh: connect to host kube-node2 port 22: Connection refused
-[kube-node2] [15195] process_3 exited (Pending: 3 | Forked: 4 | Done: 1/4 -25%- | OK: 0 | Error: 1)
+[kube-node2] [15195] process_3 exited (Pending: 3 | Forked: 4 | Done: 1/4 25% | OK: 0 | Error: 1)
 [localhost] [15203] -> OK
 Redirecting to /bin/systemctl restart  ntpd.service
-[localhost] [15197] process_4 exited (Pending: 2 | Forked: 4 | Done: 2/4 -50%- | OK: 1 | Error: 1)
+[localhost] [15197] process_4 exited (Pending: 2 | Forked: 4 | Done: 2/4 50% | OK: 1 | Error: 1)
 [kube-node1] [15201] -> OK
 Redirecting to /bin/systemctl restart ntpd.service
-[kube-node1] [15193] process_2 exited (Pending: 1 | Forked: 4 | Done: 3/4 -75%- | OK: 2 | Error: 1)
+[kube-node1] [15193] process_2 exited (Pending: 1 | Forked: 4 | Done: 3/4 75% | OK: 2 | Error: 1)
 [kube-master] [15202] -> OK
 Redirecting to /bin/systemctl restart ntpd.service
-[kube-master] [15192] process_1 exited (Pending: 0 | Forked: 4 | Done: 4/4 -100%- | OK: 3 | Error: 1)
+[kube-master] [15192] process_1 exited (Pending: 0 | Forked: 4 | Done: 4/4 100% | OK: 3 | Error: 1)
 All processes completed
 -----
 Number of hosts: 4
@@ -245,7 +245,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
-     -timeout : Timeout value for Expect (default: 20 s)
+     -timeout : Timeout value for Expect (default: 20s)
      -threads : Number of concurrent processes (default: 10)
      -scp : Copy <source_path> from local host to @remote_hosts:<target_path>
        -tolocal : Copy @remote_hosts:<source_path> to <target_path> in local host
@@ -256,7 +256,7 @@ Usage: mdssh.pl [-help] [-version] [-u[=username]] [-p[=password]]
        -target : Target path (default: '.' -dot, or current directory-)
        -meter : Display scp progress (default: disabled)
      -tcount : Number of forked processes before throttling (default: 25)
-     -ttime : Throttling time (default: 5 s)
+     -ttime : Throttling time (default: 5s)
      -out : (Not defined) Buffer the output and display it after command completion
             (0) Do not display command output
             (1) Display command output as it happens
@@ -303,7 +303,7 @@ Usage: sshexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
-     -timeout : Timeout value for Expect (default: 20 s)
+     -timeout : Timeout value for Expect (default: 20s)
      -out : (Not defined) Display command output as it happens
             (0) Do not display command output
             (1) Buffer the output and display it after command completion (useful for concurrent execution)
@@ -334,7 +334,7 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
      -sshOpts : Additional SSH options
                 (default: -o StrictHostKeyChecking=no -o CheckHostIP=no)
                 Example: -sshOpts='-o UserKnownHostsFile=/dev/null -o ConnectTimeout=10'
-     -timeout : Timeout value for Expect (default: 20 s)
+     -timeout : Timeout value for Expect (default: 20s)
      -tolocal : Copy from remote host to local host (default: local -> remote)
                 If permissions allow it, non-existent local directories in <target_path> will be created
      -multiauth : Always authenticate when password prompted (default: single authentication attempt)
@@ -375,4 +375,3 @@ Usage: scpexp.pl [-help] [-version] [-u[=username]] [-p[=password]]
 * Pull `/var/log/messages` to the local `./remote_files` directory:
 
 	`mdssh.pl -f=hosts -scp -tolocal -target=remote_files /var/log/messages`
-
