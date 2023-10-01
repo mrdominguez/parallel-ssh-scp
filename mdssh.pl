@@ -270,8 +270,8 @@ printf("Execution time: %0.03fs (aggregated)\n", &time() - $start) unless ( $et 
 sub log_trace {
 	my $trace = "@_";
 	if ( $timestamp ) {
-		my $date = strftime "%m/%d/%Y at %H:%M:%S", localtime;
-		$trace .= " _on_ $date";
+		my $date = strftime "<%m/%d/%Y %H:%M:%S>", localtime;
+		$trace .= " $date";
 	}
 	print "$trace\n";
 }
