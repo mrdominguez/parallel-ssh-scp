@@ -23,7 +23,7 @@ use File::Basename;
 use IO::Prompter;
 use Time::HiRes qw( time );
 
-our ($help, $version, $u, $p, $sudo, $prompt, $bg, $via, $proxy, $bu, $ru, $sshOpts, $timeout, $out, $olines, $odir, $et, $v, $d);
+our ($help, $version, $u, $p, $sudo, $prompt, $bg, $via, $proxy, $bu, $ru, $sshOpts, $timeout, $out, $olines, $odir, $oneliner, $et, $v, $d);
 
 my $start = time() unless ( $et || $help || $version );
 
@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.7.3\n";
-	print "Release date: 2023-10-01\n";
+	print "Version: 6.7.4\n";
+	print "Release date: 2023-10-02\n";
 	exit;
 }
 
@@ -221,6 +221,13 @@ unless ( defined $cmd ) {
 $pw_sent = 0;
 @exp_output = ();
 my $cmd_sent = 0;
+if ( $oneliner ) {
+	$cmd =~ s/\s(\\)\R/ /g;
+	$cmd =~ s/^\s*\R//;
+	$cmd =~ s/((;|&&|\|\|)\s*)\R/$2 /g;
+	$cmd =~ s/\R/ ; /g;
+	$cmd =~ s/;\s*$//;
+}
 print "command = $cmd\n" if $v;
 $exp->send("$cmd\n");
 $exp->expect($int_opts->{'timeout'},
@@ -373,7 +380,8 @@ sub usage {
 	print "\nUsage: $0 [-help] [-version] [-u[=username]] [-p[=password]]\n";
 	print "\t[-sudo[=sudo_user]] [-bg] [-prompt=regex]\n";
 	print "\t[-via|proxy=[bastion_user@]bastion [-bu=bastion_user] [-ru=remote_user]]\n";
-	print "\t[-sshOpts=ssh_options] [-timeout=n] [-out[=0|1] -olines=n -odir=path] [-et] [-v] [-d]\n";
+	print "\t[-sshOpts=ssh_options] [-timeout=n] [-out[=0|1] -olines=n -odir=path]\n";
+	print "\t[-oneliner] [-et] [-v] [-d]\n";
 	print "\t<[username|remote_user@]host[,\$via|proxy]> [<command>]\n\n";
 
 	print "\t -help : Display usage\n";
@@ -396,6 +404,7 @@ sub usage {
 	print "\t        (1) Buffer the output and display it after command completion (useful for concurrent execution)\n";
 	print "\t -olines : Display the last n lines of buffered output (default: $olines_default | full output: 0, implies -out=1)\n";
 	print "\t -odir : Directory in which the command output will be stored as a file (default: \$PWD -current folder-)\n";
+	print "\t -oneliner : Attempt to execute a multiple-line command as a oneliner\n";
 	print "\t -et : Hide execution time\n";
 	print "\t -v : Enable verbose messages\n";
 	print "\t -d : Expect debugging\n";
