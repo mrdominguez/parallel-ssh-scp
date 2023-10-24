@@ -177,10 +177,25 @@ print "[$host] [$pid] -> $msg_status\n";
 exit $rc;
 
 END {
-	printf("[$host] [$pid] Execution time: %0.03fs\n", &time() - $start) unless ( $et || $help || $version || !$host );
+	print "[$host] [$pid] Execution time - " . &parse_duration(&time() - $start) . "\n" unless ( $et || $help || $version || !$host );
 }
 
 # End of script
+
+sub parse_duration {
+	use integer;
+	my $duration = sprintf("%.3f", shift);
+	my $hours = $duration/3600;
+	my $minutes = $duration%3600/60;
+	my $seconds = $duration%60;
+	my ($milliseconds) = $duration =~ m/\.(.*)/;
+
+	my $formatted_duration;
+	$formatted_duration = sprintf("%.3fs", $duration) if ( $hours == 0 && $minutes == 0 );
+	$formatted_duration = sprintf("%dm:%02d.%ss", $minutes, $seconds, $milliseconds) if ( $hours == 0 && $minutes > 0 );
+	$formatted_duration = sprintf("%dh:%02dm:%02d.%ss", $hours, $minutes, $seconds, $milliseconds) if $hours > 0;
+	return $formatted_duration;
+}
 
 sub send_password {
 	if ( defined $password ) {
