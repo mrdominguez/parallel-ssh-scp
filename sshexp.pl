@@ -35,8 +35,8 @@ if ( $d ) {
 if ( $version ) {
 	print "SSH command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.7.4\n";
-	print "Release date: 2023-10-02\n";
+	print "Version: 6.7.5\n";
+	print "Release date: 2023-10-24\n";
 	exit;
 }
 
@@ -134,7 +134,8 @@ $ssh .= " $username\@$host";
 print "$ssh\n" if $v;
 
 # \s will match newline, use literal space instead
-my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'][$#] $';
+#my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'][$#] $';
+my $shell_prompt = ( $prompt ) ? qr/$prompt/ : qr'[:\]].*[$#] $';
 
 my $exp = new Expect;
 $exp->raw_pty(0);
@@ -289,10 +290,25 @@ print "[$host] [$pid] -> $msg_status";
 exit $rc;
 
 END {
-	printf("[$host] [$pid] Execution time: %0.03fs\n", &time() - $start) unless ( $et || $help || $version || !$host );
+	print "[$host] [$pid] Execution time: " . &parse_duration(&time() - $start) . "\n" unless ( $et || $help || $version || !$host );
 }
 
 # End of script
+
+sub parse_duration {
+	use integer;
+	my $duration = sprintf("%.3f", shift);
+	my $hours = $duration/3600;
+	my $minutes = $duration%3600/60;
+	my $seconds = $duration%60;
+	my ($milliseconds) = $duration =~ m/\.(.*)/;
+
+	my $formatted_duration; 
+	$formatted_duration = sprintf("%.3fs", $duration) if ( $hours == 0 && $minutes == 0 );
+	$formatted_duration = sprintf("%dm:%02d.%ss", $minutes, $seconds, $milliseconds) if ( $hours == 0 && $minutes > 0 );
+	$formatted_duration = sprintf("%dh:%02dm:%02d.%ss", $hours, $minutes, $seconds, $milliseconds) if $hours > 0;
+	return $formatted_duration;
+}
 
 sub capture {
 	my $msg = shift;
