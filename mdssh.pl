@@ -263,7 +263,7 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 }
 
 print "\n-----\n";
-print "Execution time: " . &parse_duration(&time() - $start) . " (aggregated)\n" unless ( $et || $help || $version );
+print "Execution time - " . &parse_duration(&time() - $start) . " (aggregated)\n" unless ( $et || $help || $version );
 
 # End of script
 
