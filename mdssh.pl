@@ -42,8 +42,8 @@ my $odir_default = $ENV{PWD};
 if ( $version ) {
 	print "Asyncronous parallel SSH/SCP command-line utility\n";
 	print "Author: Mariano Dominguez\n";
-	print "Version: 6.7.4\n";
-	print "Release date: 2023-10-02\n";
+	print "Version: 6.7.5\n";
+	print "Release date: 2023-10-24\n";
 	exit;
 }
 
@@ -263,9 +263,24 @@ foreach my $rc ( sort { $a <=> $b } keys(%{$error_hosts}) ) {
 }
 
 print "\n-----\n";
-printf("Execution time: %0.03fs (aggregated)\n", &time() - $start) unless ( $et || $help || $version );
+print "Execution time: " . &parse_duration(&time() - $start) . " (aggregated)\n" unless ( $et || $help || $version );
 
 # End of script
+
+sub parse_duration {
+	use integer;
+	my $duration = sprintf("%.3f", shift);
+	my $hours = $duration/3600;
+	my $minutes = $duration%3600/60;
+	my $seconds = $duration%60;
+	my ($milliseconds) = $duration =~ m/\.(.*)/;
+
+	my $formatted_duration;
+	$formatted_duration = sprintf("%.3fs", $duration) if ( $hours == 0 && $minutes == 0 );
+	$formatted_duration = sprintf("%dm:%02d.%ss", $minutes, $seconds, $milliseconds) if ( $hours == 0 && $minutes > 0 );
+	$formatted_duration = sprintf("%dh:%02dm:%02d.%ss", $hours, $minutes, $seconds, $milliseconds) if $hours > 0;
+	return $formatted_duration;
+}
 
 sub log_trace {
 	my $trace = "@_";
@@ -370,14 +385,14 @@ sub check_process {
 		unless ( $v ) {
 			unless ( $minimal ) {
 				print "\\___ $completed_cnt/$num_hosts";
-				printf(" %0.03fs", &time() - $start) unless $et;
+				print " " . &parse_duration(&time() - $start) unless $et;
 				print "\n";
 			}
 		} else {
 			my $log_msg = "[$hosts->{$child_pid}->{'host'}";
 			$log_msg .= " __via__ $hosts->{$child_pid}->{'via'}" if ( $hosts->{$child_pid}->{'via'} && $hosts->{$child_pid}->{'via'} ne '1' );
 			$log_msg .= "] [$child_pid] process_$id->{$child_pid} exited (Pending: $pending_cnt | Forked: $forked_cnt | Done: $completed_cnt/$num_hosts $completed_percent";
-			$log_msg .= sprintf(" %0.03fs", &time() - $start) unless $et;
+			$log_msg .= " " . &parse_duration(&time() - $start) unless $et;
 			$log_msg .= " | OK: $ok_cnt | Error: $error_cnt)";
 			&log_trace($log_msg);
 		}
