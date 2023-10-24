@@ -290,7 +290,7 @@ print "[$host] [$pid] -> $msg_status";
 exit $rc;
 
 END {
-	print "[$host] [$pid] Execution time: " . &parse_duration(&time() - $start) . "\n" unless ( $et || $help || $version || !$host );
+	print "[$host] [$pid] Execution time - " . &parse_duration(&time() - $start) . "\n" unless ( $et || $help || $version || !$host );
 }
 
 # End of script
