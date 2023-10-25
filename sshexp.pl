@@ -227,6 +227,7 @@ if ( $oneliner ) {
 	$cmd =~ s/^\s*\R//;
 	$cmd =~ s/((;|&&|\|\|)\s*)\R/$2 /g;
 	$cmd =~ s/\R/ ; /g;
+	$cmd =~ s/ (do|then|elif|else) ; / $1 /g;
 	$cmd =~ s/;\s*$//;
 }
 print "command = $cmd\n" if $v;
